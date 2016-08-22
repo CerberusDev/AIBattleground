@@ -12,6 +12,6 @@ public:
 	TextureManager();
 	~TextureManager();
 
-	void InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const;
+	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const;
 };
 

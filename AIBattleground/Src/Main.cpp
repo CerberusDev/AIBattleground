@@ -2,8 +2,9 @@
 #include <iostream>
 
 #include "TextureManager.h"
+#include "Actor.h"
 
-#define CIRCLE_AMOUNT 10000
+#define ACTORS_AMOUNT 10000
 #define RES_X 1000
 #define RES_Y 800
 
@@ -21,18 +22,10 @@ int main(int argc, char** argv)
 
 	TextureManager TextureManager;
 
-	sf::Sprite* Sprites[CIRCLE_AMOUNT];
-	sf::Transform* Transforms[CIRCLE_AMOUNT];
+	Actor* Actors[ACTORS_AMOUNT];
 
-	for (int i = 0; i < CIRCLE_AMOUNT; ++i)
-	{
-		Sprites[i] = new sf::Sprite();
-		Sprites[i]->setOrigin(16.0f, 16.0f);
-		TextureManager.InitTexture(Sprites[i], "TestTex32a");
-
-		Transforms[i] = new sf::Transform();
-		Transforms[i]->translate((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y));
-	}
+	for (int i = 0; i < ACTORS_AMOUNT; ++i)
+		Actors[i] = new Actor(&TextureManager, "TestTex32a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
 
 	while (Window.isOpen())
 	{
@@ -45,8 +38,8 @@ int main(int argc, char** argv)
 		
 		Window.clear(sf::Color(180, 180, 180));
 
-		for (int i = 0; i < CIRCLE_AMOUNT; ++i)
-			Window.draw(*Sprites[i], *Transforms[i]);
+		for (const Actor* CurrActor : Actors)
+			CurrActor->Draw(&Window);
 
 		Window.display();
 
@@ -62,8 +55,8 @@ int main(int argc, char** argv)
 		}
 	}
 
-	for (int i = 0; i < CIRCLE_AMOUNT; ++i)
-		delete Sprites[i];
+	for (int i = 0; i < ACTORS_AMOUNT; ++i)
+		delete Actors[i];
 
 	return 0;
 }

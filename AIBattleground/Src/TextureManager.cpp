@@ -23,17 +23,21 @@ TextureManager::~TextureManager()
 		delete it.second;
 }
 
-void TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const
+sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const
 {
 	auto TexIt = MyMap.find(TextureName);
+	sf::Texture* Tex;
 
 	if (TexIt == MyMap.end())
 	{
 		std::cout << "Can't find " << TextureName << " texture, using default one instead." << std::endl;
-		SpriteToInit->setTexture(*MyMap.at(DefaultTexName));
+		Tex = MyMap.at(DefaultTexName);
 	}
 	else
 	{
-		SpriteToInit->setTexture(*TexIt->second);
+		Tex = TexIt->second;
 	}
+
+	SpriteToInit->setTexture(*Tex);
+	return Tex->getSize();
 }

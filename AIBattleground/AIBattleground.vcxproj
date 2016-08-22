@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Actor.cpp" />
     <ClCompile Include="Src\Main.cpp" />
     <ClCompile Include="Src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Actor.h" />
     <ClInclude Include="Src\TextureManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
