@@ -20,6 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\TextureManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\TextureManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29503ABE-DE74-4527-9E2E-21097FAA9A1B}</ProjectGuid>
