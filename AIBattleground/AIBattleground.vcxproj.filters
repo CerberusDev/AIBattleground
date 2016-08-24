@@ -15,12 +15,18 @@
     <ClCompile Include="Src\Actor.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Globals.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\TextureManager.h">
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\Actor.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Globals.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

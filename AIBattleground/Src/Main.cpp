@@ -16,10 +16,6 @@ int main(int argc, char** argv)
 	Settings.antialiasingLevel = 0;
 	sf::RenderWindow Window(sf::VideoMode(RES_X, RES_Y), "SFML window title", sf::Style::Titlebar | sf::Style::Close, Settings);
 
-	sf::Clock MainClock;
-	sf::Time MainTimeCounter;
-	int MainFPSCounter = 0;
-
 	TextureManager TextureManager;
 
 	Actor* Actors[ACTORS_AMOUNT];
@@ -27,23 +23,15 @@ int main(int argc, char** argv)
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 		Actors[i] = new Actor(&TextureManager, "TestTex32a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
 
+	sf::Clock MainClock;
+	sf::Time MainTimeCounter;
+	sf::Time DeltaTime;
+	int MainFPSCounter = 0;
+
 	while (Window.isOpen())
 	{
-		sf::Event event;
-		while (Window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				Window.close();
-		}
-		
-		Window.clear(sf::Color(180, 180, 180));
-
-		for (const Actor* CurrActor : Actors)
-			CurrActor->Draw(&Window);
-
-		Window.display();
-
-		MainTimeCounter += MainClock.restart();
+		DeltaTime = MainClock.restart();
+		MainTimeCounter += DeltaTime;
 		MainFPSCounter++;
 
 		if (MainTimeCounter.asSeconds() > 1.0f)
@@ -53,6 +41,23 @@ int main(int argc, char** argv)
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
 		}
+
+		sf::Event event;
+		while (Window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				Window.close();
+		}
+		
+		Window.clear(sf::Color(180, 180, 180));
+
+		for (Actor* CurrActor : Actors)
+			CurrActor->Update(DeltaTime.asSeconds());
+
+		for (const Actor* CurrActor : Actors)
+			CurrActor->Draw(&Window);
+
+		Window.display();
 	}
 
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
