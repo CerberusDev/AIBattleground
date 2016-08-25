@@ -5,7 +5,7 @@
 #include "Actor.h"
 #include "LevelInfo.h"
 
-#define ACTORS_AMOUNT 10000
+#define ACTORS_AMOUNT 1000
 #define RES_X 1000
 #define RES_Y 800
 
