@@ -8,7 +8,7 @@ DefaultTexName("DefaultTex")
 	std::vector<std::string> TexNames;
 	TexNames.push_back(DefaultTexName);
 
-	TexNames.push_back("TestTex32a");
+	TexNames.push_back("TestTex16a");
 
 	for (auto &it : TexNames)
 	{

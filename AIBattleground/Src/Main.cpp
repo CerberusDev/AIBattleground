@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 	Actor* Actors[ACTORS_AMOUNT];
 
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
-		Actors[i] = new Actor(&TextureManager, "TestTex32a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
+		Actors[i] = new Actor(&TextureManager, "TestTex16a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
