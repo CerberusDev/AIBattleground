@@ -15,6 +15,8 @@
 
 int main(int argc, char** argv)
 {
+	std::cout << "AI Battleground: Start! " << std::endl;
+
 	std::srand((unsigned int)std::time(0));
 	
 	sf::ContextSettings Settings;
@@ -33,6 +35,8 @@ int main(int argc, char** argv)
 	sf::Time MainTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
+
+	std::cout << "Initialization completed." << std::endl;
 
 	while (Window.isOpen())
 	{
