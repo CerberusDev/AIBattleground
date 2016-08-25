@@ -10,11 +10,14 @@ class TextureManager
 {
 private:
 	std::map<std::string, sf::Texture*> MyMap;
-	const std::string DefaultTexName;
+	sf::Texture* DefaultTexture;
 
 public:
 	TextureManager();
 	~TextureManager();
 
-	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const;
+	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName);
+
+private:
+	static std::string GetTextureFilePath(const std::string& TextureName);
 };

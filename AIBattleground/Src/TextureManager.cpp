@@ -6,36 +6,40 @@
 
 #include "TextureManager.h"
 
-TextureManager::TextureManager() :
-DefaultTexName("DefaultTex")
+TextureManager::TextureManager()
 {
-	std::vector<std::string> TexNames;
-	TexNames.push_back(DefaultTexName);
-
-	TexNames.push_back("TestTex16a");
-
-	for (auto &it : TexNames)
-	{
-		MyMap[it] = new sf::Texture();
-		MyMap[it]->loadFromFile("Tex/" + it + ".png");
-	}
+	DefaultTexture = new sf::Texture();
+	DefaultTexture->loadFromFile(GetTextureFilePath("DefaultTex"));
 }
 
 TextureManager::~TextureManager()
 {
 	for (auto &it : MyMap)
-		delete it.second;
+		if (it.second != DefaultTexture)
+			delete it.second;
+
+	delete DefaultTexture;
 }
 
-sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const
+sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName)
 {
 	auto TexIt = MyMap.find(TextureName);
 	sf::Texture* Tex;
 
 	if (TexIt == MyMap.end())
 	{
-		std::cout << "Can't find " << TextureName << " texture, using default one instead." << std::endl;
-		Tex = MyMap.at(DefaultTexName);
+		Tex = new sf::Texture();
+
+		if (Tex->loadFromFile(GetTextureFilePath(TextureName)))
+		{
+			MyMap[TextureName] = Tex;
+		}
+		else
+		{
+			delete Tex;
+			Tex = DefaultTexture;
+			MyMap[TextureName] = Tex;
+		}
 	}
 	else
 	{
@@ -44,4 +48,9 @@ sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::st
 
 	SpriteToInit->setTexture(*Tex);
 	return Tex->getSize();
+}
+
+std::string TextureManager::GetTextureFilePath(const std::string& TextureName)
+{
+	return std::string("Tex/" + TextureName + ".png");
 }
