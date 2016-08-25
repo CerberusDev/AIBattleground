@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// ------------- AI Battleground, Copyright(C) Maciej Pryc, 2016 --------------
+// ----------------------------------------------------------------------------
+
 #pragma once
 
 #include <SFML\Graphics.hpp>
@@ -24,4 +28,3 @@ public:
 private:
 	void GenerateRandomMovementDirection(Direction DirectionToAvoid = Direction::NONE);
 };
-

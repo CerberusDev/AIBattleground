@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// ------------- AI Battleground, Copyright(C) Maciej Pryc, 2016 --------------
+// ----------------------------------------------------------------------------
+
 #pragma once
 
 #include <SFML\Graphics.hpp>
@@ -12,4 +16,3 @@ public:
 	LevelInfo(const sf::FloatRect& LevelBoundaries);
 	~LevelInfo();
 };
-

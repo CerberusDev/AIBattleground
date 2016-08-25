@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// ------------- AI Battleground, Copyright(C) Maciej Pryc, 2016 --------------
+// ----------------------------------------------------------------------------
+
 #pragma once
 
 #include <SFML\Graphics.hpp>
@@ -14,4 +18,3 @@ public:
 
 	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName) const;
 };
-
