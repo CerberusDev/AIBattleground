@@ -9,7 +9,7 @@
 class TextureManager
 {
 private:
-	std::map<std::string, sf::Texture*> MyMap;
+	std::map<std::string, sf::Texture*> TextureMap;
 	sf::Texture* DefaultTexture;
 
 public:

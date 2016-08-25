@@ -14,7 +14,7 @@ TextureManager::TextureManager()
 
 TextureManager::~TextureManager()
 {
-	for (auto &it : MyMap)
+	for (auto &it : TextureMap)
 		if (it.second != DefaultTexture)
 			delete it.second;
 
@@ -23,22 +23,22 @@ TextureManager::~TextureManager()
 
 sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName)
 {
-	auto TexIt = MyMap.find(TextureName);
+	auto TexIt = TextureMap.find(TextureName);
 	sf::Texture* Tex;
 
-	if (TexIt == MyMap.end())
+	if (TexIt == TextureMap.end())
 	{
 		Tex = new sf::Texture();
 
 		if (Tex->loadFromFile(GetTextureFilePath(TextureName)))
 		{
-			MyMap[TextureName] = Tex;
+			TextureMap[TextureName] = Tex;
 		}
 		else
 		{
 			delete Tex;
 			Tex = DefaultTexture;
-			MyMap[TextureName] = Tex;
+			TextureMap[TextureName] = Tex;
 		}
 	}
 	else
