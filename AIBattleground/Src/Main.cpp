@@ -3,6 +3,7 @@
 
 #include "TextureManager.h"
 #include "Actor.h"
+#include "LevelInfo.h"
 
 #define ACTORS_AMOUNT 10000
 #define RES_X 1000
@@ -17,11 +18,12 @@ int main(int argc, char** argv)
 	sf::RenderWindow Window(sf::VideoMode(RES_X, RES_Y), "SFML window title", sf::Style::Titlebar | sf::Style::Close, Settings);
 
 	TextureManager TextureManager;
+	LevelInfo LevelInfo(sf::FloatRect(0, 0, RES_X, RES_Y));
 
 	Actor* Actors[ACTORS_AMOUNT];
 
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
-		Actors[i] = new Actor(&TextureManager, "TestTex16a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
+		Actors[i] = new Actor(&LevelInfo, &TextureManager, "TestTex16a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;

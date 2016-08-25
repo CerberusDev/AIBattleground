@@ -1,8 +1,9 @@
 #include "Actor.h"
 #include "TextureManager.h"
+#include "LevelInfo.h"
 
-Actor::Actor(TextureManager* TexManager, const std::string& TexName, const sf::Vector2f& InitialPosition) :
-Speed(100.0f), MovementDirection(0.0f, 0.0f)
+Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const sf::Vector2f& InitialPosition) :
+LevelInfo(argLevelInfo), MovementDirection(0.0f, 0.0f), Speed(100.0f)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
 	Position = InitialPosition;
@@ -28,13 +29,13 @@ void Actor::Update(const float DeltaTime)
 {
 	Position += MovementDirection * Speed * DeltaTime;
 
-	if (Position.x > 1000.0f - Size.x / 2.0f)
+	if (Position.x > LevelInfo->RightBottomEdge.x - Size.x / 2.0f)
 		GenerateRandomMovementDirection(Direction::RIGHT);
-	else if (Position.x < Size.x / 2.0f)
+	else if (Position.x < LevelInfo->Boundaries.left + Size.x / 2.0f)
 		GenerateRandomMovementDirection(Direction::LEFT);
-	if (Position.y > 800.0f - Size.y / 2.0f)
+	if (Position.y > LevelInfo->RightBottomEdge.y - Size.y / 2.0f)
 		GenerateRandomMovementDirection(Direction::DOWN);
-	else if (Position.y < Size.y / 2.0f)
+	else if (Position.y < LevelInfo->Boundaries.top + Size.y / 2.0f)
 		GenerateRandomMovementDirection(Direction::UP);
 }
 
