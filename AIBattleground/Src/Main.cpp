@@ -4,6 +4,7 @@
 
 #include <SFML\Graphics.hpp>
 #include <iostream>
+#include <iomanip>
 
 #include "TextureManager.h"
 #include "Actor.h"
@@ -27,6 +28,8 @@ int main()
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
+	sf::Time UpdateTimeCounter;
+	sf::Time DrawTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
 
@@ -40,8 +43,13 @@ int main()
 
 		while (MainTimeCounter.asSeconds() >= 1.0f)
 		{
-			std::cout << "FPS: " << MainFPSCounter << std::endl;
+			std::cout << "FPS: " << MainFPSCounter 
+				<< std::setprecision(1) << std::fixed << "   Avg draw time: "
+				<< DrawTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg update time: " 
+				<< UpdateTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
 
+			UpdateTimeCounter = sf::seconds(0.0f);
+			DrawTimeCounter = sf::seconds(0.0f);
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
 		}
@@ -53,11 +61,19 @@ int main()
 				Window.close();
 		}
 
+		sf::Clock UpdateClock;
+
 		LevelInfo.Update(DeltaTime.asSeconds(), MainTimeCounter);
+
+		UpdateTimeCounter += UpdateClock.getElapsedTime();
+
+		sf::Clock DrawClock;
 
 		Window.clear();
 		LevelInfo.Draw(&Window);
 		Window.display();
+
+		DrawTimeCounter += DrawClock.getElapsedTime();
 	}
 
 	return 0;
