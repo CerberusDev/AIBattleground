@@ -21,7 +21,7 @@ TextureManager::~TextureManager()
 	delete DefaultTexture;
 }
 
-sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName)
+sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName, const bool bRepeated)
 {
 	auto TexIt = TextureMap.find(TextureName);
 	sf::Texture* Tex;
@@ -33,6 +33,7 @@ sf::Vector2u TextureManager::InitTexture(sf::Sprite* SpriteToInit, const std::st
 		if (Tex->loadFromFile(GetTextureFilePath(TextureName)))
 		{
 			TextureMap[TextureName] = Tex;
+			Tex->setRepeated(bRepeated);
 		}
 		else
 		{

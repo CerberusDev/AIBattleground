@@ -16,7 +16,7 @@ public:
 	TextureManager();
 	~TextureManager();
 
-	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName);
+	sf::Vector2u InitTexture(sf::Sprite* SpriteToInit, const std::string& TextureName, const bool bRepeated = false);
 
 private:
 	static std::string GetTextureFilePath(const std::string& TextureName);

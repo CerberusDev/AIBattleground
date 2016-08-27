@@ -31,6 +31,10 @@ int main(int argc, char** argv)
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 		Actors[i] = new Actor(&LevelInfo, &TextureManager, "TestTex16a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
 
+	sf::Sprite BackgroundSprite;
+	TextureManager.InitTexture(&BackgroundSprite, "Background256", true);
+	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, RES_X, RES_Y));
+
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
 	sf::Time DeltaTime;
@@ -59,10 +63,12 @@ int main(int argc, char** argv)
 				Window.close();
 		}
 		
-		Window.clear(sf::Color(180, 180, 180));
+		Window.clear();
 
 		for (Actor* CurrActor : Actors)
 			CurrActor->Update(DeltaTime.asSeconds());
+
+		Window.draw(BackgroundSprite);
 
 		for (const Actor* CurrActor : Actors)
 			CurrActor->Draw(&Window);
