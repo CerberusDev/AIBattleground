@@ -19,3 +19,8 @@ float GetSquaredDist(const sf::Vector2f& VectorA, const sf::Vector2f& VectorB)
 {
 	return std::pow((VectorA.x - VectorB.x) + (VectorA.y - VectorB.y), 2);
 }
+
+float GetRandomFloat(float Max)
+{
+	return (float)std::rand() / ((float)RAND_MAX / Max);
+}

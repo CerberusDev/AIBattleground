@@ -63,24 +63,24 @@ void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)
 	switch (DirectionToAvoid)
 	{
 	case EDirection::UP:
-		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
-		MovementDirection.y = (float)std::rand() / (float)RAND_MAX;
+		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		MovementDirection.y = GetRandomFloat();
 		break;
 	case EDirection::RIGHT:
-		MovementDirection.x = (float)std::rand() / (float)RAND_MAX - 1.0f;
-		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
+		MovementDirection.x = GetRandomFloat() - 1.0f;
+		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	case EDirection::DOWN:
-		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
-		MovementDirection.y = (float)std::rand() / (float)RAND_MAX - 1.0f;
+		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		MovementDirection.y = GetRandomFloat() - 1.0f;
 		break;
 	case EDirection::LEFT:
-		MovementDirection.x = (float)std::rand() / (float)RAND_MAX;
-		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
+		MovementDirection.x = GetRandomFloat();
+		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	case EDirection::NONE:
-		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
-		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
+		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	}
 

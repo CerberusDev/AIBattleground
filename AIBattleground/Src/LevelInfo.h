@@ -6,7 +6,7 @@
 
 #include <SFML\Graphics.hpp>
 
-#define ACTORS_PER_TEAM_AMOUNT 500
+#define ACTORS_PER_TEAM_AMOUNT 2000
 #define ACTORS_AMOUNT (2 * ACTORS_PER_TEAM_AMOUNT)
 
 class LevelInfo
@@ -27,4 +27,7 @@ public:
 
 	void Draw(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime, const sf::Time MainTimeCounter);
+
+private:
+	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);
 };

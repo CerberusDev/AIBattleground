@@ -11,9 +11,12 @@
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height)
 {
+	const float InitialRectSize = 0.15f;
+
 	ETeam InitialTeam = ETeam::TEAM_A;
 	std::string TexName("RobotA");
 	Actor** ArrayToPopulate = ActorsTeamA;
+	sf::FloatRect RectToSpawnIn(Boundaries.left, Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
 
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 	{
@@ -22,21 +25,27 @@ Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundar
 			InitialTeam = ETeam::TEAM_B;
 			TexName = "RobotB";
 			ArrayToPopulate = ActorsTeamB;
+			RectToSpawnIn = sf::FloatRect(Boundaries.left + Boundaries.width * (1.0f - InitialRectSize), Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
 		}
 
-		const sf::Vector2f InitialPos((float)(std::rand() % (int)Boundaries.width), (float)(std::rand() % (int)Boundaries.height));
-		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, InitialPos);
+		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
 		ArrayToPopulate[i % ACTORS_PER_TEAM_AMOUNT] = Actors[i];
 	}
 
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
+	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
 }
 
 LevelInfo::~LevelInfo()
 {
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 		delete Actors[i];
+}
+
+sf::Vector2f LevelInfo::GetRandomPointInRect(const sf::FloatRect& Rect)
+{
+	return sf::Vector2f(Rect.left + GetRandomFloat(Rect.width), Rect.top + GetRandomFloat(Rect.height));
 }
 
 void LevelInfo::Draw(sf::RenderWindow* Window) const
