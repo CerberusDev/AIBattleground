@@ -14,3 +14,8 @@ void NormalizeVector2f(sf::Vector2f& InVector)
 		InVector.y /= Length;
 	}
 }
+
+float GetSquaredDist(const sf::Vector2f& VectorA, const sf::Vector2f& VectorB)
+{
+	return std::pow((VectorA.x - VectorB.x) + (VectorA.y - VectorB.y), 2);
+}

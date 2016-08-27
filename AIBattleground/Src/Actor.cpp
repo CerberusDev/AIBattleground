@@ -6,8 +6,8 @@
 #include "TextureManager.h"
 #include "LevelInfo.h"
 
-Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), MovementDirection(0.0f, 0.0f), Speed(100.0f)
+Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
+LevelInfo(argLevelInfo), MovementDirection(0.0f, 0.0f), Speed(100.0f), Team(argTeam)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
 	Position = InitialPosition;
@@ -41,6 +41,21 @@ void Actor::Update(const float DeltaTime)
 		GenerateRandomMovementDirection(Direction::DOWN);
 	else if (Position.y < LevelInfo->Boundaries.top + Size.y / 2.0f)
 		GenerateRandomMovementDirection(Direction::UP);
+}
+
+sf::Vector2f Actor::GetPosition() const
+{
+	return Position;
+}
+
+ETeam Actor::GetTeam() const
+{
+	return Team;
+}
+
+void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
+{
+	NearestEnemy = NewNearestEnemy;
 }
 
 void Actor::GenerateRandomMovementDirection(Direction DirectionToAvoid)

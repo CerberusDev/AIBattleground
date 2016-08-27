@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 		MainTimeCounter += DeltaTime;
 		MainFPSCounter++;
 
-		if (MainTimeCounter.asSeconds() > 1.0f)
+		while (MainTimeCounter.asSeconds() >= 1.0f)
 		{
 			std::cout << "FPS: " << MainFPSCounter << std::endl;
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 				Window.close();
 		}
 
-		LevelInfo.Update(DeltaTime.asSeconds());
+		LevelInfo.Update(DeltaTime.asSeconds(), MainTimeCounter);
 
 		Window.clear();
 		LevelInfo.Draw(&Window);
