@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// ------------- AI Battleground, Copyright(C) Maciej Pryc, 2016 --------------
+// ----------------------------------------------------------------------------
+
 #include "LevelInfo.h"
 
 LevelInfo::LevelInfo(const sf::FloatRect& LevelBoundaries) :
