@@ -13,6 +13,8 @@
 #define RES_X 1000
 #define RES_Y 800
 
+const float MaxDeltaTime = 0.2f;
+
 int main()
 {
 	std::cout << "AI Battleground: Start! " << std::endl;
@@ -63,7 +65,7 @@ int main()
 
 		sf::Clock UpdateClock;
 
-		LevelInfo.Update(DeltaTime.asSeconds(), MainTimeCounter);
+		LevelInfo.Update(std::min(DeltaTime.asSeconds(), MaxDeltaTime), MainTimeCounter);
 
 		UpdateDurationTimeCounter += UpdateClock.getElapsedTime();
 
