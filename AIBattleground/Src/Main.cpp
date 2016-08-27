@@ -9,7 +9,6 @@
 #include "Actor.h"
 #include "LevelInfo.h"
 
-#define ACTORS_AMOUNT 1000
 #define RES_X 1000
 #define RES_Y 800
 
@@ -24,16 +23,7 @@ int main(int argc, char** argv)
 	sf::RenderWindow Window(sf::VideoMode(RES_X, RES_Y), "SFML window title", sf::Style::Titlebar | sf::Style::Close, Settings);
 
 	TextureManager TextureManager;
-	LevelInfo LevelInfo(sf::FloatRect(0, 0, RES_X, RES_Y));
-
-	Actor* Actors[ACTORS_AMOUNT];
-
-	for (int i = 0; i < ACTORS_AMOUNT; ++i)
-		Actors[i] = new Actor(&LevelInfo, &TextureManager, "TestTex16a", sf::Vector2f((float)(std::rand() % RES_X), (float)(std::rand() % RES_Y)));
-
-	sf::Sprite BackgroundSprite;
-	TextureManager.InitTexture(&BackgroundSprite, "Background256", true);
-	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, RES_X, RES_Y));
+	LevelInfo LevelInfo(&TextureManager, sf::FloatRect(0, 0, RES_X, RES_Y));
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
@@ -62,22 +52,13 @@ int main(int argc, char** argv)
 			if (event.type == sf::Event::Closed)
 				Window.close();
 		}
-		
+
+		LevelInfo.Update(DeltaTime.asSeconds());
+
 		Window.clear();
-
-		for (Actor* CurrActor : Actors)
-			CurrActor->Update(DeltaTime.asSeconds());
-
-		Window.draw(BackgroundSprite);
-
-		for (const Actor* CurrActor : Actors)
-			CurrActor->Draw(&Window);
-
+		LevelInfo.Draw(&Window);
 		Window.display();
 	}
-
-	for (int i = 0; i < ACTORS_AMOUNT; ++i)
-		delete Actors[i];
 
 	return 0;
 }
