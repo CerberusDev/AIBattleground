@@ -56,10 +56,10 @@ int main()
 			MainFPSCounter = 0;
 		}
 
-		sf::Event event;
-		while (Window.pollEvent(event))
+		sf::Event Event;
+		while (Window.pollEvent(Event))
 		{
-			if (event.type == sf::Event::Closed)
+			if (Event.type == sf::Event::Closed || (Event.type == sf::Event::KeyPressed && Event.key.code == sf::Keyboard::Escape))
 				Window.close();
 		}
 
