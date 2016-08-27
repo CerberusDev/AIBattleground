@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 	
 	sf::ContextSettings Settings;
 	Settings.antialiasingLevel = 0;
-	sf::RenderWindow Window(sf::VideoMode(RES_X, RES_Y), "SFML window title", sf::Style::Titlebar | sf::Style::Close, Settings);
+	sf::RenderWindow Window(sf::VideoMode(RES_X, RES_Y), "AI Battleground", sf::Style::Titlebar | sf::Style::Close, Settings);
 
 	TextureManager TextureManager;
 	LevelInfo LevelInfo(&TextureManager, sf::FloatRect(0, 0, RES_X, RES_Y));
