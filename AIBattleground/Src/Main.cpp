@@ -28,8 +28,8 @@ int main()
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
-	sf::Time UpdateTimeCounter;
-	sf::Time DrawTimeCounter;
+	sf::Time UpdateDurationTimeCounter;
+	sf::Time DrawDurationTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
 
@@ -45,11 +45,11 @@ int main()
 		{
 			std::cout << "FPS: " << MainFPSCounter 
 				<< std::setprecision(1) << std::fixed << "   Avg draw time: "
-				<< DrawTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg update time: " 
-				<< UpdateTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
+				<< DrawDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg update time: "
+				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
 
-			UpdateTimeCounter = sf::seconds(0.0f);
-			DrawTimeCounter = sf::seconds(0.0f);
+			DrawDurationTimeCounter = sf::seconds(0.0f);
+			UpdateDurationTimeCounter = sf::seconds(0.0f);
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
 		}
@@ -65,7 +65,7 @@ int main()
 
 		LevelInfo.Update(DeltaTime.asSeconds(), MainTimeCounter);
 
-		UpdateTimeCounter += UpdateClock.getElapsedTime();
+		UpdateDurationTimeCounter += UpdateClock.getElapsedTime();
 
 		sf::Clock DrawClock;
 
@@ -73,7 +73,7 @@ int main()
 		LevelInfo.Draw(&Window);
 		Window.display();
 
-		DrawTimeCounter += DrawClock.getElapsedTime();
+		DrawDurationTimeCounter += DrawClock.getElapsedTime();
 	}
 
 	return 0;
