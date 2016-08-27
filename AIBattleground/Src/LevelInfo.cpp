@@ -71,7 +71,7 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 		Actor* NearestOtherActor = nullptr;
 		float MinSquaredDist = 9999999.0f;
 
-		Actor** EnemyActors = CurrActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamA : ActorsTeamB;
+		Actor** EnemyActors = CurrActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
 
 		for (int j = 0; j < ACTORS_PER_TEAM_AMOUNT; ++j)
 		{
