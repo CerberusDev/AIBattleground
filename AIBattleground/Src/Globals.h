@@ -6,7 +6,7 @@
 
 #include <SFML\Graphics.hpp>
 
-enum class Direction { NONE, UP, RIGHT, DOWN, LEFT };
+enum class EDirection { NONE, UP, RIGHT, DOWN, LEFT };
 
 enum class ETeam { TEAM_A, TEAM_B };
 

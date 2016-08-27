@@ -34,13 +34,13 @@ void Actor::Update(const float DeltaTime)
 	Position += MovementDirection * Speed * DeltaTime;
 
 	if (Position.x > LevelInfo->RightBottomEdge.x - Size.x / 2.0f)
-		GenerateRandomMovementDirection(Direction::RIGHT);
+		GenerateRandomMovementDirection(EDirection::RIGHT);
 	else if (Position.x < LevelInfo->Boundaries.left + Size.x / 2.0f)
-		GenerateRandomMovementDirection(Direction::LEFT);
+		GenerateRandomMovementDirection(EDirection::LEFT);
 	if (Position.y > LevelInfo->RightBottomEdge.y - Size.y / 2.0f)
-		GenerateRandomMovementDirection(Direction::DOWN);
+		GenerateRandomMovementDirection(EDirection::DOWN);
 	else if (Position.y < LevelInfo->Boundaries.top + Size.y / 2.0f)
-		GenerateRandomMovementDirection(Direction::UP);
+		GenerateRandomMovementDirection(EDirection::UP);
 }
 
 sf::Vector2f Actor::GetPosition() const
@@ -58,27 +58,27 @@ void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 	NearestEnemy = NewNearestEnemy;
 }
 
-void Actor::GenerateRandomMovementDirection(Direction DirectionToAvoid)
+void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)
 {
 	switch (DirectionToAvoid)
 	{
-	case Direction::UP:
+	case EDirection::UP:
 		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		MovementDirection.y = (float)std::rand() / (float)RAND_MAX;
 		break;
-	case Direction::RIGHT:
+	case EDirection::RIGHT:
 		MovementDirection.x = (float)std::rand() / (float)RAND_MAX - 1.0f;
 		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		break;
-	case Direction::DOWN:
+	case EDirection::DOWN:
 		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		MovementDirection.y = (float)std::rand() / (float)RAND_MAX - 1.0f;
 		break;
-	case Direction::LEFT:
+	case EDirection::LEFT:
 		MovementDirection.x = (float)std::rand() / (float)RAND_MAX;
 		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		break;
-	case Direction::NONE:
+	case EDirection::NONE:
 		MovementDirection.x = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		MovementDirection.y = (float)std::rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 		break;

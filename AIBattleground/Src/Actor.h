@@ -29,5 +29,5 @@ public:
 	void SetNearestEnemy(Actor* NewNearestEnemy);
 
 private:
-	void GenerateRandomMovementDirection(Direction DirectionToAvoid = Direction::NONE);
+	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };
