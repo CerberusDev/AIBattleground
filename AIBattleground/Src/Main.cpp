@@ -12,7 +12,7 @@
 #define RES_X 1000
 #define RES_Y 800
 
-int main(int argc, char** argv)
+int main()
 {
 	std::cout << "AI Battleground: Start! " << std::endl;
 
