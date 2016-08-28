@@ -52,8 +52,25 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 {
 	Window->draw(BackgroundSprite);
 
-	for (const Actor* CurrActor : Actors)
-		CurrActor->Draw(Window);
+	const int Divider = 10; // ACTORS_AMOUNT has to be divisible by this value!
+
+	for (int i = 0; i < Divider; ++i)
+	{
+		int ii;
+
+		if (i % 2 == 0)
+			ii = i / 2;
+		else
+			ii = Divider - 1 - i / 2;
+
+		// for Divider == 6 "ii" will looks like this:  0      5       1       4       2       3
+		// so for 600 actors "j" will looks like this: 0-99 500-599 100-199 400-499 200-299 300-399
+
+		for (int j = ii * ACTORS_AMOUNT / Divider; j < (ii + 1) * ACTORS_AMOUNT / Divider; ++j)
+		{
+			Actors[j]->Draw(Window);
+		}
+	}
 }
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
