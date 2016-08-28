@@ -63,19 +63,21 @@ int main()
 				Window.close();
 		}
 
-		sf::Clock UpdateClock;
+		//------------------- Update ----------------------
+		sf::Time UpdateStartTime = MainClock.getElapsedTime();
 
 		LevelInfo.Update(std::min(DeltaTime.asSeconds(), MaxDeltaTime), MainTimeCounter);
 
-		UpdateDurationTimeCounter += UpdateClock.getElapsedTime();
+		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;;
 
-		sf::Clock DrawClock;
+		//-------------------- Draw ------------------------
+		sf::Time DrawStartTime = MainClock.getElapsedTime();
 
 		Window.clear();
 		LevelInfo.Draw(&Window);
 		Window.display();
 
-		DrawDurationTimeCounter += DrawClock.getElapsedTime();
+		DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;;
 	}
 
 	return 0;
