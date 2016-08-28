@@ -14,6 +14,7 @@
 #define RES_Y 800
 
 const float MaxDeltaTime = 0.2f;
+const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
 
 int main()
 {
@@ -66,7 +67,7 @@ int main()
 		//------------------- Update ----------------------
 		sf::Time UpdateStartTime = MainClock.getElapsedTime();
 
-		LevelInfo.Update(std::min(DeltaTime.asSeconds(), MaxDeltaTime), MainTimeCounter);
+		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime), MainTimeCounter);
 
 		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;;
 
@@ -77,7 +78,13 @@ int main()
 		LevelInfo.Draw(&Window);
 		Window.display();
 
-		DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;;
+		DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;
+
+		//----------------- Time padding -------------------
+		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();
+
+		if ((BonusTime) > sf::Time::Zero)
+			sf::sleep(BonusTime);
 	}
 
 	return 0;
