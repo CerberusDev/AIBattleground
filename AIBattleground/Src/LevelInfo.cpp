@@ -86,22 +86,19 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 	{
 		Actor* CurrActor = Actors[i];
 		Actor* NearestOtherActor = nullptr;
-		float MinSquaredDist = 9999999.0f;
+		float MinSquaredDist = FLT_MAX;
 
 		Actor** EnemyActors = CurrActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
 
 		for (int j = 0; j < ACTORS_PER_TEAM_AMOUNT; ++j)
 		{
 			Actor* CurrEnemyActor = EnemyActors[j];
+			const float SquaredDist = GetSquaredDist(CurrActor->GetPosition(), CurrEnemyActor->GetPosition());
 
-			if (CurrEnemyActor != CurrActor)
+			if (SquaredDist < MinSquaredDist)
 			{
-				const float SquaredDist = GetSquaredDist(CurrActor->GetPosition(), CurrEnemyActor->GetPosition());
-				if (SquaredDist < MinSquaredDist)
-				{
-					MinSquaredDist = SquaredDist;
-					NearestOtherActor = CurrEnemyActor;
-				}
+				MinSquaredDist = SquaredDist;
+				NearestOtherActor = CurrEnemyActor;
 			}
 		}
 

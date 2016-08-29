@@ -7,13 +7,10 @@
 #include "LevelInfo.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), MovementDirection(0.0f, 0.0f), Speed(100.0f), Team(argTeam)
+LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), MovementDirection(0.0f, 0.0f), Speed(100.0f), Team(argTeam)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
-	Position = InitialPosition;
 	MySprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
-
-	GenerateRandomMovementDirection();
 }
 
 Actor::~Actor()
@@ -31,16 +28,14 @@ void Actor::Draw(sf::RenderWindow* Window) const
 
 void Actor::Update(const float DeltaTime)
 {
-	Position += MovementDirection * Speed * DeltaTime;
+	if (NearestEnemy)
+	{
+		MovementDirection = NearestEnemy->GetPosition() - GetPosition();
+		NormalizeVector2f(MovementDirection);
+	}
 
-	if (Position.x > LevelInfo->RightBottomEdge.x - Size.x / 2.0f)
-		GenerateRandomMovementDirection(EDirection::RIGHT);
-	else if (Position.x < LevelInfo->Boundaries.left + Size.x / 2.0f)
-		GenerateRandomMovementDirection(EDirection::LEFT);
-	if (Position.y > LevelInfo->RightBottomEdge.y - Size.y / 2.0f)
-		GenerateRandomMovementDirection(EDirection::DOWN);
-	else if (Position.y < LevelInfo->Boundaries.top + Size.y / 2.0f)
-		GenerateRandomMovementDirection(EDirection::UP);
+	Position += MovementDirection * Speed * DeltaTime;
+	ClampVector2f(Position, LevelInfo->Boundaries);
 }
 
 sf::Vector2f Actor::GetPosition() const

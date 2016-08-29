@@ -4,6 +4,11 @@
 
 #include "Globals.h"
 
+float Clamp(float Value, float Min, float Max)
+{
+	return std::max(std::min(Value, Max), Min);
+}
+
 void NormalizeVector2f(sf::Vector2f& InVector)
 {
 	float Length = std::sqrt(std::pow(InVector.x, 2) + std::pow(InVector.y, 2));
@@ -15,9 +20,15 @@ void NormalizeVector2f(sf::Vector2f& InVector)
 	}
 }
 
+void ClampVector2f(sf::Vector2f& InVector, const sf::FloatRect& ClampRect)
+{
+	InVector.x = Clamp(InVector.x, ClampRect.left, ClampRect.left + ClampRect.width);
+	InVector.y = Clamp(InVector.y, ClampRect.top, ClampRect.top + ClampRect.height);
+}
+
 float GetSquaredDist(const sf::Vector2f& VectorA, const sf::Vector2f& VectorB)
 {
-	return std::pow((VectorA.x - VectorB.x) + (VectorA.y - VectorB.y), 2);
+	return std::pow((VectorA.x - VectorB.x), 2) + std::pow((VectorA.y - VectorB.y), 2);
 }
 
 float GetRandomFloat(float Max)
