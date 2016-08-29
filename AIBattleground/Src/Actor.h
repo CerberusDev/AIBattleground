@@ -13,9 +13,11 @@ private:
 	Actor* NearestEnemy;
 	sf::Sprite MySprite;
 	sf::Vector2f Position;
-	sf::Vector2f MovementDirection;
+	sf::Vector2f DesiredMovementDirection;
+	sf::Vector2f ActualMovementDirection;
 	sf::Vector2u Size;
-	float Speed;
+	float MovementSpeed;
+	float DirectionChangeSpeed;
 	ETeam Team;
 
 public:

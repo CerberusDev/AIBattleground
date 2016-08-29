@@ -7,7 +7,8 @@
 #include "LevelInfo.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), MovementDirection(0.0f, 0.0f), Speed(100.0f), Team(argTeam)
+LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
+ActualMovementDirection(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed(1.0f), Team(argTeam)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
 	MySprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
@@ -28,13 +29,34 @@ void Actor::Draw(sf::RenderWindow* Window) const
 
 void Actor::Update(const float DeltaTime)
 {
+	static sf::Vector2f InterpStart;
+	static bool bInterpolate = false;
+	static float InterpAlpha;
+
 	if (NearestEnemy)
 	{
-		MovementDirection = NearestEnemy->GetPosition() - GetPosition();
-		NormalizeVector2f(MovementDirection);
+		DesiredMovementDirection = NearestEnemy->GetPosition() - GetPosition();
+		NormalizeVector2f(DesiredMovementDirection);
+		InterpStart = ActualMovementDirection;
+		InterpAlpha = 0.0f;
+		bInterpolate = true;
 	}
 
-	Position += MovementDirection * Speed * DeltaTime;
+	if (bInterpolate)
+	{
+		if (InterpAlpha >= 1.0f)
+		{
+			ActualMovementDirection = DesiredMovementDirection;
+			bInterpolate = false;
+		}
+		else
+		{
+			InterpAlpha += DeltaTime * DirectionChangeSpeed;
+			ActualMovementDirection = (1.0f - InterpAlpha) * InterpStart + InterpAlpha * DesiredMovementDirection;
+		}
+	}
+
+	Position += ActualMovementDirection * MovementSpeed * DeltaTime;
 	ClampVector2f(Position, LevelInfo->Boundaries);
 }
 
@@ -58,26 +80,26 @@ void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)
 	switch (DirectionToAvoid)
 	{
 	case EDirection::UP:
-		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		MovementDirection.y = GetRandomFloat();
+		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.y = GetRandomFloat();
 		break;
 	case EDirection::RIGHT:
-		MovementDirection.x = GetRandomFloat() - 1.0f;
-		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.x = GetRandomFloat() - 1.0f;
+		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	case EDirection::DOWN:
-		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		MovementDirection.y = GetRandomFloat() - 1.0f;
+		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.y = GetRandomFloat() - 1.0f;
 		break;
 	case EDirection::LEFT:
-		MovementDirection.x = GetRandomFloat();
-		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.x = GetRandomFloat();
+		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	case EDirection::NONE:
-		MovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		MovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
+		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
 		break;
 	}
 
-	NormalizeVector2f(MovementDirection);
+	NormalizeVector2f(DesiredMovementDirection);
 }
