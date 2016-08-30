@@ -22,6 +22,8 @@ private:
 	sf::Vector2f MovementDirectionInterpStart;
 	bool bInterpolateMovementDirection;
 	float MovementDirectionInterpAlpha;
+	sf::Time ShotInterval;
+	sf::Time ShotTimeCounter;
 
 public:
 	Actor(class LevelInfo* argLevelInfo, class TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition);
@@ -32,7 +34,9 @@ public:
 	sf::Vector2f GetPosition() const;
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
+	Actor* GetNearestEnemy() const;
 
 private:
+	void TryToShoot();
 	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };

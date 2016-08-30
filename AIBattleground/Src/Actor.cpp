@@ -9,7 +9,8 @@
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
 LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
 ActualMovementDirection(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f), Team(argTeam), 
-MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false), MovementDirectionInterpAlpha(0.0f)
+MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false), MovementDirectionInterpAlpha(0.0f),
+ShotInterval(sf::seconds(1.0f)), ShotTimeCounter(ShotInterval)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
 	MySprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
@@ -30,6 +31,8 @@ void Actor::Draw(sf::RenderWindow* Window) const
 
 void Actor::Update(const float DeltaTime)
 {
+	ShotTimeCounter += sf::seconds(DeltaTime);
+
 	if (NearestEnemy)
 	{
 		sf::Vector2f DiffVec = NearestEnemy->GetPosition() - GetPosition();
@@ -42,6 +45,7 @@ void Actor::Update(const float DeltaTime)
 		else
 		{
 			DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
+			TryToShoot();
 		}
 
 		MovementDirectionInterpStart = ActualMovementDirection;
@@ -80,6 +84,29 @@ ETeam Actor::GetTeam() const
 void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 {
 	NearestEnemy = NewNearestEnemy;
+
+	if (NearestEnemy == nullptr)
+	{
+		DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
+		MovementDirectionInterpStart = ActualMovementDirection;
+		MovementDirectionInterpAlpha = 0.0f;
+		bInterpolateMovementDirection = true;
+	}
+}
+
+Actor* Actor::GetNearestEnemy() const
+{
+	return NearestEnemy;
+}
+
+void Actor::TryToShoot()
+{
+	if (ShotTimeCounter >= ShotInterval)
+	{
+		LevelInfo->DestroyActor(NearestEnemy);
+		SetNearestEnemy(nullptr);
+		ShotTimeCounter = sf::Time::Zero;
+	}
 }
 
 void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)

@@ -27,6 +27,7 @@ public:
 
 	void Draw(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime, const sf::Time MainTimeCounter);
+	void DestroyActor(class Actor* ActorToDestroy);
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);
