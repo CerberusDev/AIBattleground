@@ -8,7 +8,8 @@
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
 LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
-ActualMovementDirection(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed(1.0f), Team(argTeam)
+ActualMovementDirection(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f), Team(argTeam), 
+MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false), MovementDirectionInterpAlpha(0.0f)
 {
 	Size = TexManager->InitTexture(&MySprite, TexName);
 	MySprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
@@ -29,10 +30,6 @@ void Actor::Draw(sf::RenderWindow* Window) const
 
 void Actor::Update(const float DeltaTime)
 {
-	static sf::Vector2f InterpStart;
-	static bool bInterpolate = false;
-	static float InterpAlpha;
-
 	if (NearestEnemy)
 	{
 		sf::Vector2f DiffVec = NearestEnemy->GetPosition() - GetPosition();
@@ -47,22 +44,22 @@ void Actor::Update(const float DeltaTime)
 			DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
 		}
 
-		InterpStart = ActualMovementDirection;
-		InterpAlpha = 0.0f;
-		bInterpolate = true;
+		MovementDirectionInterpStart = ActualMovementDirection;
+		MovementDirectionInterpAlpha = 0.0f;
+		bInterpolateMovementDirection = true;
 	}
 
-	if (bInterpolate)
+	if (bInterpolateMovementDirection)
 	{
-		if (InterpAlpha >= 1.0f)
+		if (MovementDirectionInterpAlpha >= 1.0f)
 		{
 			ActualMovementDirection = DesiredMovementDirection;
-			bInterpolate = false;
+			bInterpolateMovementDirection = false;
 		}
 		else
 		{
-			InterpAlpha += DeltaTime * DirectionChangeSpeed;
-			ActualMovementDirection = (1.0f - InterpAlpha) * InterpStart + InterpAlpha * DesiredMovementDirection;
+			MovementDirectionInterpAlpha += DeltaTime * DirectionChangeSpeed;
+			ActualMovementDirection = (1.0f - MovementDirectionInterpAlpha) * MovementDirectionInterpStart + MovementDirectionInterpAlpha * DesiredMovementDirection;
 		}
 	}
 

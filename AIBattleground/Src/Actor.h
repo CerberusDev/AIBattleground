@@ -19,6 +19,9 @@ private:
 	float MovementSpeed;
 	float DirectionChangeSpeed;
 	ETeam Team;
+	sf::Vector2f MovementDirectionInterpStart;
+	bool bInterpolateMovementDirection;
+	float MovementDirectionInterpAlpha;
 
 public:
 	Actor(class LevelInfo* argLevelInfo, class TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition);
