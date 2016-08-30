@@ -35,8 +35,18 @@ void Actor::Update(const float DeltaTime)
 
 	if (NearestEnemy)
 	{
-		DesiredMovementDirection = NearestEnemy->GetPosition() - GetPosition();
-		NormalizeVector2f(DesiredMovementDirection);
+		sf::Vector2f DiffVec = NearestEnemy->GetPosition() - GetPosition();
+		
+		if (GetLength(DiffVec) > 100.0f)
+		{
+			DesiredMovementDirection = DiffVec;
+			NormalizeVector2f(DesiredMovementDirection);
+		}
+		else
+		{
+			DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
+		}
+
 		InterpStart = ActualMovementDirection;
 		InterpAlpha = 0.0f;
 		bInterpolate = true;
