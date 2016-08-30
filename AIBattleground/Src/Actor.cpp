@@ -104,7 +104,6 @@ void Actor::TryToShoot()
 	if (ShotTimeCounter >= ShotInterval)
 	{
 		LevelInfo->DestroyActor(NearestEnemy);
-		SetNearestEnemy(nullptr);
 		ShotTimeCounter = sf::Time::Zero;
 	}
 }

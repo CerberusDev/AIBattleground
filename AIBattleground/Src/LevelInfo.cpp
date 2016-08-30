@@ -87,38 +87,8 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 		NewIndex = ACTORS_AMOUNT;
 
 	for (int i = LastIndex; i < NewIndex; ++i)
-	{
-		Actor* CurrActor = Actors[i];
-
-		if (CurrActor)
-		{
-			Actor* NearestOtherActor = nullptr;
-			float MinSquaredDist = FLT_MAX;
-
-			Actor** EnemyActors = CurrActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
-
-			for (int j = 0; j < ACTORS_PER_TEAM_AMOUNT; ++j)
-			{
-				Actor* CurrEnemyActor = EnemyActors[j];
-
-				if (CurrEnemyActor)
-				{
-					const float SquaredDist = GetSquaredDist(CurrActor->GetPosition(), CurrEnemyActor->GetPosition());
-
-					if (SquaredDist < MinSquaredDist)
-					{
-						MinSquaredDist = SquaredDist;
-						NearestOtherActor = CurrEnemyActor;
-					}
-				}
-			}
-
-			if (NearestOtherActor)
-			{
-				CurrActor->SetNearestEnemy(NearestOtherActor);
-			}
-		}
-	}
+		if (Actors[i])
+			FindNearestEnemyForActor(Actors[i]);
 
 	LastIndex = NewIndex != ACTORS_AMOUNT ? NewIndex: 0;
 
@@ -127,28 +97,59 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 			CurrActor->Update(DeltaTime);
 }
 
+void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
+{
+	Actor* NearestOtherActor = nullptr;
+	float MinSquaredDist = FLT_MAX;
+
+	Actor** EnemyActors = RequestingActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
+
+	for (int j = 0; j < ACTORS_PER_TEAM_AMOUNT; ++j)
+	{
+		Actor* CurrEnemyActor = EnemyActors[j];
+
+		if (CurrEnemyActor)
+		{
+			const float SquaredDist = GetSquaredDist(RequestingActor->GetPosition(), CurrEnemyActor->GetPosition());
+
+			if (SquaredDist < MinSquaredDist)
+			{
+				MinSquaredDist = SquaredDist;
+				NearestOtherActor = CurrEnemyActor;
+			}
+		}
+	}
+
+	RequestingActor->SetNearestEnemy(NearestOtherActor);
+}
+
 void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 {
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 	{
-		if (Actors[i])
+		if (Actors[i] == ActorToDestroy)
 		{
-			if (Actors[i] == ActorToDestroy)
-			{
-				Actors[i] = nullptr;
-			}
-			else if (Actors[i]->GetNearestEnemy() == ActorToDestroy)
-			{
-				Actors[i]->SetNearestEnemy(nullptr);
-			}
+			Actors[i] = nullptr;
+			break;
 		}
 	}
 
 	Actor** TeamActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamA : ActorsTeamB;
 
 	for (int i = 0; i < ACTORS_PER_TEAM_AMOUNT; ++i)
+	{
 		if (TeamActors[i] == ActorToDestroy)
+		{
 			TeamActors[i] = nullptr;
+			break;
+		}
+	}
+
+	Actor** EnemyActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
+
+	for (int i = 0; i < ACTORS_PER_TEAM_AMOUNT; ++i)
+		if (EnemyActors[i] && EnemyActors[i]->GetNearestEnemy() == ActorToDestroy)
+			FindNearestEnemyForActor(EnemyActors[i]);
 
 	delete ActorToDestroy;
 }
