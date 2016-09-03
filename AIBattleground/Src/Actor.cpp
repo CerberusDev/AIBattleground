@@ -12,8 +12,8 @@ ActualMovementDirection(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed
 MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false), MovementDirectionInterpAlpha(0.0f),
 ShotInterval(sf::seconds(1.0f)), ShotTimeCounter(ShotInterval)
 {
-	Size = TexManager->InitTexture(&MySprite, TexName);
-	MySprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
+	Size = TexManager->InitTexture(&RobotSprite, TexName);
+	RobotSprite.setOrigin(Size.x / 2.0f, Size.y / 2.0f);
 }
 
 Actor::~Actor()
@@ -26,7 +26,7 @@ void Actor::Draw(sf::RenderWindow* Window) const
 	sf::Transform CurrTransform;
 	CurrTransform.translate(Position);
 
-	Window->draw(MySprite, CurrTransform);
+	Window->draw(RobotSprite, CurrTransform);
 }
 
 void Actor::Update(const float DeltaTime)

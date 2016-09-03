@@ -11,7 +11,7 @@ class Actor
 private:
 	class LevelInfo* LevelInfo;
 	Actor* NearestEnemy;
-	sf::Sprite MySprite;
+	sf::Sprite RobotSprite;
 	sf::Vector2f Position;
 	sf::Vector2f DesiredMovementDirection;
 	sf::Vector2f ActualMovementDirection;
