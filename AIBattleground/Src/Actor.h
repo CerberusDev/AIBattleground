@@ -14,7 +14,8 @@ private:
 	class LevelInfo* LevelInfo;
 	Actor* NearestEnemy;
 	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
-	sf::Sprite BeamSprite;
+	sf::Sprite LaserBeamSprite;
+	sf::Sprite LaserBurstSprite;
 	sf::Vector2f Position;
 	sf::Vector2f DesiredMovementDirection;
 	sf::Vector2f ActualMovementDirection;
@@ -33,7 +34,8 @@ private:
 	sf::Vector2f MovementDirectionInterpStart;
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
-	mutable bool bDrawBeam;
+	mutable bool bDrawLaser;
+	mutable float AngleToEnemy;
 	sf::Time ShotInterval;
 	sf::Time ShotTimeCounter;
 
@@ -43,7 +45,8 @@ public:
 
 	void DrawRobot(sf::RenderWindow* Window) const;
 	const sf::Sprite& GetRobotSprite() const;
-	void DrawBeam(sf::RenderWindow* Window) const;
+	void DrawLaserBurst(sf::RenderWindow* Window) const;
+	void DrawLaserBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
 	void TakeDamage(float DamageAmount);
 	sf::Vector2f GetPosition() const;

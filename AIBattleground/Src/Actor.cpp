@@ -14,7 +14,7 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bDrawBeam(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
+MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -28,8 +28,11 @@ MovementDirectionInterpAlpha(0.0f), bDrawBeam(false), ShotInterval(sf::seconds(0
 		RobotSprite[i].setOrigin(Size.x / 2.0f, Size.y / 2.0f);
 	}
 
-	BeamTexSize = TexManager->InitTexture(&BeamSprite, "LaserBeam");
-	BeamSprite.setOrigin(0.0f, BeamTexSize.y / 2.0f);
+	BeamTexSize = TexManager->InitTexture(&LaserBeamSprite, "LaserBeam");
+	LaserBeamSprite.setOrigin(0.0f, BeamTexSize.y / 2.0f);
+
+	sf::Vector2u BurstTexSize = TexManager->InitTexture(&LaserBurstSprite, "LaserBurst");
+	LaserBurstSprite.setOrigin(BurstTexSize.x / 2.0f, BurstTexSize.y / 2.0f);
 
 	MovementDirectionOffset.x = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
 	MovementDirectionOffset.y = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
@@ -44,6 +47,8 @@ Actor::~Actor()
 
 void Actor::DrawRobot(sf::RenderWindow* Window) const
 {
+	DrawLaserBurst(Window);
+
 	sf::Transform CurrTransform;
 	CurrTransform.translate(Position);
 
@@ -56,25 +61,38 @@ const sf::Sprite& Actor::GetRobotSprite() const
 	return RobotSprite[(int)((1.0f - HPRatio) * ROBOT_SPRITES_AMOUNT)];
 }
 
-void Actor::DrawBeam(sf::RenderWindow* Window) const
+void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 {
-	if (bDrawBeam)
+	if (bDrawLaser)
 	{
 		sf::Vector2f Diff = VectorTowardsEnemy;
 		NormalizeVector2f(Diff);
-		float Angle = acos(Diff.x);
-		Angle *= (float)M_1_PI * 180.0f;
+		AngleToEnemy = acos(Diff.x);
+		AngleToEnemy *= (float)M_1_PI * 180.0f;
 
 		if (Diff.y < 0.0f)
-			Angle = 360.0f - Angle;
+			AngleToEnemy = 360.0f - AngleToEnemy;
 
 		sf::Transform CurrTransform;
 		CurrTransform.translate(Position);
-		CurrTransform.rotate(Angle);
+		CurrTransform.rotate(AngleToEnemy);
 		CurrTransform.scale(GetLength(VectorTowardsEnemy) / BeamTexSize.x, 1.0f);
 
-		Window->draw(BeamSprite, CurrTransform);
-		bDrawBeam = false;
+		Window->draw(LaserBeamSprite, CurrTransform);
+	}
+}
+
+void Actor::DrawLaserBurst(sf::RenderWindow* Window) const
+{
+	if (bDrawLaser)
+	{
+		sf::Transform CurrTransform;
+		CurrTransform.translate(Position);
+		CurrTransform.rotate(AngleToEnemy);
+		CurrTransform.translate(sf::Vector2f(Size.x / 2.0f + 1.0f, 0.0f));
+		Window->draw(LaserBurstSprite, CurrTransform);
+
+		bDrawLaser = false;
 	}
 }
 
@@ -155,7 +173,7 @@ void Actor::TryToShoot()
 {
 	if (ShotTimeCounter >= ShotInterval)
 	{
-		bDrawBeam = true;
+		bDrawLaser = true;
 		NearestEnemy->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
 	}

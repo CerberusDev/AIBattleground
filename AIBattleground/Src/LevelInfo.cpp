@@ -63,7 +63,7 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
-			CurrActor->DrawBeam(Window);
+			CurrActor->DrawLaserBeam(Window);
 
 	const int Divider = 10; // ACTORS_AMOUNT has to be divisible by this value!
 
