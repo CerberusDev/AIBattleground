@@ -21,6 +21,9 @@ private:
 	sf::Vector2u Size;
 	sf::Vector2u BeamTexSize;
 	sf::Vector2f VectorTowardsEnemy;
+	float ShotDist;
+	sf::Vector2f MovementDirectionOffset;
+	float MovementStopOffset;
 	float MovementSpeed;
 	float DirectionChangeSpeed;
 	float MaxHP;

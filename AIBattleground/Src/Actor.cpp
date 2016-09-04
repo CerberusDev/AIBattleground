@@ -12,7 +12,7 @@
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
 LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
-ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f), 
+ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bDrawBeam(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
 {
@@ -30,6 +30,11 @@ MovementDirectionInterpAlpha(0.0f), bDrawBeam(false), ShotInterval(sf::seconds(0
 
 	BeamTexSize = TexManager->InitTexture(&BeamSprite, "LaserBeam");
 	BeamSprite.setOrigin(0.0f, BeamTexSize.y / 2.0f);
+
+	MovementDirectionOffset.x = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
+	MovementDirectionOffset.y = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
+
+	MovementStopOffset = GetRandomFloat(ShotDist * 0.4f);
 }
 
 Actor::~Actor()
@@ -80,16 +85,19 @@ void Actor::Update(const float DeltaTime)
 	if (NearestEnemy)
 	{
 		VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
-		
-		if (GetLength(VectorTowardsEnemy) > 100.0f)
+		float VectorTowardsEnemyLength = GetLength(VectorTowardsEnemy);
+
+		if (VectorTowardsEnemyLength < ShotDist)
+			TryToShoot();
+
+		if (VectorTowardsEnemyLength > ShotDist - MovementStopOffset)
 		{
-			DesiredMovementDirection = VectorTowardsEnemy;
+			DesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
 			NormalizeVector2f(DesiredMovementDirection);
 		}
 		else
 		{
 			DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
-			TryToShoot();
 		}
 
 		MovementDirectionInterpStart = ActualMovementDirection;
