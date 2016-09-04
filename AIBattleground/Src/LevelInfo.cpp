@@ -35,6 +35,10 @@ Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundar
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
+
+#if defined DRAW_DEBUG_GRID
+	TexManager->InitTexture(&DebugGridSprite, "DebugGrid1000x800");
+#endif
 }
 
 LevelInfo::~LevelInfo()
@@ -52,6 +56,10 @@ sf::Vector2f LevelInfo::GetRandomPointInRect(const sf::FloatRect& Rect)
 void LevelInfo::Draw(sf::RenderWindow* Window) const
 {
 	Window->draw(BackgroundSprite);
+
+#if defined DRAW_DEBUG_GRID
+	Window->draw(DebugGridSprite);
+#endif
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)

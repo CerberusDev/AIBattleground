@@ -6,6 +6,8 @@
 
 #include <SFML\Graphics.hpp>
 
+//#define DRAW_DEBUG_GRID
+
 #define ACTORS_PER_TEAM_AMOUNT 1000
 #define ACTORS_AMOUNT (2 * ACTORS_PER_TEAM_AMOUNT)
 
@@ -17,6 +19,9 @@ public:
 
 private:
 	sf::Sprite BackgroundSprite;
+#if defined DRAW_DEBUG_GRID
+	sf::Sprite DebugGridSprite;
+#endif
 	class Actor* Actors[ACTORS_AMOUNT];
 	class Actor* ActorsTeamA[ACTORS_PER_TEAM_AMOUNT];
 	class Actor* ActorsTeamB[ACTORS_PER_TEAM_AMOUNT];
