@@ -6,12 +6,14 @@
 
 #include "Globals.h"
 
+#define ROBOT_SPRITES_AMOUNT 8
+
 class Actor
 {
 private:
 	class LevelInfo* LevelInfo;
 	Actor* NearestEnemy;
-	sf::Sprite RobotSprite;
+	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
 	sf::Sprite BeamSprite;
 	sf::Vector2f Position;
 	sf::Vector2f DesiredMovementDirection;
@@ -21,6 +23,9 @@ private:
 	sf::Vector2f VectorTowardsEnemy;
 	float MovementSpeed;
 	float DirectionChangeSpeed;
+	float MaxHP;
+	float HP;
+	float Damage;
 	ETeam Team;
 	sf::Vector2f MovementDirectionInterpStart;
 	float MovementDirectionInterpAlpha;
@@ -34,8 +39,10 @@ public:
 	~Actor();
 
 	void DrawRobot(sf::RenderWindow* Window) const;
+	const sf::Sprite& GetRobotSprite() const;
 	void DrawBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
+	void TakeDamage(float DamageAmount);
 	sf::Vector2f GetPosition() const;
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
