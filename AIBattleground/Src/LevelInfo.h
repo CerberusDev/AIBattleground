@@ -6,7 +6,7 @@
 
 #include <SFML\Graphics.hpp>
 
-#define ACTORS_PER_TEAM_AMOUNT 2000
+#define ACTORS_PER_TEAM_AMOUNT 1000
 #define ACTORS_AMOUNT (2 * ACTORS_PER_TEAM_AMOUNT)
 
 class LevelInfo
