@@ -53,6 +53,10 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 {
 	Window->draw(BackgroundSprite);
 
+	for (Actor* CurrActor : Actors)
+		if (CurrActor)
+			CurrActor->DrawBeam(Window);
+
 	const int Divider = 10; // ACTORS_AMOUNT has to be divisible by this value!
 
 	for (int i = 0; i < Divider; ++i)
@@ -71,7 +75,7 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 		{
 			if (Actors[j])
 			{
-				Actors[j]->Draw(Window);
+				Actors[j]->DrawRobot(Window);
 			}
 		}
 	}

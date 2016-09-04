@@ -12,16 +12,20 @@ private:
 	class LevelInfo* LevelInfo;
 	Actor* NearestEnemy;
 	sf::Sprite RobotSprite;
+	sf::Sprite BeamSprite;
 	sf::Vector2f Position;
 	sf::Vector2f DesiredMovementDirection;
 	sf::Vector2f ActualMovementDirection;
 	sf::Vector2u Size;
+	sf::Vector2u BeamTexSize;
+	sf::Vector2f VectorTowardsEnemy;
 	float MovementSpeed;
 	float DirectionChangeSpeed;
 	ETeam Team;
 	sf::Vector2f MovementDirectionInterpStart;
-	bool bInterpolateMovementDirection;
 	float MovementDirectionInterpAlpha;
+	bool bInterpolateMovementDirection;
+	mutable bool bDrawBeam;
 	sf::Time ShotInterval;
 	sf::Time ShotTimeCounter;
 
@@ -29,7 +33,8 @@ public:
 	Actor(class LevelInfo* argLevelInfo, class TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition);
 	~Actor();
 
-	void Draw(sf::RenderWindow* Window) const;
+	void DrawRobot(sf::RenderWindow* Window) const;
+	void DrawBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
 	sf::Vector2f GetPosition() const;
 	ETeam GetTeam() const;
