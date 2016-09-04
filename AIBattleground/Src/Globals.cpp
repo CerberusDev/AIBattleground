@@ -11,7 +11,7 @@ float Clamp(float Value, float Min, float Max)
 
 void NormalizeVector2f(sf::Vector2f& InVector)
 {
-	float Length = std::sqrt(std::pow(InVector.x, 2) + std::pow(InVector.y, 2));
+	float Length = GetLength(InVector);
 
 	if (Length != 0.0f)
 	{
