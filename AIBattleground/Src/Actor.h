@@ -55,6 +55,7 @@ public:
 	Actor* GetNearestEnemy() const;
 
 private:
+	void SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton);
 	void TryToShoot();
 	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };

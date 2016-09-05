@@ -105,22 +105,19 @@ void Actor::Update(const float DeltaTime)
 		VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
 		float VectorTowardsEnemyLength = GetLength(VectorTowardsEnemy);
 
-		if (VectorTowardsEnemyLength < ShotDist)
-			TryToShoot();
-
 		if (VectorTowardsEnemyLength > ShotDist - MovementStopOffset)
 		{
-			DesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
-			NormalizeVector2f(DesiredMovementDirection);
+			sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
+			NormalizeVector2f(NewDesiredMovementDirection);
+			SetDesiredMovementDirection(NewDesiredMovementDirection);
 		}
 		else
 		{
-			DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
-		}
+			if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
+				SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
 
-		MovementDirectionInterpStart = ActualMovementDirection;
-		MovementDirectionInterpAlpha = 0.0f;
-		bInterpolateMovementDirection = true;
+			TryToShoot();
+		}
 	}
 
 	if (bInterpolateMovementDirection)
@@ -141,6 +138,14 @@ void Actor::Update(const float DeltaTime)
 	ClampVector2f(Position, LevelInfo->Boundaries);
 }
 
+void Actor::SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton)
+{
+	DesiredMovementDirection = NewDesiredMovementDireciton;
+	MovementDirectionInterpStart = ActualMovementDirection;
+	MovementDirectionInterpAlpha = 0.0f;
+	bInterpolateMovementDirection = true;
+}
+
 sf::Vector2f Actor::GetPosition() const
 {
 	return Position;
@@ -156,12 +161,7 @@ void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 	NearestEnemy = NewNearestEnemy;
 
 	if (NearestEnemy == nullptr)
-	{
-		DesiredMovementDirection = sf::Vector2f(0.0f, 0.0f);
-		MovementDirectionInterpStart = ActualMovementDirection;
-		MovementDirectionInterpAlpha = 0.0f;
-		bInterpolateMovementDirection = true;
-	}
+		SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
 }
 
 Actor* Actor::GetNearestEnemy() const
