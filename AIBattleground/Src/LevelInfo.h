@@ -6,6 +6,8 @@
 
 #include <SFML\Graphics.hpp>
 
+#include "HealZone.h"
+
 //#define DRAW_DEBUG_GRID
 
 #define ACTORS_PER_TEAM_AMOUNT 1000
@@ -25,6 +27,8 @@ private:
 	class Actor* Actors[ACTORS_AMOUNT];
 	class Actor* ActorsTeamA[ACTORS_PER_TEAM_AMOUNT];
 	class Actor* ActorsTeamB[ACTORS_PER_TEAM_AMOUNT];
+	HealZone HealZoneA;
+	HealZone HealZoneB;
 
 public:
 	LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries);

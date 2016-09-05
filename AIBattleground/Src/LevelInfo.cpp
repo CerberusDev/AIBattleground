@@ -9,7 +9,9 @@
 #include "TextureManager.h"
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
-Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height)
+Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
+HealZoneA(TexManager, sf::Vector2f(200.0f, 400.0f), ETeam::TEAM_A), 
+HealZoneB(TexManager, sf::Vector2f(800.0f, 400.0f), ETeam::TEAM_B)
 {
 	const float InitialRectSize = 0.15f;
 
@@ -60,6 +62,9 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 #if defined DRAW_DEBUG_GRID
 	Window->draw(DebugGridSprite);
 #endif
+
+	HealZoneA.Draw(Window);
+	HealZoneB.Draw(Window);
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
