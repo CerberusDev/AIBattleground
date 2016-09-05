@@ -38,6 +38,7 @@ public:
 	void Update(const float DeltaTime, const sf::Time MainTimeCounter);
 	void FindNearestEnemyForActor(class Actor* RequestingActor);
 	void DestroyActor(class Actor* ActorToDestroy);
+	sf::Vector2f GetHealZonePosition(ETeam Team) const;
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);

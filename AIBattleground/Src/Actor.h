@@ -34,6 +34,7 @@ private:
 	sf::Vector2f MovementDirectionInterpStart;
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
+	bool bHealing;
 	mutable bool bDrawLaser;
 	mutable float AngleToEnemy;
 	sf::Time ShotInterval;
@@ -48,11 +49,13 @@ public:
 	void DrawLaserBurst(sf::RenderWindow* Window) const;
 	void DrawLaserBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
+	void RetreatToHealZone();
 	void TakeDamage(float DamageAmount);
 	sf::Vector2f GetPosition() const;
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
 	Actor* GetNearestEnemy() const;
+	void Heal(float HPToHeal);
 
 private:
 	void SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton);

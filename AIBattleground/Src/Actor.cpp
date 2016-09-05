@@ -14,7 +14,8 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
+MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval), 
+bHealing(false)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -100,26 +101,44 @@ void Actor::Update(const float DeltaTime)
 {
 	ShotTimeCounter += sf::seconds(DeltaTime);
 
-	if (NearestEnemy)
+	if (bHealing)
 	{
-		VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
-		float VectorTowardsEnemyLength = GetLength(VectorTowardsEnemy);
-
-		if (VectorTowardsEnemyLength > ShotDist - MovementStopOffset)
+		if (GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) > 100.0f)
 		{
-			sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
-			NormalizeVector2f(NewDesiredMovementDirection);
-			SetDesiredMovementDirection(NewDesiredMovementDirection);
+			RetreatToHealZone();
 		}
-		else
+		else if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
 		{
-			if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
-				SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
-
-			TryToShoot();
+			SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
 		}
 	}
+	else
+	{
+		if (HP < MaxHP / 2.0f)
+		{
+			RetreatToHealZone();
+		}
+		else if (NearestEnemy)
+		{
+			VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
+			float VectorTowardsEnemyLength = GetLength(VectorTowardsEnemy);
 
+			if (VectorTowardsEnemyLength > ShotDist - MovementStopOffset)
+			{
+				sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
+				NormalizeVector2f(NewDesiredMovementDirection);
+				SetDesiredMovementDirection(NewDesiredMovementDirection);
+			}
+			else
+			{
+				if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
+					SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
+
+				TryToShoot();
+			}
+		}
+	}
+	
 	if (bInterpolateMovementDirection)
 	{
 		if (MovementDirectionInterpAlpha >= 1.0f)
@@ -136,6 +155,13 @@ void Actor::Update(const float DeltaTime)
 
 	Position += ActualMovementDirection * MovementSpeed * DeltaTime;
 	ClampVector2f(Position, LevelInfo->Boundaries);
+}
+
+void Actor::RetreatToHealZone()
+{
+	sf::Vector2f NewDesiredMovementDirection = LevelInfo->GetHealZonePosition(Team) - GetPosition() + MovementDirectionOffset;
+	NormalizeVector2f(NewDesiredMovementDirection);
+	SetDesiredMovementDirection(NewDesiredMovementDirection);
 }
 
 void Actor::SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton)
@@ -167,6 +193,22 @@ void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 Actor* Actor::GetNearestEnemy() const
 {
 	return NearestEnemy;
+}
+
+void Actor::Heal(float HPToHeal)
+{
+	if (HP < MaxHP)
+	{
+		bHealing = true;
+
+		HP += HPToHeal;
+
+		if (HP >= MaxHP)
+		{
+			HP = MaxHP;
+			bHealing = false;
+		}
+	}
 }
 
 void Actor::TryToShoot()

@@ -10,8 +10,8 @@
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
-HealZoneA(TexManager, sf::Vector2f(200.0f, 400.0f), ETeam::TEAM_A), 
-HealZoneB(TexManager, sf::Vector2f(800.0f, 400.0f), ETeam::TEAM_B)
+HealZoneA(TexManager, sf::Vector2f(200.0f, 400.0f), ETeam::TEAM_A, Actors, ACTORS_AMOUNT),
+HealZoneB(TexManager, sf::Vector2f(800.0f, 400.0f), ETeam::TEAM_B, Actors, ACTORS_AMOUNT)
 {
 	const float InitialRectSize = 0.15f;
 
@@ -93,6 +93,9 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->Update(DeltaTime);
+
+	HealZoneA.Update(DeltaTime);
+	HealZoneB.Update(DeltaTime);
 }
 
 void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
@@ -150,4 +153,9 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 			FindNearestEnemyForActor(EnemyActors[i]);
 
 	delete ActorToDestroy;
+}
+
+sf::Vector2f LevelInfo::GetHealZonePosition(ETeam Team) const
+{
+	return Team == ETeam::TEAM_A ? HealZoneA.GetPosition() : HealZoneB.GetPosition();
 }
