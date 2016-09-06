@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Globals.h"
+#include "Blackboard.h"
+#include "AISystemFSM.h"
 
 #define ROBOT_SPRITES_AMOUNT 8
 
@@ -12,6 +14,8 @@ class Actor
 {
 private:
 	class LevelInfo* LevelInfo;
+	Blackboard Blackboard;
+	AISystemFSM AISystem;
 	Actor* NearestEnemy;
 	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
 	sf::Sprite LaserBeamSprite;
@@ -24,7 +28,6 @@ private:
 	sf::Vector2f VectorTowardsEnemy;
 	float ShotDist;
 	sf::Vector2f MovementDirectionOffset;
-	float MovementStopOffset;
 	float MovementSpeed;
 	float DirectionChangeSpeed;
 	float MaxHP;
@@ -34,7 +37,6 @@ private:
 	sf::Vector2f MovementDirectionInterpStart;
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
-	bool bHealing;
 	mutable bool bDrawLaser;
 	mutable float AngleToEnemy;
 	sf::Time ShotInterval;
@@ -50,6 +52,9 @@ public:
 	void DrawLaserBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
 	void RetreatToHealZone();
+	void StopMovement();
+	void GoTowardsNearestEnemy();
+	void TryToShoot();
 	void TakeDamage(float DamageAmount);
 	sf::Vector2f GetPosition() const;
 	ETeam GetTeam() const;
@@ -59,6 +64,5 @@ public:
 
 private:
 	void SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton);
-	void TryToShoot();
 	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };

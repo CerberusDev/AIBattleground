@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Actor.cpp" />
+    <ClCompile Include="Src\AISystemFSM.cpp" />
+    <ClCompile Include="Src\Blackboard.cpp" />
     <ClCompile Include="Src\Globals.cpp" />
     <ClCompile Include="Src\HealZone.cpp" />
     <ClCompile Include="Src\LevelInfo.cpp" />
@@ -28,6 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Actor.h" />
+    <ClInclude Include="Src\AISystemFSM.h" />
+    <ClInclude Include="Src\Blackboard.h" />
     <ClInclude Include="Src\Globals.h" />
     <ClInclude Include="Src\HealZone.h" />
     <ClInclude Include="Src\LevelInfo.h" />

@@ -11,11 +11,10 @@
 #include "LevelInfo.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), 
-ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
+LevelInfo(argLevelInfo), AISystem(this, &Blackboard), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
+ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval), 
-bHealing(false)
+MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -35,10 +34,11 @@ bHealing(false)
 	sf::Vector2u BurstTexSize = TexManager->InitTexture(&LaserBurstSprite, "LaserBurst");
 	LaserBurstSprite.setOrigin(BurstTexSize.x / 2.0f, BurstTexSize.y / 2.0f);
 
-	MovementDirectionOffset.x = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
-	MovementDirectionOffset.y = GetRandomFloat(ShotDist) - ShotDist / 2.0f;
+	MovementDirectionOffset.x = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
+	MovementDirectionOffset.y = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 
-	MovementStopOffset = GetRandomFloat(ShotDist * 0.4f);
+	Blackboard.SetMaxHP(MaxHP);
+	Blackboard.SetHP(HP);
 }
 
 Actor::~Actor()
@@ -100,45 +100,18 @@ void Actor::DrawLaserBurst(sf::RenderWindow* Window) const
 void Actor::Update(const float DeltaTime)
 {
 	ShotTimeCounter += sf::seconds(DeltaTime);
-
-	if (bHealing)
-	{
-		if (GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) > 100.0f)
-		{
-			RetreatToHealZone();
-		}
-		else if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
-		{
-			SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
-		}
-	}
-	else
-	{
-		if (HP < MaxHP / 2.0f)
-		{
-			RetreatToHealZone();
-		}
-		else if (NearestEnemy)
-		{
-			VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
-			float VectorTowardsEnemyLength = GetLength(VectorTowardsEnemy);
-
-			if (VectorTowardsEnemyLength > ShotDist - MovementStopOffset)
-			{
-				sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
-				NormalizeVector2f(NewDesiredMovementDirection);
-				SetDesiredMovementDirection(NewDesiredMovementDirection);
-			}
-			else
-			{
-				if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
-					SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
-
-				TryToShoot();
-			}
-		}
-	}
 	
+	const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
+	Blackboard.SetBHealthZoneDestReached(bReached);	
+
+	if (NearestEnemy)
+	{
+		VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
+		Blackboard.SetBEnemyInRange(GetLength(VectorTowardsEnemy) <= ShotDist);
+	}
+
+	AISystem.Update();
+
 	if (bInterpolateMovementDirection)
 	{
 		if (MovementDirectionInterpAlpha >= 1.0f)
@@ -164,6 +137,19 @@ void Actor::RetreatToHealZone()
 	SetDesiredMovementDirection(NewDesiredMovementDirection);
 }
 
+void Actor::StopMovement()
+{
+	if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
+		SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
+}
+
+void Actor::GoTowardsNearestEnemy()
+{
+	sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
+	NormalizeVector2f(NewDesiredMovementDirection);
+	SetDesiredMovementDirection(NewDesiredMovementDirection);
+}
+
 void Actor::SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton)
 {
 	DesiredMovementDirection = NewDesiredMovementDireciton;
@@ -185,9 +171,7 @@ ETeam Actor::GetTeam() const
 void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 {
 	NearestEnemy = NewNearestEnemy;
-
-	if (NearestEnemy == nullptr)
-		SetDesiredMovementDirection(sf::Vector2f(0.0f, 0.0f));
+	Blackboard.SetNearestEnemy(NearestEnemy);
 }
 
 Actor* Actor::GetNearestEnemy() const
@@ -197,18 +181,8 @@ Actor* Actor::GetNearestEnemy() const
 
 void Actor::Heal(float HPToHeal)
 {
-	if (HP < MaxHP)
-	{
-		bHealing = true;
-
-		HP += HPToHeal;
-
-		if (HP >= MaxHP)
-		{
-			HP = MaxHP;
-			bHealing = false;
-		}
-	}
+	HP = std::min(HP + HPToHeal, MaxHP);
+	Blackboard.SetHP(HP);
 }
 
 void Actor::TryToShoot()
@@ -224,6 +198,7 @@ void Actor::TryToShoot()
 void Actor::TakeDamage(float DamageAmount)
 {
 	HP -= DamageAmount;
+	Blackboard.SetHP(HP);
 
 	if (HP <= 0.0f)
 		LevelInfo->DestroyActor(this);
