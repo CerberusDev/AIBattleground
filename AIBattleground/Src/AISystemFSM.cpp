@@ -7,7 +7,7 @@
 #include "Blackboard.h"
 
 AISystemFSM::AISystemFSM(class Actor* argOwner, class Blackboard* argBlackboard) :
-State(EState::IDLE), Owner(argOwner), Blackboard(argBlackboard)
+AISystemBase(argOwner, argBlackboard), State(EState::IDLE)
 {
 
 }

@@ -30,6 +30,12 @@
     <ClCompile Include="Src\AISystemFSM.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\AISystemBT.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\AISystemBase.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\TextureManager.h">
@@ -51,6 +57,12 @@
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\AISystemFSM.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AISystemBT.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\AISystemBase.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

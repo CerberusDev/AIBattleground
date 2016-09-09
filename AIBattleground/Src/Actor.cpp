@@ -9,9 +9,11 @@
 #include "Actor.h"
 #include "TextureManager.h"
 #include "LevelInfo.h"
+#include "AISystemFSM.h"
+#include "AISystemBT.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), AISystem(this, &Blackboard), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
+LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
@@ -37,13 +39,16 @@ MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(
 	MovementDirectionOffset.x = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 	MovementDirectionOffset.y = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 
+	AISystem = new AISystemFSM(this, &Blackboard);
+	//AISystem = new AISystemBT(this, &Blackboard);
+
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
 }
 
 Actor::~Actor()
 {
-
+	delete AISystem;
 }
 
 void Actor::DrawRobot(sf::RenderWindow* Window) const
@@ -110,7 +115,7 @@ void Actor::Update(const float DeltaTime)
 		Blackboard.SetBEnemyInRange(GetLength(VectorTowardsEnemy) <= ShotDist);
 	}
 
-	AISystem.Update();
+	AISystem->Update();
 
 	if (bInterpolateMovementDirection)
 	{

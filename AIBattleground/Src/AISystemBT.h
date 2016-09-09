@@ -6,17 +6,11 @@
 
 #include "AISystemBase.h"
 
-class AISystemFSM : public AISystemBase
+class AISystemBT : public AISystemBase
 {
 public:
-	enum class EState {IDLE, MOVE_TOWARDS_ENEMY, FIGHT, RETREAT, RECOVER};
-
-private:
-	EState State;
-
-public:
-	AISystemFSM(class Actor* argOwner, class Blackboard* argBlackboard);
-	~AISystemFSM();
+	AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard);
+	~AISystemBT();
 
 	void Update();
 };

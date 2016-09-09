@@ -6,7 +6,6 @@
 
 #include "Globals.h"
 #include "Blackboard.h"
-#include "AISystemFSM.h"
 
 #define ROBOT_SPRITES_AMOUNT 8
 
@@ -14,8 +13,8 @@ class Actor
 {
 private:
 	class LevelInfo* LevelInfo;
+	class AISystemBase* AISystem;
 	Blackboard Blackboard;
-	AISystemFSM AISystem;
 	Actor* NearestEnemy;
 	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
 	sf::Sprite LaserBeamSprite;
