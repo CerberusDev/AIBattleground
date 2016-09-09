@@ -10,8 +10,8 @@
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
-HealZoneA(TexManager, sf::Vector2f(200.0f, 400.0f), ETeam::TEAM_A, Actors, ACTORS_AMOUNT),
-HealZoneB(TexManager, sf::Vector2f(800.0f, 400.0f), ETeam::TEAM_B, Actors, ACTORS_AMOUNT)
+HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_AMOUNT),
+HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_AMOUNT)
 {
 	const float InitialRectSize = 0.15f;
 
