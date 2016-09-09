@@ -11,7 +11,7 @@
 #include "LevelInfo.h"
 
 #define RES_X 1000
-#define RES_Y 800
+#define RES_Y 600
 
 const float MaxDeltaTime = 0.2f;
 const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
