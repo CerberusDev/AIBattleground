@@ -12,6 +12,9 @@
 class AISystemBT : public AISystemBase
 {
 private:
+	bool BTStorage_Bool;
+
+private:
 	enum class EStatus { SUCCESS, FAIL, IN_PROGRESS };
 
 	struct BTNode
@@ -88,6 +91,21 @@ private:
 		}
 	};
 
+	struct BTDecorator_BTStorage_Bool : public BTDecorator
+	{
+		AISystemBT* AISystem;
+
+		BTDecorator_BTStorage_Bool(AISystemBT* argAISystem, BTNode* argChild) : BTDecorator(argChild), AISystem(argAISystem) {};
+
+		virtual EStatus Update()
+		{
+			if (AISystem->BTStorage_Bool)
+				return Child->Update();
+			else
+				return EStatus::FAIL;
+		}
+	};
+
 	struct BTBlackboardDecorator : public BTDecorator
 	{
 		class Blackboard* AIBlackboard;
@@ -135,6 +153,16 @@ private:
 		}
 	};
 
+	struct BTBDecorator_FullHealth : public BTBlackboardDecorator
+	{
+		BTBDecorator_FullHealth(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
+
+		virtual bool IsConditionFulfilled()
+		{
+			return AIBlackboard->GetHP() == AIBlackboard->GetMaxHP();
+		}
+	};
+
 	struct BTBDecorator_HealZoneReached : public BTBlackboardDecorator
 	{
 		BTBDecorator_HealZoneReached(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
@@ -150,6 +178,20 @@ private:
 		Actor* OwningActor;
 
 		BTTask(Actor* argOwningActor) : OwningActor(argOwningActor) {};
+	};
+
+	struct BTTask_SetBTStorage_Bool : public BTNode
+	{
+		AISystemBT* AISystem;
+		bool ValueToSet;
+
+		BTTask_SetBTStorage_Bool(AISystemBT* argAISystem, bool argValueToSet) : AISystem(argAISystem), ValueToSet(argValueToSet) {};
+
+		virtual EStatus Update()
+		{
+			AISystem->BTStorage_Bool = ValueToSet;
+			return EStatus::SUCCESS;
+		}
 	};
 
 	struct BTTask_StopMovement : public BTTask
