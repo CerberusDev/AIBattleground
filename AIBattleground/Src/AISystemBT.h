@@ -93,18 +93,25 @@ private:
 		class Blackboard* AIBlackboard;
 
 		BTBlackboardDecorator(class Blackboard* argBlackboard, BTNode* argChild) : BTDecorator(argChild), AIBlackboard(argBlackboard) {};
+	
+		virtual EStatus Update()
+		{
+			if (IsConditionFulfilled())
+				return Child->Update();
+			else
+				return EStatus::FAIL;
+		}
+
+		virtual bool IsConditionFulfilled() = 0;
 	};
 
 	struct BTBDecorator_EnemyInRange : public BTBlackboardDecorator
 	{
 		BTBDecorator_EnemyInRange(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
 	
-		virtual EStatus Update()
+		virtual bool IsConditionFulfilled() 
 		{
-			if (AIBlackboard->GetBEnemyInRange())
-				return Child->Update();
-			else
-				return EStatus::FAIL;
+			return AIBlackboard->GetBEnemyInRange();
 		}
 	};
 
@@ -112,12 +119,9 @@ private:
 	{
 		BTBDecorator_NearestEnemySet(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
 
-		virtual EStatus Update()
+		virtual bool IsConditionFulfilled()
 		{
-			if (AIBlackboard->GetNearestEnemy())
-				return Child->Update();
-			else
-				return EStatus::FAIL;
+			return AIBlackboard->GetNearestEnemy() != nullptr;
 		}
 	};
 
@@ -125,12 +129,9 @@ private:
 	{
 		BTBDecorator_LowHealth(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
 
-		virtual EStatus Update()
+		virtual bool IsConditionFulfilled()
 		{
-			if (AIBlackboard->GetHP() < AIBlackboard->GetMaxHP() * 0.5f)
-				return Child->Update();
-			else
-				return EStatus::FAIL;
+			return AIBlackboard->GetHP() < AIBlackboard->GetMaxHP() * 0.5f;
 		}
 	};
 
@@ -138,12 +139,9 @@ private:
 	{
 		BTBDecorator_HealZoneReached(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
 
-		virtual EStatus Update()
+		virtual bool IsConditionFulfilled()
 		{
-			if (AIBlackboard->GetBHealthZoneDestReached())
-				return Child->Update();
-			else
-				return EStatus::FAIL;
+			return AIBlackboard->GetBHealthZoneDestReached();
 		}
 	};
 
