@@ -121,6 +121,32 @@ private:
 		}
 	};
 
+	struct BTBDecorator_LowHealth : public BTBlackboardDecorator
+	{
+		BTBDecorator_LowHealth(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
+
+		virtual EStatus Update()
+		{
+			if (AIBlackboard->GetHP() < AIBlackboard->GetMaxHP() * 0.5f)
+				return Child->Update();
+			else
+				return EStatus::FAIL;
+		}
+	};
+
+	struct BTBDecorator_HealZoneReached : public BTBlackboardDecorator
+	{
+		BTBDecorator_HealZoneReached(class Blackboard* argBlackboard, BTNode* argChild) : BTBlackboardDecorator(argBlackboard, argChild) {};
+
+		virtual EStatus Update()
+		{
+			if (AIBlackboard->GetBHealthZoneDestReached())
+				return Child->Update();
+			else
+				return EStatus::FAIL;
+		}
+	};
+
 	struct BTTask : public BTNode
 	{
 		Actor* OwningActor;
@@ -157,6 +183,17 @@ private:
 		virtual EStatus Update()
 		{
 			OwningActor->TryToShoot();
+			return EStatus::IN_PROGRESS;
+		}
+	};
+
+	struct BTTask_RetreatToHealZone : public BTTask
+	{
+		BTTask_RetreatToHealZone(Actor* argOwningActor) : BTTask(argOwningActor) {};
+
+		virtual EStatus Update()
+		{
+			OwningActor->RetreatToHealZone();
 			return EStatus::IN_PROGRESS;
 		}
 	};

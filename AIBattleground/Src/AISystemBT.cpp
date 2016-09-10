@@ -12,6 +12,11 @@ AISystemBT::AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard) :
 AISystemBase(argOwner, argBlackboard), Root(nullptr)
 {
 	Root = new BTSelector(std::vector<BTNode*> {
+		new BTBDecorator_LowHealth(Blackboard,
+			new BTSelector(std::vector<BTNode*> {
+				new BTBDecorator_HealZoneReached(Blackboard,
+					new BTTask_StopMovement(Owner)),
+				new BTTask_RetreatToHealZone(Owner)})),
 		new BTBDecorator_NearestEnemySet(Blackboard, 
 			new BTSelector(std::vector<BTNode*> {
 				new BTBDecorator_EnemyInRange(Blackboard,
