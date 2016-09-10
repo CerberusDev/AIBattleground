@@ -13,8 +13,13 @@ AISystemBase(argOwner, argBlackboard), Root(nullptr)
 {
 	Root = new BTSelector(std::vector<BTNode*> {
 		new BTBDecorator_NearestEnemySet(Blackboard, 
-			new BTTask_GoTowardsNearestEnemy(Owner))
-	});
+			new BTSelector(std::vector<BTNode*> {
+				new BTBDecorator_EnemyInRange(Blackboard,
+					new BTSequence(std::vector<BTNode*> {
+						new BTTask_StopMovement(Owner),
+						new BTTask_Fight(Owner)})),
+				new BTTask_GoTowardsNearestEnemy(Owner)})),
+		new BTTask_StopMovement(Owner)});
 }
 
 AISystemBT::~AISystemBT()

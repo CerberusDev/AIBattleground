@@ -12,7 +12,7 @@
 class AISystemBT : public AISystemBase
 {
 private:
-	enum class EStatus { SUCCESS, FAIL };
+	enum class EStatus { SUCCESS, FAIL, IN_PROGRESS };
 
 	struct BTNode
 	{
@@ -44,9 +44,36 @@ private:
 				{
 					return EStatus::SUCCESS;
 				}
+				else if (ChildStatus == EStatus::IN_PROGRESS)
+				{
+					return EStatus::IN_PROGRESS;
+				}
 			}
 
 			return EStatus::FAIL;
+		}
+	};
+
+	struct BTSequence : public BTComposite
+	{
+		BTSequence(std::vector<BTNode*> argChildren) : BTComposite(argChildren) {};
+		virtual EStatus Update()
+		{
+			for (auto it = Children.begin(); it != Children.end(); ++it)
+			{
+				EStatus ChildStatus = (*it)->Update();
+
+				if (ChildStatus == EStatus::FAIL)
+				{
+					return EStatus::FAIL;
+				}
+				else if (ChildStatus == EStatus::IN_PROGRESS)
+				{
+					return EStatus::IN_PROGRESS;
+				}
+			}
+
+			return EStatus::SUCCESS;
 		}
 	};
 
@@ -74,7 +101,10 @@ private:
 	
 		virtual EStatus Update()
 		{
-			return AIBlackboard->GetBEnemyInRange() ? EStatus::SUCCESS : EStatus::FAIL;
+			if (AIBlackboard->GetBEnemyInRange())
+				return Child->Update();
+			else
+				return EStatus::FAIL;
 		}
 	};
 
@@ -116,7 +146,18 @@ private:
 		virtual EStatus Update()
 		{
 			OwningActor->GoTowardsNearestEnemy();
-			return EStatus::SUCCESS;
+			return EStatus::IN_PROGRESS;
+		}
+	};
+
+	struct BTTask_Fight : public BTTask
+	{
+		BTTask_Fight(Actor* argOwningActor) : BTTask(argOwningActor) {};
+
+		virtual EStatus Update()
+		{
+			OwningActor->TryToShoot();
+			return EStatus::IN_PROGRESS;
 		}
 	};
 
