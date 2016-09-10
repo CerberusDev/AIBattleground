@@ -173,11 +173,11 @@ private:
 		}
 	};
 
-	struct BTTask : public BTNode
+	struct BTTaskActor : public BTNode
 	{
 		Actor* OwningActor;
 
-		BTTask(Actor* argOwningActor) : OwningActor(argOwningActor) {};
+		BTTaskActor(Actor* argOwningActor) : OwningActor(argOwningActor) {};
 	};
 
 	struct BTTask_SetBTStorage_Bool : public BTNode
@@ -194,9 +194,9 @@ private:
 		}
 	};
 
-	struct BTTask_StopMovement : public BTTask
+	struct BTTask_StopMovement : public BTTaskActor
 	{
-		BTTask_StopMovement(Actor* argOwningActor) : BTTask(argOwningActor) {};
+		BTTask_StopMovement(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
 
 		virtual EStatus Update()
 		{
@@ -205,9 +205,9 @@ private:
 		}
 	};
 
-	struct BTTask_GoTowardsNearestEnemy : public BTTask
+	struct BTTask_GoTowardsNearestEnemy : public BTTaskActor
 	{
-		BTTask_GoTowardsNearestEnemy(Actor* argOwningActor) : BTTask(argOwningActor) {};
+		BTTask_GoTowardsNearestEnemy(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
 
 		virtual EStatus Update()
 		{
@@ -216,9 +216,9 @@ private:
 		}
 	};
 
-	struct BTTask_Fight : public BTTask
+	struct BTTask_Fight : public BTTaskActor
 	{
-		BTTask_Fight(Actor* argOwningActor) : BTTask(argOwningActor) {};
+		BTTask_Fight(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
 
 		virtual EStatus Update()
 		{
@@ -227,9 +227,9 @@ private:
 		}
 	};
 
-	struct BTTask_RetreatToHealZone : public BTTask
+	struct BTTask_RetreatToHealZone : public BTTaskActor
 	{
-		BTTask_RetreatToHealZone(Actor* argOwningActor) : BTTask(argOwningActor) {};
+		BTTask_RetreatToHealZone(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
 
 		virtual EStatus Update()
 		{
