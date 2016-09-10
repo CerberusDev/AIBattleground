@@ -23,20 +23,17 @@ private:
 	{
 		std::vector<BTNode*> Childs;
 
+		BTComposite(std::vector<BTNode*> argChilds) : Childs(argChilds) {};
 		virtual ~BTComposite()
 		{
 			for (auto it = Childs.begin(); it != Childs.end(); ++it)
 				delete *it;
 		}
-
-		void AddChild(BTNode* NewChild)
-		{
-			Childs.push_back(NewChild);
-		}
 	};
 
 	struct BTSelector : public BTComposite
 	{
+		BTSelector(std::vector<BTNode*> argChilds) : BTComposite(argChilds) {};
 		virtual EStatus Update()
 		{
 			for (auto it = Childs.begin(); it != Childs.end(); ++it)

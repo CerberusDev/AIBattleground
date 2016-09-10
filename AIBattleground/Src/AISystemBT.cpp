@@ -11,11 +11,10 @@
 AISystemBT::AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard) :
 AISystemBase(argOwner, argBlackboard), Root(nullptr)
 {
-	BTSelector* FirstSelector = new BTSelector();
-	Root = FirstSelector;
-	BTTask_GoTowardsNearestEnemy* Task = new BTTask_GoTowardsNearestEnemy(Owner);
-	BTBDecorator_NearestEnemySet* Dec = new BTBDecorator_NearestEnemySet(Blackboard, Task);
-	FirstSelector->AddChild(Dec);
+	Root = new BTSelector(std::vector<BTNode*> {
+		new BTBDecorator_NearestEnemySet(Blackboard, 
+			new BTTask_GoTowardsNearestEnemy(Owner))
+	});
 }
 
 AISystemBT::~AISystemBT()
