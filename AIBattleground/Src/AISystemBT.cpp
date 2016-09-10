@@ -11,9 +11,11 @@
 AISystemBT::AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard) :
 AISystemBase(argOwner, argBlackboard), Root(nullptr)
 {
-	BTComposite* FirstComposite = new BTComposite();
-	Root = FirstComposite;
-	FirstComposite->AddChild(new BTTask_GoTowardsNearestEnemy(Owner));
+	BTSelector* FirstSelector = new BTSelector();
+	Root = FirstSelector;
+	BTTask_GoTowardsNearestEnemy* Task = new BTTask_GoTowardsNearestEnemy(Owner);
+	BTBDecorator_NearestEnemySet* Dec = new BTBDecorator_NearestEnemySet(Blackboard, Task);
+	FirstSelector->AddChild(Dec);
 }
 
 AISystemBT::~AISystemBT()
