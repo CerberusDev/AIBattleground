@@ -21,22 +21,22 @@ private:
 
 	struct BTComposite : public BTNode
 	{
-		std::vector<BTNode*> Childs;
+		std::vector<BTNode*> Children;
 
-		BTComposite(std::vector<BTNode*> argChilds) : Childs(argChilds) {};
+		BTComposite(std::vector<BTNode*> argChildren) : Children(argChildren) {};
 		virtual ~BTComposite()
 		{
-			for (auto it = Childs.begin(); it != Childs.end(); ++it)
+			for (auto it = Children.begin(); it != Children.end(); ++it)
 				delete *it;
 		}
 	};
 
 	struct BTSelector : public BTComposite
 	{
-		BTSelector(std::vector<BTNode*> argChilds) : BTComposite(argChilds) {};
+		BTSelector(std::vector<BTNode*> argChildren) : BTComposite(argChildren) {};
 		virtual EStatus Update()
 		{
-			for (auto it = Childs.begin(); it != Childs.end(); ++it)
+			for (auto it = Children.begin(); it != Children.end(); ++it)
 			{
 				EStatus ChildStatus = (*it)->Update();
 
