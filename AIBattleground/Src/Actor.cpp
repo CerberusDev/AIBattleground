@@ -13,7 +13,7 @@
 #include "AISystemBT.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
+LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
@@ -182,6 +182,16 @@ void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 Actor* Actor::GetNearestEnemy() const
 {
 	return NearestEnemy;
+}
+
+void Actor::UpdateLastQuadTreePosition()
+{
+	LastQuadTreePosition = Position;
+}
+
+sf::Vector2f Actor::GetLastQuadTreePosition() const
+{
+	return LastQuadTreePosition;
 }
 
 void Actor::Heal(float HPToHeal)

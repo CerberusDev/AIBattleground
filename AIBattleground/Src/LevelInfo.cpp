@@ -21,6 +21,7 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 	std::string TexName("RobotA");
 	Actor** ArrayToPopulate = ActorsTeamA;
 	sf::FloatRect RectToSpawnIn(Boundaries.left, Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
+	QuadTree* QuadTreeToUpdate = &QuadTree_TeamA;
 
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 	{
@@ -30,15 +31,13 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 			TexName = "RobotB";
 			ArrayToPopulate = ActorsTeamB;
 			RectToSpawnIn = sf::FloatRect(Boundaries.left + Boundaries.width * (1.0f - InitialRectSize), Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
+			QuadTreeToUpdate = &QuadTree_TeamB;
 		}
 
 		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
 		ArrayToPopulate[i % ACTORS_PER_TEAM_AMOUNT] = Actors[i];
 
-		if (InitialTeam == ETeam::TEAM_A)
-			QuadTree_TeamA.AddActor(Actors[i]);
-		else
-			QuadTree_TeamB.AddActor(Actors[i]);
+		QuadTreeToUpdate->AddActor(Actors[i]);
 	}
 
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
@@ -133,6 +132,9 @@ void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
 
 void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 {
+	QuadTree* QuadTreeToRemoveFrom = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
+	QuadTreeToRemoveFrom->RemoveActor(ActorToDestroy);
+
 	for (int i = 0; i < ACTORS_AMOUNT; ++i)
 	{
 		if (Actors[i] == ActorToDestroy)
@@ -160,6 +162,13 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 			FindNearestEnemyForActor(EnemyActors[i]);
 
 	delete ActorToDestroy;
+}
+
+void LevelInfo::UpdatePositionInQuadTree(Actor* ActorToUpdate)
+{
+	QuadTree* QuadTreeToUpdate = ActorToUpdate->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
+	QuadTreeToUpdate->RemoveActor(ActorToUpdate);
+	QuadTreeToUpdate->AddActor(ActorToUpdate);
 }
 
 sf::Vector2f LevelInfo::GetHealZonePosition(ETeam Team) const

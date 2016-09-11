@@ -19,6 +19,7 @@ private:
 	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
 	sf::Sprite LaserBeamSprite;
 	sf::Sprite LaserBurstSprite;
+	sf::Vector2f LastQuadTreePosition;
 	sf::Vector2f Position;
 	sf::Vector2f DesiredMovementDirection;
 	sf::Vector2f ActualMovementDirection;
@@ -59,6 +60,8 @@ public:
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
 	Actor* GetNearestEnemy() const;
+	void UpdateLastQuadTreePosition();
+	sf::Vector2f GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
 
 private:

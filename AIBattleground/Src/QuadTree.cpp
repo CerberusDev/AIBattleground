@@ -6,7 +6,7 @@
 
 QuadTree::QuadTree(sf::Vector2f FirstNodeCoords)
 {
-	Root = new QTNode(FirstNodeCoords, FirstNodeCoords * 2.0f);
+	Root = new QTNode(nullptr, FirstNodeCoords, FirstNodeCoords * 2.0f);
 }
 
 QuadTree::~QuadTree()
@@ -17,4 +17,10 @@ QuadTree::~QuadTree()
 void QuadTree::AddActor(Actor* NewActor)
 {
 	Root->AddActor(NewActor);
+	NewActor->UpdateLastQuadTreePosition();
+}
+
+void QuadTree::RemoveActor(Actor* ActorToRemove)
+{
+	Root->RemoveActor(ActorToRemove);
 }
