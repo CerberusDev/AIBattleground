@@ -7,6 +7,7 @@
 #include <SFML\Graphics.hpp>
 
 #include "HealZone.h"
+#include "QuadTree.h"
 
 //#define DRAW_DEBUG_GRID
 
@@ -20,6 +21,8 @@ public:
 	const sf::Vector2f RightBottomEdge;
 
 private:
+	QuadTree QuadTree_TeamA;
+	QuadTree QuadTree_TeamB;
 	sf::Sprite BackgroundSprite;
 #if defined DRAW_DEBUG_GRID
 	sf::Sprite DebugGridSprite;

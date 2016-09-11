@@ -10,6 +10,8 @@
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
+QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
+QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_AMOUNT),
 HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_AMOUNT)
 {
@@ -32,6 +34,11 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 
 		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
 		ArrayToPopulate[i % ACTORS_PER_TEAM_AMOUNT] = Actors[i];
+
+		if (InitialTeam == ETeam::TEAM_A)
+			QuadTree_TeamA.AddActor(Actors[i]);
+		else
+			QuadTree_TeamB.AddActor(Actors[i]);
 	}
 
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);

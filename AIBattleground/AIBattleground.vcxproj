@@ -28,6 +28,7 @@
     <ClCompile Include="Src\HealZone.cpp" />
     <ClCompile Include="Src\LevelInfo.cpp" />
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\QuadTree.cpp" />
     <ClCompile Include="Src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +40,7 @@
     <ClInclude Include="Src\Globals.h" />
     <ClInclude Include="Src\HealZone.h" />
     <ClInclude Include="Src\LevelInfo.h" />
+    <ClInclude Include="Src\QuadTree.h" />
     <ClInclude Include="Src\TextureManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
