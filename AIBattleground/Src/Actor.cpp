@@ -131,8 +131,11 @@ void Actor::Update(const float DeltaTime)
 		}
 	}
 
-	Position += ActualMovementDirection * MovementSpeed * DeltaTime;
-	ClampVector2f(Position, LevelInfo->Boundaries);
+	if (ActualMovementDirection != sf::Vector2f(0.0f, 0.0f))
+	{
+		Position += ActualMovementDirection * MovementSpeed * DeltaTime;
+		ClampVector2f(Position, LevelInfo->Boundaries);
+	}
 
 	LevelInfo->UpdatePositionInQuadTree(this);
 }
