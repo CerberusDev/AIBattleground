@@ -133,6 +133,8 @@ void Actor::Update(const float DeltaTime)
 
 	Position += ActualMovementDirection * MovementSpeed * DeltaTime;
 	ClampVector2f(Position, LevelInfo->Boundaries);
+
+	LevelInfo->UpdatePositionInQuadTree(this);
 }
 
 void Actor::RetreatToHealZone()
