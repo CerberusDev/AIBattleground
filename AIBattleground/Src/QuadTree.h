@@ -13,9 +13,8 @@
 class QuadTree
 {
 private:
-	class QTNode
+	struct QTNode
 	{
-	private:
 		sf::Vector2f Coords;
 		sf::Vector2f RegionSize;
 		QTNode* Parent;
@@ -25,7 +24,6 @@ private:
 		QTNode* BottomLeftChild;
 		std::vector<Actor*> Actors;
 
-	public:
 		QTNode(QTNode* argParent, sf::Vector2f argCoords, sf::Vector2f argRegionSize) : Coords(argCoords), RegionSize(argRegionSize),
 			Parent(argParent), TopRightChild(nullptr), TopLeftChild(nullptr), BottomRightChild(nullptr), BottomLeftChild(nullptr) {};
 		~QTNode() 
@@ -47,26 +45,33 @@ private:
 			BottomLeftChild = nullptr;
 		}
 
+		QTNode* SelectProperChild(sf::Vector2f Position)
+		{
+			QTNode* ResultNode = nullptr;
+
+			if (Position.x > Coords.x)
+			{
+				if (Position.y > Coords.y)
+					ResultNode = BottomLeftChild;
+				else
+					ResultNode = TopLeftChild;
+			}
+			else
+			{
+				if (Position.y > Coords.y)
+					ResultNode = BottomRightChild;
+				else
+					ResultNode = TopRightChild;
+			}
+
+			return ResultNode;
+		}
+
 		void AddActor(Actor* NewActor)
 		{
 			if (TopRightChild)
 			{
-				sf::Vector2f ActorPosition = NewActor->GetPosition();
-
-				if (ActorPosition.x > Coords.x)
-				{
-					if (ActorPosition.y > Coords.y)
-						BottomLeftChild->AddActor(NewActor);
-					else
-						TopLeftChild->AddActor(NewActor);
-				}
-				else
-				{
-					if (ActorPosition.y > Coords.y)
-						BottomRightChild->AddActor(NewActor);
-					else
-						TopRightChild->AddActor(NewActor);
-				}
+				SelectProperChild(NewActor->GetPosition())->AddActor(NewActor);
 			}
 			else
 			{
@@ -94,22 +99,7 @@ private:
 		{
 			if (TopRightChild)
 			{
-				sf::Vector2f ActorPosition = ActorToRemove->GetLastQuadTreePosition();
-
-				if (ActorPosition.x > Coords.x)
-				{
-					if (ActorPosition.y > Coords.y)
-						BottomLeftChild->RemoveActor(ActorToRemove);
-					else
-						TopLeftChild->RemoveActor(ActorToRemove);
-				}
-				else
-				{
-					if (ActorPosition.y > Coords.y)
-						BottomRightChild->RemoveActor(ActorToRemove);
-					else
-						TopRightChild->RemoveActor(ActorToRemove);
-				}
+				SelectProperChild(ActorToRemove->GetLastQuadTreePosition())->RemoveActor(ActorToRemove);
 			}
 			else
 			{
@@ -136,7 +126,36 @@ private:
 					Actors.insert(Actors.end(), BottomLeftChild->Actors.begin(), BottomLeftChild->Actors.end());
 
 					DeleteChildren();
+
+					if (Actors.size() == 0 && Parent)
+						Parent->MergeIfNecessary();
 				}
+			}
+		}
+
+		Actor* GetNaiveNeighbor(sf::Vector2f BasePoint)
+		{
+			if (TopRightChild)
+			{
+				QTNode* ProperChild = SelectProperChild(BasePoint);
+
+				if (ProperChild->TopRightChild || ProperChild->Actors.size() > 0)
+					return ProperChild->GetNaiveNeighbor(BasePoint);
+
+				if (TopRightChild->TopRightChild || TopRightChild->Actors.size() > 0)
+					return TopRightChild->GetNaiveNeighbor(BasePoint);
+
+				if (TopLeftChild->TopRightChild || TopLeftChild->Actors.size() > 0)
+					return TopLeftChild->GetNaiveNeighbor(BasePoint);
+
+				if (BottomRightChild->TopRightChild || BottomRightChild->Actors.size() > 0)
+					return BottomRightChild->GetNaiveNeighbor(BasePoint);
+
+				return BottomLeftChild->GetNaiveNeighbor(BasePoint);
+			}
+			else
+			{
+				return Actors[0];
 			}
 		}
 	};
@@ -149,4 +168,5 @@ public:
 
 	void AddActor(Actor* NewActor);
 	void RemoveActor(Actor* ActorToRemove);
+	Actor* FindNearestNeighborTo(sf::Vector2f BasePoint);
 };

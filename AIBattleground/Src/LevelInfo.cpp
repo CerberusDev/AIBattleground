@@ -128,6 +128,10 @@ void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
 	}
 
 	RequestingActor->SetNearestEnemy(NearestOtherActor);
+
+	//QuadTree* EnemyQuadTree = RequestingActor->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamB : &QuadTree_TeamA;
+	//Actor* NearestNeighbor = EnemyQuadTree->FindNearestNeighborTo(RequestingActor->GetPosition());
+	//RequestingActor->SetNearestEnemy(NearestNeighbor);
 }
 
 void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
