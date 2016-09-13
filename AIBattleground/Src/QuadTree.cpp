@@ -25,38 +25,34 @@ void QuadTree::RemoveActor(Actor* ActorToRemove)
 	Root->RemoveActor(ActorToRemove);
 }
 
-Actor* QuadTree::FindNearestNeighborTo(sf::Vector2f BasePoint)
+bool QuadTree::NoActorsInTree() const
 {
-	return QuickFindNearNeighborTo(BasePoint, true);
+	return (Root->TopRightChild == nullptr && Root->Actors.size() == 0);
 }
 
-Actor* QuadTree::QuickFindNearNeighborTo(Actor* RequestingActor)
+Actor* QuadTree::FindNearestNeighborTo(sf::Vector2f BasePoint)
 {
-	Actor* ResultActor = QuickFindNearNeighborTo(RequestingActor->GetNearestEnemy()->GetPosition());
+	if (NoActorsInTree())
+		return nullptr;
 
-	if (ResultActor == nullptr)
-		ResultActor = FindNearestNeighborTo(RequestingActor->GetPosition());
+	Actor* ResultActor = Root->GetNaiveNeighbor(BasePoint);
+	float SquaredDist = GetSquaredDist(BasePoint, ResultActor->GetPosition());
+	float Dist = std::sqrt(SquaredDist);
+	Root->GetNearestNeighbor(BasePoint, ResultActor, Dist, SquaredDist);
 
 	return ResultActor;
 }
 
-Actor* QuadTree::QuickFindNearNeighborTo(sf::Vector2f BasePoint, bool bForceNearestNeighborSearch)
+Actor* QuadTree::QuickFindNearNeighborTo(Actor* RequestingActor)
 {
-	Actor* ResultActor = nullptr;
+	if (NoActorsInTree())
+		return nullptr;
 
-	if (Root->TopRightChild || Root->Actors.size() > 0)
-	{
-		Actor* NearNeighbor = Root->GetNaiveNeighbor(BasePoint);
-		float SquaredDist = GetSquaredDist(BasePoint, NearNeighbor->GetPosition());
+	sf::Vector2f LastEnemyPosition = RequestingActor->GetNearestEnemy()->GetPosition();
+	Actor* ResultActor = Root->GetNaiveNeighbor(LastEnemyPosition);
 
-		if (SquaredDist > 400.0f || bForceNearestNeighborSearch)
-		{
-			float Dist = std::sqrt(SquaredDist);
-			Root->GetNearestNeighbor(BasePoint, NearNeighbor, Dist, SquaredDist);
-		}
-
-		ResultActor = NearNeighbor;
-	}
+	if (GetSquaredDist(LastEnemyPosition, ResultActor->GetPosition()) > MAX_ACCEPTABLE_SQUARED_DIST_DURING_QUICK_SEARCH)
+		ResultActor = FindNearestNeighborTo(RequestingActor->GetPosition());
 
 	return ResultActor;
 }

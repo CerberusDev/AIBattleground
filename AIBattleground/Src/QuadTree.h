@@ -9,6 +9,8 @@
 #include "Actor.h"
 
 #define MIN_REGION_SIZE 13.0f
+#define MAX_ACTORS_IN_REGION 5
+#define MAX_ACCEPTABLE_SQUARED_DIST_DURING_QUICK_SEARCH 900.0f
 
 class QuadTree
 {
@@ -77,7 +79,7 @@ private:
 			{
 				Actors.push_back(NewActor);
 
-				if (RegionSize.x / 2.0f > MIN_REGION_SIZE && RegionSize.y / 2.0f > MIN_REGION_SIZE && Actors.size() > 5)
+				if (RegionSize.x / 2.0f > MIN_REGION_SIZE && RegionSize.y / 2.0f > MIN_REGION_SIZE && Actors.size() > MAX_ACTORS_IN_REGION)
 					Subdivide();
 			}
 		}
@@ -212,7 +214,7 @@ public:
 
 	void AddActor(Actor* NewActor);
 	void RemoveActor(Actor* ActorToRemove);
+	bool QuadTree::NoActorsInTree() const;
 	Actor* FindNearestNeighborTo(sf::Vector2f BasePoint);
-	Actor* QuickFindNearNeighborTo(sf::Vector2f BasePoint, bool bForceNearestNeighborSearch = false);
 	Actor* QuickFindNearNeighborTo(Actor* RequestingActor);
 };
