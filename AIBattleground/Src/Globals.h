@@ -16,3 +16,4 @@ void ClampVector2f(sf::Vector2f& InVector, const sf::FloatRect& ClampRect);
 float GetSquaredDist(const sf::Vector2f& VectorA, const sf::Vector2f& VectorB);
 float GetLength(const sf::Vector2f& InVector);
 float GetRandomFloat(float Max = 1.0f);
+sf::Vector2f Abs(const sf::Vector2f& InVector);

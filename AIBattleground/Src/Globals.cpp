@@ -40,3 +40,8 @@ float GetRandomFloat(float Max)
 {
 	return (float)std::rand() / ((float)RAND_MAX / Max);
 }
+
+sf::Vector2f Abs(const sf::Vector2f& InVector)
+{
+	return sf::Vector2f(std::abs(InVector.x), std::abs(InVector.y));
+}
