@@ -155,7 +155,21 @@ private:
 			}
 			else
 			{
-				return Actors[0];
+				Actor* ResultActor = nullptr;
+				float MinSquaredDist = FLT_MAX;
+
+				for (auto it = Actors.begin(); it != Actors.end(); ++it)
+				{
+					float SquaredDist = GetSquaredDist((*it)->GetPosition(), BasePoint);
+
+					if (SquaredDist < MinSquaredDist)
+					{
+						MinSquaredDist = SquaredDist;
+						ResultActor = *it;
+					}
+				}
+
+				return ResultActor;
 			}
 		}
 
