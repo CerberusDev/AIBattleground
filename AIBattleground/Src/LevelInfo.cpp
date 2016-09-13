@@ -106,32 +106,9 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
 {
-	Actor* NearestOtherActor = nullptr;
-	float MinSquaredDist = FLT_MAX;
-
-	Actor** EnemyActors = RequestingActor->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
-
-	for (int j = 0; j < ACTORS_PER_TEAM_AMOUNT; ++j)
-	{
-		Actor* CurrEnemyActor = EnemyActors[j];
-
-		if (CurrEnemyActor)
-		{
-			const float SquaredDist = GetSquaredDist(RequestingActor->GetPosition(), CurrEnemyActor->GetPosition());
-
-			if (SquaredDist < MinSquaredDist)
-			{
-				MinSquaredDist = SquaredDist;
-				NearestOtherActor = CurrEnemyActor;
-			}
-		}
-	}
-
-	RequestingActor->SetNearestEnemy(NearestOtherActor);
-
-	//QuadTree* EnemyQuadTree = RequestingActor->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamB : &QuadTree_TeamA;
-	//Actor* NearestNeighbor = EnemyQuadTree->FindNearestNeighborTo(RequestingActor->GetPosition());
-	//RequestingActor->SetNearestEnemy(NearestNeighbor);
+	QuadTree* EnemyQuadTree = RequestingActor->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamB : &QuadTree_TeamA;
+	Actor* NearestNeighbor = EnemyQuadTree->FindNearestNeighborTo(RequestingActor->GetPosition());
+	RequestingActor->SetNearestEnemy(NearestNeighbor);
 }
 
 void LevelInfo::DestroyActor(class Actor* ActorToDestroy)

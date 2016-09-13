@@ -31,13 +31,11 @@ Actor* QuadTree::FindNearestNeighborTo(sf::Vector2f BasePoint)
 
 	if (Root->TopRightChild || Root->Actors.size() > 0)
 	{
-		Actor* NaiveNeighbor = Root->GetNaiveNeighbor(BasePoint);
-
-		ResultActor = NaiveNeighbor;
-	}
-	else
-	{
-		return nullptr;
+		Actor* NearestNeighbor = Root->GetNaiveNeighbor(BasePoint);
+		float SquaredDist = GetSquaredDist(BasePoint, NearestNeighbor->GetPosition());
+		float Dist = std::sqrt(SquaredDist);
+		Root->GetNearestNeighbor(BasePoint, NearestNeighbor, Dist, SquaredDist);
+		ResultActor = NearestNeighbor;
 	}
 	
 	return ResultActor;

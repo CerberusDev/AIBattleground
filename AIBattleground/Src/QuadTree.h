@@ -52,16 +52,16 @@ private:
 			if (Position.x > Coords.x)
 			{
 				if (Position.y > Coords.y)
-					ResultNode = BottomLeftChild;
+					ResultNode = BottomRightChild;
 				else
-					ResultNode = TopLeftChild;
+					ResultNode = TopRightChild;
 			}
 			else
 			{
 				if (Position.y > Coords.y)
-					ResultNode = BottomRightChild;
+					ResultNode = BottomLeftChild;
 				else
-					ResultNode = TopRightChild;
+					ResultNode = TopLeftChild;
 			}
 
 			return ResultNode;
@@ -156,6 +156,36 @@ private:
 			else
 			{
 				return Actors[0];
+			}
+		}
+
+		void GetNearestNeighbor(sf::Vector2f BasePoint, Actor*& CurrentNearestNeighbor, float& CurrentMinDist, float& CurrentMinDistSquared) const
+		{
+			sf::Vector2f Diff = Abs(Coords - BasePoint) - RegionSize;
+
+			if (Diff.x < CurrentMinDist && Diff.y < CurrentMinDist)
+			{
+				if (TopRightChild)
+				{
+					TopRightChild->GetNearestNeighbor(BasePoint, CurrentNearestNeighbor, CurrentMinDist, CurrentMinDistSquared);
+					TopLeftChild->GetNearestNeighbor(BasePoint, CurrentNearestNeighbor, CurrentMinDist, CurrentMinDistSquared);
+					BottomRightChild->GetNearestNeighbor(BasePoint, CurrentNearestNeighbor, CurrentMinDist, CurrentMinDistSquared);
+					BottomLeftChild->GetNearestNeighbor(BasePoint, CurrentNearestNeighbor, CurrentMinDist, CurrentMinDistSquared);
+				}
+				else
+				{
+					for (auto it = Actors.begin(); it != Actors.end(); ++it)
+					{
+						float SquaredDist = GetSquaredDist(BasePoint, (*it)->GetPosition());
+
+						if (SquaredDist < CurrentMinDistSquared)
+						{
+							CurrentMinDist = std::sqrt(SquaredDist);
+							CurrentMinDistSquared = SquaredDist;
+							CurrentNearestNeighbor = *it;
+						}
+					}
+				}
 			}
 		}
 	};
