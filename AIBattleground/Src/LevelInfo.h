@@ -40,6 +40,7 @@ public:
 	void Draw(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime, const sf::Time MainTimeCounter);
 	void FindNearestEnemyForActor(class Actor* RequestingActor);
+	void QuickFindNearEnemyForActor(class Actor* RequestingActor);
 	void DestroyActor(class Actor* ActorToDestroy);
 	void UpdatePositionInQuadTree(Actor* ActorToUpdate);
 	sf::Vector2f GetHealZonePosition(ETeam Team) const;

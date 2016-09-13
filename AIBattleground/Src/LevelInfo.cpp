@@ -111,6 +111,12 @@ void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
 	RequestingActor->SetNearestEnemy(NearestNeighbor);
 }
 
+void LevelInfo::QuickFindNearEnemyForActor(class Actor* RequestingActor)
+{
+	QuadTree* EnemyQuadTree = RequestingActor->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamB : &QuadTree_TeamA;
+	RequestingActor->SetNearestEnemy(EnemyQuadTree->QuickFindNearNeighborTo(RequestingActor));
+}
+
 void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 {
 	QuadTree* QuadTreeToRemoveFrom = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
@@ -140,7 +146,7 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 
 	for (int i = 0; i < ACTORS_PER_TEAM_AMOUNT; ++i)
 		if (EnemyActors[i] && EnemyActors[i]->GetNearestEnemy() == ActorToDestroy)
-			FindNearestEnemyForActor(EnemyActors[i]);
+			QuickFindNearEnemyForActor(EnemyActors[i]);
 
 	delete ActorToDestroy;
 }

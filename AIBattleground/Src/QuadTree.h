@@ -213,4 +213,6 @@ public:
 	void AddActor(Actor* NewActor);
 	void RemoveActor(Actor* ActorToRemove);
 	Actor* FindNearestNeighborTo(sf::Vector2f BasePoint);
+	Actor* QuickFindNearNeighborTo(sf::Vector2f BasePoint, bool bForceNearestNeighborSearch = false);
+	Actor* QuickFindNearNeighborTo(Actor* RequestingActor);
 };
