@@ -11,8 +11,8 @@
 
 //#define DRAW_DEBUG_GRID
 
-#define ACTORS_PER_TEAM_AMOUNT 3000
-#define ACTORS_AMOUNT (2 * ACTORS_PER_TEAM_AMOUNT)
+#define ACTORS_PER_TEAM_NUMBER 3000
+#define ACTORS_NUMBER (2 * ACTORS_PER_TEAM_NUMBER)
 
 class LevelInfo
 {
@@ -27,9 +27,9 @@ private:
 #if defined DRAW_DEBUG_GRID
 	sf::Sprite DebugGridSprite;
 #endif
-	class Actor* Actors[ACTORS_AMOUNT];
-	class Actor* ActorsTeamA[ACTORS_PER_TEAM_AMOUNT];
-	class Actor* ActorsTeamB[ACTORS_PER_TEAM_AMOUNT];
+	class Actor* Actors[ACTORS_NUMBER];
+	class Actor* ActorsTeamA[ACTORS_PER_TEAM_NUMBER];
+	class Actor* ActorsTeamB[ACTORS_PER_TEAM_NUMBER];
 	HealZone HealZoneA;
 	HealZone HealZoneB;
 

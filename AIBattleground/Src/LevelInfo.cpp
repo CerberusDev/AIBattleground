@@ -12,8 +12,8 @@ LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& Leve
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
 QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
-HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_AMOUNT),
-HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_AMOUNT)
+HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
+HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER)
 {
 	const float InitialRectSize = 0.15f;
 
@@ -23,9 +23,9 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 	sf::FloatRect RectToSpawnIn(Boundaries.left, Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
 	QuadTree* QuadTreeToUpdate = &QuadTree_TeamA;
 
-	for (int i = 0; i < ACTORS_AMOUNT; ++i)
+	for (int i = 0; i < ACTORS_NUMBER; ++i)
 	{
-		if (i == ACTORS_PER_TEAM_AMOUNT)
+		if (i == ACTORS_PER_TEAM_NUMBER)
 		{
 			InitialTeam = ETeam::TEAM_B;
 			TexName = "RobotB";
@@ -35,7 +35,7 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 		}
 
 		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
-		ArrayToPopulate[i % ACTORS_PER_TEAM_AMOUNT] = Actors[i];
+		ArrayToPopulate[i % ACTORS_PER_TEAM_NUMBER] = Actors[i];
 
 		QuadTreeToUpdate->AddActor(Actors[i]);
 	}
@@ -51,7 +51,7 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 
 LevelInfo::~LevelInfo()
 {
-	for (int i = 0; i < ACTORS_AMOUNT; ++i)
+	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		if (Actors[i])
 			delete Actors[i];
 }
@@ -85,16 +85,16 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 {
 	static int LastIndex = 0;
 
-	int NewIndex = (int)(MainTimeCounter.asSeconds() * ACTORS_AMOUNT);
+	int NewIndex = (int)(MainTimeCounter.asSeconds() * ACTORS_NUMBER);
 
 	if (NewIndex < LastIndex)
-		NewIndex = ACTORS_AMOUNT;
+		NewIndex = ACTORS_NUMBER;
 
 	for (int i = LastIndex; i < NewIndex; ++i)
 		if (Actors[i])
 			FindNearestEnemyForActor(Actors[i]);
 
-	LastIndex = NewIndex != ACTORS_AMOUNT ? NewIndex: 0;
+	LastIndex = NewIndex != ACTORS_NUMBER ? NewIndex: 0;
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
@@ -122,7 +122,7 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 	QuadTree* QuadTreeToRemoveFrom = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
 	QuadTreeToRemoveFrom->RemoveActor(ActorToDestroy);
 
-	for (int i = 0; i < ACTORS_AMOUNT; ++i)
+	for (int i = 0; i < ACTORS_NUMBER; ++i)
 	{
 		if (Actors[i] == ActorToDestroy)
 		{
@@ -133,7 +133,7 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 
 	Actor** TeamActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamA : ActorsTeamB;
 
-	for (int i = 0; i < ACTORS_PER_TEAM_AMOUNT; ++i)
+	for (int i = 0; i < ACTORS_PER_TEAM_NUMBER; ++i)
 	{
 		if (TeamActors[i] == ActorToDestroy)
 		{
@@ -144,7 +144,7 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 
 	Actor** EnemyActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
 
-	for (int i = 0; i < ACTORS_PER_TEAM_AMOUNT; ++i)
+	for (int i = 0; i < ACTORS_PER_TEAM_NUMBER; ++i)
 		if (EnemyActors[i] && EnemyActors[i]->GetNearestEnemy() == ActorToDestroy)
 			QuickFindNearEnemyForActor(EnemyActors[i]);
 
