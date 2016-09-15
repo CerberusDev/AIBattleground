@@ -56,15 +56,15 @@ public:
 	void GoTowardsNearestEnemy();
 	void TryToShoot();
 	void TakeDamage(float DamageAmount);
-	sf::Vector2f GetPosition() const;
+	const sf::Vector2f& GetPosition() const;
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
 	Actor* GetNearestEnemy() const;
 	void UpdateLastQuadTreePosition();
-	sf::Vector2f GetLastQuadTreePosition() const;
+	const sf::Vector2f& GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
 
 private:
-	void SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton);
+	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);
 	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };

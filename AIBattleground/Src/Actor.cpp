@@ -160,7 +160,7 @@ void Actor::GoTowardsNearestEnemy()
 	SetDesiredMovementDirection(NewDesiredMovementDirection);
 }
 
-void Actor::SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton)
+void Actor::SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton)
 {
 	DesiredMovementDirection = NewDesiredMovementDireciton;
 	MovementDirectionInterpStart = ActualMovementDirection;
@@ -168,7 +168,7 @@ void Actor::SetDesiredMovementDirection(sf::Vector2f NewDesiredMovementDireciton
 	bInterpolateMovementDirection = true;
 }
 
-sf::Vector2f Actor::GetPosition() const
+const sf::Vector2f& Actor::GetPosition() const
 {
 	return Position;
 }
@@ -194,7 +194,7 @@ void Actor::UpdateLastQuadTreePosition()
 	LastQuadTreePosition = Position;
 }
 
-sf::Vector2f Actor::GetLastQuadTreePosition() const
+const sf::Vector2f& Actor::GetLastQuadTreePosition() const
 {
 	return LastQuadTreePosition;
 }
