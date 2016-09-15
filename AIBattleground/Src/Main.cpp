@@ -5,6 +5,7 @@
 #include <SFML\Graphics.hpp>
 #include <iostream>
 #include <iomanip>
+#include <thread>
 
 #include "TextureManager.h"
 #include "Actor.h"
@@ -15,6 +16,31 @@
 
 const float MaxDeltaTime = 0.2f;
 const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
+
+int MainThreadFrameNum = 0;
+
+void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
+{
+	int RenderingThreadFrameNum = 1;
+
+	while (Window->isOpen())
+	{
+		if (RenderingThreadFrameNum <= MainThreadFrameNum)
+		{
+			Window->clear();
+			LevelInfo->Draw(Window);
+			Window->display();
+
+			++RenderingThreadFrameNum;
+		}
+		else
+		{
+			sf::sleep(sf::seconds(0.001f));
+		}
+	}
+
+	std::cout << "Terminating rendering thread." << RenderingThreadFrameNum << std::endl;
+}
 
 int main()
 {
@@ -35,6 +61,9 @@ int main()
 	sf::Time DrawDurationTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
+
+	Window.setActive(false);
+	std::thread RenderingThread(main_RenderingThread, &Window, &LevelInfo);
 
 	std::cout << "Initialization completed." << std::endl;
 
@@ -71,21 +100,15 @@ int main()
 
 		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;;
 
-		//-------------------- Draw ------------------------
-		sf::Time DrawStartTime = MainClock.getElapsedTime();
-
-		Window.clear();
-		LevelInfo.Draw(&Window);
-		Window.display();
-
-		DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;
-
 		//----------------- Time padding -------------------
 		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();
 
 		if ((BonusTime) > sf::Time::Zero)
 			sf::sleep(BonusTime);
-	}
 
+		++MainThreadFrameNum;
+	}
+	
+	RenderingThread.join();
 	return 0;
 }

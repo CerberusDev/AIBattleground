@@ -102,6 +102,10 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
+
+	for (Actor* CurrActor : Actors)
+		if (CurrActor)
+			CurrActor->SyncDrawData();
 }
 
 void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)

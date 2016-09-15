@@ -16,7 +16,7 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
+MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -51,38 +51,46 @@ Actor::~Actor()
 	delete AISystem;
 }
 
+void Actor::SyncDrawData()
+{
+	DrawData_Position = Position;
+	DrawData_HP = HP;
+	DrawData_bShouldDrawLaser = bShouldDrawLaser;
+	DrawData_VectorTowardsEnemy = VectorTowardsEnemy;
+}
+
 void Actor::DrawRobot(sf::RenderWindow* Window) const
 {
 	DrawLaserBurst(Window);
 
 	sf::Transform CurrTransform;
-	CurrTransform.translate(Position);
+	CurrTransform.translate(DrawData_Position);
 
 	Window->draw(GetRobotSprite(), CurrTransform);
 }
 
 const sf::Sprite& Actor::GetRobotSprite() const
 {
-	const float HPRatio = HP / MaxHP;
+	const float HPRatio = DrawData_HP / MaxHP;
 	return RobotSprite[(int)((1.0f - HPRatio) * ROBOT_SPRITES_AMOUNT)];
 }
 
 void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 {
-	if (bDrawLaser)
+	if (DrawData_bShouldDrawLaser)
 	{
-		sf::Vector2f Diff = VectorTowardsEnemy;
+		sf::Vector2f Diff = DrawData_VectorTowardsEnemy;
 		NormalizeVector2f(Diff);
-		AngleToEnemy = acos(Diff.x);
-		AngleToEnemy *= (float)M_1_PI * 180.0f;
+		DrawData_AngleToEnemy = acos(Diff.x);
+		DrawData_AngleToEnemy *= (float)M_1_PI * 180.0f;
 
 		if (Diff.y < 0.0f)
-			AngleToEnemy = 360.0f - AngleToEnemy;
+			DrawData_AngleToEnemy = 360.0f - DrawData_AngleToEnemy;
 
 		sf::Transform CurrTransform;
-		CurrTransform.translate(Position);
-		CurrTransform.rotate(AngleToEnemy);
-		CurrTransform.scale(GetLength(VectorTowardsEnemy) / BeamTexSize.x, 1.0f);
+		CurrTransform.translate(DrawData_Position);
+		CurrTransform.rotate(DrawData_AngleToEnemy);
+		CurrTransform.scale(GetLength(DrawData_VectorTowardsEnemy) / BeamTexSize.x, 1.0f);
 
 		Window->draw(LaserBeamSprite, CurrTransform);
 	}
@@ -90,20 +98,19 @@ void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 
 void Actor::DrawLaserBurst(sf::RenderWindow* Window) const
 {
-	if (bDrawLaser)
+	if (DrawData_bShouldDrawLaser)
 	{
 		sf::Transform CurrTransform;
-		CurrTransform.translate(Position);
-		CurrTransform.rotate(AngleToEnemy);
+		CurrTransform.translate(DrawData_Position);
+		CurrTransform.rotate(DrawData_AngleToEnemy);
 		CurrTransform.translate(sf::Vector2f(Size.x / 2.0f + 1.0f, 0.0f));
 		Window->draw(LaserBurstSprite, CurrTransform);
-
-		bDrawLaser = false;
 	}
 }
 
 void Actor::Update(const float DeltaTime)
 {
+	bShouldDrawLaser = false;
 	ShotTimeCounter += sf::seconds(DeltaTime);
 	
 	const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
@@ -209,7 +216,7 @@ void Actor::TryToShoot()
 {
 	if (ShotTimeCounter >= ShotInterval)
 	{
-		bDrawLaser = true;
+		bShouldDrawLaser = true;
 		NearestEnemy->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
 	}

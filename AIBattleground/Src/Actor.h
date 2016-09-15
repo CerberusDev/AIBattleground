@@ -37,15 +37,21 @@ private:
 	sf::Vector2f MovementDirectionInterpStart;
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
-	mutable bool bDrawLaser;
-	mutable float AngleToEnemy;
+	bool bShouldDrawLaser;
 	sf::Time ShotInterval;
 	sf::Time ShotTimeCounter;
+
+	sf::Vector2f DrawData_Position;
+	sf::Vector2f DrawData_VectorTowardsEnemy;
+	float DrawData_HP;
+	mutable float DrawData_AngleToEnemy;
+	bool DrawData_bShouldDrawLaser;
 
 public:
 	Actor(class LevelInfo* argLevelInfo, class TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition);
 	~Actor();
 
+	void SyncDrawData();
 	void DrawRobot(sf::RenderWindow* Window) const;
 	const sf::Sprite& GetRobotSprite() const;
 	void DrawLaserBurst(sf::RenderWindow* Window) const;
