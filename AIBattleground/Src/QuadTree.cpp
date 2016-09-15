@@ -30,7 +30,7 @@ bool QuadTree::NoActorsInTree() const
 	return (Root->TopRightChild == nullptr && Root->Actors.size() == 0);
 }
 
-Actor* QuadTree::FindNearestNeighborTo(sf::Vector2f BasePoint)
+Actor* QuadTree::FindNearestNeighborTo(const sf::Vector2f& BasePoint) const
 {
 	if (NoActorsInTree())
 		return nullptr;
@@ -43,7 +43,7 @@ Actor* QuadTree::FindNearestNeighborTo(sf::Vector2f BasePoint)
 	return ResultActor;
 }
 
-Actor* QuadTree::QuickFindNearNeighborTo(Actor* RequestingActor)
+Actor* QuadTree::QuickFindNearNeighborTo(Actor* RequestingActor) const
 {
 	if (NoActorsInTree())
 		return nullptr;

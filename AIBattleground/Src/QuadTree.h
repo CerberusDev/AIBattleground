@@ -47,7 +47,7 @@ private:
 			BottomLeftChild = nullptr;
 		}
 
-		QTNode* SelectProperChild(sf::Vector2f Position)
+		QTNode* SelectProperChild(sf::Vector2f Position) const
 		{
 			QTNode* ResultNode = nullptr;
 
@@ -135,7 +135,7 @@ private:
 			}
 		}
 
-		Actor* GetNaiveNeighbor(sf::Vector2f BasePoint)
+		Actor* GetNaiveNeighbor(const sf::Vector2f& BasePoint) const
 		{
 			if (TopRightChild)
 			{
@@ -175,7 +175,7 @@ private:
 			}
 		}
 
-		void GetNearestNeighbor(sf::Vector2f BasePoint, Actor*& CurrentNearestNeighbor, float& CurrentMinDist, float& CurrentMinDistSquared) const
+		void GetNearestNeighbor(const sf::Vector2f& BasePoint, Actor*& CurrentNearestNeighbor, float& CurrentMinDist, float& CurrentMinDistSquared) const
 		{
 			sf::Vector2f Diff = Abs(Coords - BasePoint) - RegionSize;
 
@@ -215,6 +215,6 @@ public:
 	void AddActor(Actor* NewActor);
 	void RemoveActor(Actor* ActorToRemove);
 	bool QuadTree::NoActorsInTree() const;
-	Actor* FindNearestNeighborTo(sf::Vector2f BasePoint);
-	Actor* QuickFindNearNeighborTo(Actor* RequestingActor);
+	Actor* FindNearestNeighborTo(const sf::Vector2f& BasePoint) const;
+	Actor* QuickFindNearNeighborTo(Actor* RequestingActor) const;
 };
