@@ -18,6 +18,8 @@ const float MaxDeltaTime = 0.2f;
 const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
 
 int MainThreadFrameNum = 0;
+sf::Clock MainClock;
+sf::Time DrawDurationTimeCounter;
 
 void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 {
@@ -27,9 +29,13 @@ void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 	{
 		if (RenderingThreadFrameNum <= MainThreadFrameNum)
 		{
+			sf::Time DrawStartTime = MainClock.getElapsedTime();
+
 			Window->clear();
 			LevelInfo->Draw(Window);
 			Window->display();
+			
+			DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;
 
 			++RenderingThreadFrameNum;
 		}
@@ -55,10 +61,8 @@ int main()
 	TextureManager TextureManager;
 	LevelInfo LevelInfo(&TextureManager, sf::FloatRect(0, 0, RES_X, RES_Y));
 
-	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
 	sf::Time UpdateDurationTimeCounter;
-	sf::Time DrawDurationTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
 
@@ -98,7 +102,7 @@ int main()
 
 		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime), MainTimeCounter);
 
-		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;;
+		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;
 
 		//----------------- Time padding -------------------
 		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();
