@@ -14,8 +14,10 @@ QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f,
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
 HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
-SpawnerA(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
-SpawnerB(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
+SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.25f), ETeam::TEAM_A),
+SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.75f), ETeam::TEAM_A),
+SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.25f), ETeam::TEAM_B),
+SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.75f), ETeam::TEAM_B)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -80,8 +82,10 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	T1 += C.restart();
 
-	SpawnerA.Update(DeltaTime);
-	SpawnerB.Update(DeltaTime);
+	SpawnerA1.Update(DeltaTime);
+	SpawnerA2.Update(DeltaTime);
+	SpawnerB1.Update(DeltaTime);
+	SpawnerB2.Update(DeltaTime);
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
 

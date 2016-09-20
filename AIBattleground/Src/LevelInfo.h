@@ -35,8 +35,10 @@ private:
 	class Actor* Actors[ACTORS_NUMBER];
 	HealZone HealZoneA;
 	HealZone HealZoneB;
-	ActorSpawner SpawnerA;
-	ActorSpawner SpawnerB;
+	ActorSpawner SpawnerA1;
+	ActorSpawner SpawnerA2;
+	ActorSpawner SpawnerB1;
+	ActorSpawner SpawnerB2;
 
 public:
 	LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries);
