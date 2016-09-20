@@ -105,6 +105,10 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
+			CurrActor->UpdatePositionInQuadTree(DeltaTime);
+
+	for (Actor* CurrActor : Actors)
+		if (CurrActor)
 			CurrActor->SyncDrawData();
 }
 

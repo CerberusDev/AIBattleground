@@ -16,7 +16,8 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval)
+MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval), 
+QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds())))
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -143,8 +144,17 @@ void Actor::Update(const float DeltaTime)
 		Position += ActualMovementDirection * MovementSpeed * DeltaTime;
 		ClampVector2f(Position, LevelInfo->Boundaries);
 	}
+}
 
-	LevelInfo->UpdatePositionInQuadTree(this);
+void Actor::UpdatePositionInQuadTree(const float DeltaTime)
+{
+	QuadTreeUpdateCounter += sf::seconds(DeltaTime);
+
+	if (QuadTreeUpdateCounter >= QuadTreeUpdateInterval)
+	{
+		LevelInfo->UpdatePositionInQuadTree(this);
+		QuadTreeUpdateCounter -= QuadTreeUpdateInterval;
+	}
 }
 
 void Actor::RetreatToHealZone()
@@ -196,9 +206,9 @@ Actor* Actor::GetNearestEnemy() const
 	return NearestEnemy;
 }
 
-void Actor::UpdateLastQuadTreePosition()
+void Actor::UpdateLastQuadTreePosition(const sf::Vector2f& NewPositionInQuadTree)
 {
-	LastQuadTreePosition = Position;
+	LastQuadTreePosition = NewPositionInQuadTree;
 }
 
 const sf::Vector2f& Actor::GetLastQuadTreePosition() const

@@ -40,6 +40,8 @@ private:
 	bool bShouldDrawLaser;
 	sf::Time ShotInterval;
 	sf::Time ShotTimeCounter;
+	sf::Time QuadTreeUpdateInterval;
+	sf::Time QuadTreeUpdateCounter;
 
 	sf::Vector2f DrawData_Position;
 	sf::Vector2f DrawData_VectorTowardsEnemy;
@@ -57,6 +59,7 @@ public:
 	void DrawLaserBurst(sf::RenderWindow* Window) const;
 	void DrawLaserBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
+	void UpdatePositionInQuadTree(const float DeltaTime);
 	void RetreatToHealZone();
 	void StopMovement();
 	void GoTowardsNearestEnemy();
@@ -66,7 +69,7 @@ public:
 	ETeam GetTeam() const;
 	void SetNearestEnemy(Actor* NewNearestEnemy);
 	Actor* GetNearestEnemy() const;
-	void UpdateLastQuadTreePosition();
+	void UpdateLastQuadTreePosition(const sf::Vector2f& NewPositionInQuadTree);
 	const sf::Vector2f& GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
 

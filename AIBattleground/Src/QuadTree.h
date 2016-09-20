@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <SFML\Graphics.hpp>
 
 #include "Actor.h"
@@ -69,15 +70,16 @@ private:
 			return ResultNode;
 		}
 
-		void AddActor(Actor* NewActor)
+		void AddActor(Actor* NewActor, const sf::Vector2f& ActorPosition)
 		{
 			if (TopRightChild)
 			{
-				SelectProperChild(NewActor->GetPosition())->AddActor(NewActor);
+				SelectProperChild(ActorPosition)->AddActor(NewActor, ActorPosition);
 			}
 			else
 			{
 				Actors.push_back(NewActor);
+				NewActor->UpdateLastQuadTreePosition(ActorPosition);
 
 				if (RegionSize.x / 2.0f > MIN_REGION_SIZE && RegionSize.y / 2.0f > MIN_REGION_SIZE && Actors.size() > MAX_ACTORS_IN_REGION)
 					Subdivide();
@@ -92,7 +94,7 @@ private:
 			BottomLeftChild = new QTNode(this, sf::Vector2f(Coords.x - RegionSize.x / 4.0f, Coords.y + RegionSize.y / 4.0f), RegionSize / 2.0f);
 
 			for (auto it = Actors.begin(); it != Actors.end(); ++it)
-				AddActor(*it);
+				AddActor(*it, (*it)->GetLastQuadTreePosition());
 
 			Actors.clear();
 		}
@@ -106,7 +108,11 @@ private:
 			else
 			{
 				auto it = std::find(Actors.begin(), Actors.end(), ActorToRemove);
-				Actors.erase(it);
+
+				if (it == Actors.end())
+					std::cout << "QuadTree error, actor removal from node has failed" << std::endl;
+				else
+					Actors.erase(it);
 
 				if (Actors.size() == 0 && Parent)
 					Parent->MergeIfNecessary();

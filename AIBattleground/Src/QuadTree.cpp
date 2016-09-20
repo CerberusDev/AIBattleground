@@ -16,8 +16,7 @@ QuadTree::~QuadTree()
 
 void QuadTree::AddActor(Actor* NewActor)
 {
-	Root->AddActor(NewActor);
-	NewActor->UpdateLastQuadTreePosition();
+	Root->AddActor(NewActor, NewActor->GetPosition());
 }
 
 void QuadTree::RemoveActor(Actor* ActorToRemove)
