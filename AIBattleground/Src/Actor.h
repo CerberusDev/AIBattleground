@@ -59,6 +59,8 @@ public:
 	void DrawLaserBurst(sf::RenderWindow* Window) const;
 	void DrawLaserBeam(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime);
+	void UpdateAISystem();
+	void ProcessMovement(const float DeltaTime);
 	void UpdatePositionInQuadTree(const float DeltaTime);
 	void RetreatToHealZone();
 	void StopMovement();

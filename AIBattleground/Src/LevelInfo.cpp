@@ -96,16 +96,16 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	LastIndex = NewIndex != ACTORS_NUMBER ? NewIndex: 0;
 
-	for (Actor* CurrActor : Actors)
-		if (CurrActor)
-			CurrActor->Update(DeltaTime);
-
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
-			CurrActor->UpdatePositionInQuadTree(DeltaTime);
+			CurrActor->UpdateAISystem();
+
+	for (Actor* CurrActor : Actors)
+		if (CurrActor)
+			CurrActor->Update(DeltaTime);
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
