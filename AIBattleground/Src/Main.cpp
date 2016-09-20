@@ -86,11 +86,11 @@ int main()
 				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
 			std::cout << "-----------------------------------------------------" << std::endl;
 
-			std::cout << "Finding nearest enemy: " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Heal zone update:      " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "General actor update:  " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Update AI system:      " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Sync draw data:        " << LevelInfo.T5.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Finding nearest enemy:       " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Heal zone & spawners update: " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "General actor update:        " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Update AI system:            " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Sync draw data:              " << LevelInfo.T5.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 
 			LevelInfo.T1 = sf::Time::Zero;
 			LevelInfo.T2 = sf::Time::Zero;

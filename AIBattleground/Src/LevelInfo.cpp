@@ -13,28 +13,12 @@ Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundar
 QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
-HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER)
+HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
+SpawnerA(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
+SpawnerB(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
 {
-	const float InitialRectSize = 0.15f;
-
-	ETeam InitialTeam = ETeam::TEAM_A;
-	std::string TexName("RobotA");
-	sf::FloatRect RectToSpawnIn(Boundaries.left, Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
-	QuadTree* QuadTreeToUpdate = &QuadTree_TeamA;
-
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
-	{
-		if (i == ACTORS_NUMBER / 2)
-		{
-			InitialTeam = ETeam::TEAM_B;
-			TexName = "RobotB";
-			RectToSpawnIn = sf::FloatRect(Boundaries.left + Boundaries.width * (1.0f - InitialRectSize), Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
-			QuadTreeToUpdate = &QuadTree_TeamB;
-		}
-
-		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
-		QuadTreeToUpdate->AddActor(Actors[i]);
-	}
+		Actors[i] = nullptr;
 
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
@@ -96,6 +80,8 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	T1 += C.restart();
 
+	SpawnerA.Update(DeltaTime);
+	SpawnerB.Update(DeltaTime);
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
 
@@ -156,6 +142,12 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 	delete ActorToDestroy;
 }
 
+void LevelInfo::InitPositionInQuadTree(Actor* ActorToUpdate)
+{
+	QuadTree* QuadTreeToUpdate = ActorToUpdate->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
+	QuadTreeToUpdate->AddActor(ActorToUpdate);
+}
+
 void LevelInfo::UpdatePositionInQuadTree(Actor* ActorToUpdate)
 {
 	QuadTree* QuadTreeToUpdate = ActorToUpdate->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
@@ -166,4 +158,14 @@ void LevelInfo::UpdatePositionInQuadTree(Actor* ActorToUpdate)
 sf::Vector2f LevelInfo::GetHealZonePosition(ETeam Team) const
 {
 	return Team == ETeam::TEAM_A ? HealZoneA.GetPosition() : HealZoneB.GetPosition();
+}
+
+class Actor** LevelInfo::GetActorsArray()
+{
+	return Actors;
+}
+
+int LevelInfo::GetActorsNumber() const
+{
+	return ACTORS_NUMBER;
 }

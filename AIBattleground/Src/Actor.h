@@ -16,7 +16,7 @@ private:
 	class AISystemBase* AISystem;
 	Blackboard Blackboard;
 	Actor* NearestEnemy;
-	sf::Sprite RobotSprite[ROBOT_SPRITES_AMOUNT];
+	sf::Sprite RobotSprites[ROBOT_SPRITES_AMOUNT];
 	sf::Sprite LaserBeamSprite;
 	sf::Sprite LaserBurstSprite;
 	sf::Vector2f LastQuadTreePosition;

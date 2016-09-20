@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Actor.cpp" />
+    <ClCompile Include="Src\ActorSpawner.cpp" />
     <ClCompile Include="Src\AISystemBase.cpp" />
     <ClCompile Include="Src\AISystemBT.cpp" />
     <ClCompile Include="Src\AISystemFSM.cpp" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Actor.h" />
+    <ClInclude Include="Src\ActorSpawner.h" />
     <ClInclude Include="Src\AISystemBase.h" />
     <ClInclude Include="Src\AISystemBT.h" />
     <ClInclude Include="Src\AISystemFSM.h" />

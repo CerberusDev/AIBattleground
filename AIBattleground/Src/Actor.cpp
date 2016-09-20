@@ -17,18 +17,20 @@ LevelInfo(argLevelInfo), AISystem(nullptr), NearestEnemy(nullptr), LastQuadTreeP
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(10.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.5f)), ShotTimeCounter(ShotInterval), 
-QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds())))
+QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()))),
+DrawData_Position(0.0f, 0.0f), DrawData_VectorTowardsEnemy(0.0f, 0.0f), DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f),
+DrawData_bShouldDrawLaser(false)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
-		sf::Vector2u TexSize = TexManager->InitTexture(&RobotSprite[i], TexName + std::to_string(i + 1));
+		sf::Vector2u TexSize = TexManager->InitTexture(&RobotSprites[i], TexName + std::to_string(i + 1));
 
 		if (i == 0)
 			Size = TexSize;
 		else if (TexSize != Size)
 			std::cout << "Actor construction: sprite textures in different sizes! " << TexName << " " << i << std::endl;
 
-		RobotSprite[i].setOrigin(Size.x / 2.0f, Size.y / 2.0f);
+		RobotSprites[i].setOrigin(Size.x / 2.0f, Size.y / 2.0f);
 	}
 
 	BeamTexSize = TexManager->InitTexture(&LaserBeamSprite, "LaserBeam");
@@ -45,6 +47,9 @@ QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(Get
 
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
+
+	LevelInfo->InitPositionInQuadTree(this);
+	LevelInfo->FindNearestEnemyForActor(this);
 }
 
 Actor::~Actor()
@@ -73,7 +78,7 @@ void Actor::DrawRobot(sf::RenderWindow* Window) const
 const sf::Sprite& Actor::GetRobotSprite() const
 {
 	const float HPRatio = DrawData_HP / MaxHP;
-	return RobotSprite[(int)((1.0f - HPRatio) * ROBOT_SPRITES_AMOUNT)];
+	return RobotSprites[(int)((1.0f - HPRatio) * ROBOT_SPRITES_AMOUNT)];
 }
 
 void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
