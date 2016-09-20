@@ -19,24 +19,20 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 
 	ETeam InitialTeam = ETeam::TEAM_A;
 	std::string TexName("RobotA");
-	Actor** ArrayToPopulate = ActorsTeamA;
 	sf::FloatRect RectToSpawnIn(Boundaries.left, Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
 	QuadTree* QuadTreeToUpdate = &QuadTree_TeamA;
 
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 	{
-		if (i == ACTORS_PER_TEAM_NUMBER)
+		if (i == ACTORS_NUMBER / 2)
 		{
 			InitialTeam = ETeam::TEAM_B;
 			TexName = "RobotB";
-			ArrayToPopulate = ActorsTeamB;
 			RectToSpawnIn = sf::FloatRect(Boundaries.left + Boundaries.width * (1.0f - InitialRectSize), Boundaries.top, Boundaries.width * InitialRectSize, Boundaries.height);
 			QuadTreeToUpdate = &QuadTree_TeamB;
 		}
 
 		Actors[i] = new Actor(this, TexManager, TexName, InitialTeam, GetRandomPointInRect(RectToSpawnIn));
-		ArrayToPopulate[i % ACTORS_PER_TEAM_NUMBER] = Actors[i];
-
 		QuadTreeToUpdate->AddActor(Actors[i]);
 	}
 
@@ -151,22 +147,11 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 		}
 	}
 
-	Actor** TeamActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamA : ActorsTeamB;
+	int TeamOffset = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ACTORS_NUMBER / 2 : 0;
 
-	for (int i = 0; i < ACTORS_PER_TEAM_NUMBER; ++i)
-	{
-		if (TeamActors[i] == ActorToDestroy)
-		{
-			TeamActors[i] = nullptr;
-			break;
-		}
-	}
-
-	Actor** EnemyActors = ActorToDestroy->GetTeam() == ETeam::TEAM_A ? ActorsTeamB : ActorsTeamA;
-
-	for (int i = 0; i < ACTORS_PER_TEAM_NUMBER; ++i)
-		if (EnemyActors[i] && EnemyActors[i]->GetNearestEnemy() == ActorToDestroy)
-			QuickFindNearEnemyForActor(EnemyActors[i]);
+	for (int i = TeamOffset; i < ACTORS_NUMBER / 2 + TeamOffset; ++i)
+		if (Actors[i] && Actors[i]->GetNearestEnemy() == ActorToDestroy)
+			QuickFindNearEnemyForActor(Actors[i]);
 
 	delete ActorToDestroy;
 }

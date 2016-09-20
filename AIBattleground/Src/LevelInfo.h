@@ -11,15 +11,13 @@
 
 //#define DRAW_DEBUG_GRID
 
-#define ACTORS_PER_TEAM_NUMBER 5000
-#define ACTORS_NUMBER (2 * ACTORS_PER_TEAM_NUMBER)
+#define ACTORS_NUMBER 10000
 
 class LevelInfo
 {
 public:
 	const sf::FloatRect Boundaries;
 	const sf::Vector2f RightBottomEdge;
-
 	sf::Time T1;
 	sf::Time T2;
 	sf::Time T3;
@@ -34,8 +32,6 @@ private:
 	sf::Sprite DebugGridSprite;
 #endif
 	class Actor* Actors[ACTORS_NUMBER];
-	class Actor* ActorsTeamA[ACTORS_PER_TEAM_NUMBER];
-	class Actor* ActorsTeamB[ACTORS_PER_TEAM_NUMBER];
 	HealZone HealZoneA;
 	HealZone HealZoneB;
 
