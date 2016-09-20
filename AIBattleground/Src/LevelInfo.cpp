@@ -83,6 +83,8 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 {
+	sf::Clock C;
+
 	static int LastIndex = 0;
 
 	int NewIndex = (int)(MainTimeCounter.asSeconds() * ACTORS_NUMBER);
@@ -96,20 +98,30 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
 
 	LastIndex = NewIndex != ACTORS_NUMBER ? NewIndex: 0;
 
+	T1 += C.restart();
+
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
 
-	for (Actor* CurrActor : Actors)
-		if (CurrActor)
-			CurrActor->UpdateAISystem();
+	T2 += C.restart();
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->Update(DeltaTime);
 
+	T3 += C.restart();
+
+	for (Actor* CurrActor : Actors)
+		if (CurrActor)
+			CurrActor->UpdateAISystem();
+
+	T4 += C.restart();
+
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->SyncDrawData();
+
+	T5 += C.restart();
 }
 
 void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)

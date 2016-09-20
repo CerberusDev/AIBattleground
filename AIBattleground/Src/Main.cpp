@@ -79,10 +79,24 @@ int main()
 
 		while (MainTimeCounter.asSeconds() >= 1.0f)
 		{
+			std::cout << "-----------------------------------------------------" << std::endl;
 			std::cout << "FPS: " << MainFPSCounter 
 				<< std::setprecision(1) << std::fixed << "   Avg draw time: "
 				<< DrawDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg update time: "
 				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
+			std::cout << "-----------------------------------------------------" << std::endl;
+
+			std::cout << "Finding nearest enemy: " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Heal zone update:      " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "General actor update:  " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Update AI system:      " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			std::cout << "Sync draw data:        " << LevelInfo.T5.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+
+			LevelInfo.T1 = sf::Time::Zero;
+			LevelInfo.T2 = sf::Time::Zero;
+			LevelInfo.T3 = sf::Time::Zero;
+			LevelInfo.T4 = sf::Time::Zero;
+			LevelInfo.T5 = sf::Time::Zero;
 
 			DrawDurationTimeCounter = sf::seconds(0.0f);
 			UpdateDurationTimeCounter = sf::seconds(0.0f);

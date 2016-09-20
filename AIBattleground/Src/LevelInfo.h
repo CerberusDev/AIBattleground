@@ -20,6 +20,12 @@ public:
 	const sf::FloatRect Boundaries;
 	const sf::Vector2f RightBottomEdge;
 
+	sf::Time T1;
+	sf::Time T2;
+	sf::Time T3;
+	sf::Time T4;
+	sf::Time T5;
+
 private:
 	QuadTree QuadTree_TeamA;
 	QuadTree QuadTree_TeamB;
