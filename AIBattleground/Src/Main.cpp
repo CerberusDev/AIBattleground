@@ -18,24 +18,25 @@ const float MaxDeltaTime = 0.2f;
 const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
 
 int MainThreadFrameNum = 0;
-sf::Clock MainClock;
 sf::Time DrawDurationTimeCounter;
 
 void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 {
+	sf::Clock RenderingThreadClock;
+
 	int RenderingThreadFrameNum = 1;
 
 	while (Window->isOpen())
 	{
 		if (RenderingThreadFrameNum <= MainThreadFrameNum)
 		{
-			sf::Time DrawStartTime = MainClock.getElapsedTime();
+			sf::Time DrawStartTime = RenderingThreadClock.getElapsedTime();
 
 			Window->clear();
 			LevelInfo->Draw(Window);
 			Window->display();
 			
-			DrawDurationTimeCounter += MainClock.getElapsedTime() - DrawStartTime;
+			DrawDurationTimeCounter += RenderingThreadClock.getElapsedTime() - DrawStartTime;
 
 			++RenderingThreadFrameNum;
 		}
@@ -61,6 +62,7 @@ int main()
 	TextureManager TextureManager;
 	LevelInfo LevelInfo(&TextureManager, sf::FloatRect(0, 0, RES_X, RES_Y));
 
+	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
 	sf::Time UpdateDurationTimeCounter;
 	sf::Time DeltaTime;
