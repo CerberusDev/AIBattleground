@@ -19,4 +19,9 @@ public:
 	~AISystemFSM();
 
 	void Update();
+
+	EState MoveToNewStateIfNeeded();
+	void StateStart();
+	void StateEnd();
+	void StateUpdate();
 };

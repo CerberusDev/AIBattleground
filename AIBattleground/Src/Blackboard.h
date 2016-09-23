@@ -10,6 +10,7 @@ private:
 	float HP;
 	float MaxHP;
 	bool bHealthZoneDestReached;
+	bool bSomeValueHasChanged;
 	bool bEnemyInRange;
 	class Actor* NearestEnemy;
 
@@ -31,4 +32,6 @@ public:
 
 	void SetNearestEnemy(Actor* argNearestEnemy);
 	Actor* GetNearestEnemy() const;
+
+	bool SomeValueHasChanged();
 };

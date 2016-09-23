@@ -5,7 +5,7 @@
 #include "Blackboard.h"
 
 Blackboard::Blackboard() :
-HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bEnemyInRange(false), NearestEnemy(nullptr)
+HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), NearestEnemy(nullptr)
 {
 
 }
@@ -17,7 +17,11 @@ Blackboard::~Blackboard()
 
 void Blackboard::SetHP(float argHP)
 {
-	HP = argHP;
+	if (HP != argHP)
+	{
+		HP = argHP;
+		bSomeValueHasChanged = true;
+	}
 }
 float Blackboard::GetHP() const
 {
@@ -26,7 +30,11 @@ float Blackboard::GetHP() const
 
 void Blackboard::SetMaxHP(float argMaxHP)
 {
-	MaxHP = argMaxHP;
+	if (MaxHP != argMaxHP)
+	{
+		MaxHP = argMaxHP;
+		bSomeValueHasChanged = true;
+	}
 }
 
 float Blackboard::GetMaxHP() const
@@ -36,7 +44,11 @@ float Blackboard::GetMaxHP() const
 
 void Blackboard::SetBHealthZoneDestReached(bool argbHealthZoneDestReached)
 {
-	bHealthZoneDestReached = argbHealthZoneDestReached;
+	if (bHealthZoneDestReached != argbHealthZoneDestReached)
+	{
+		bHealthZoneDestReached = argbHealthZoneDestReached;
+		bSomeValueHasChanged = true;
+	}
 }
 
 bool Blackboard::GetBHealthZoneDestReached() const
@@ -46,7 +58,11 @@ bool Blackboard::GetBHealthZoneDestReached() const
 
 void Blackboard::SetBEnemyInRange(bool argbEnemyInRange)
 {
-	bEnemyInRange = argbEnemyInRange;
+	if (bEnemyInRange != argbEnemyInRange)
+	{
+		bEnemyInRange = argbEnemyInRange;
+		bSomeValueHasChanged = true;
+	}
 }
 
 bool Blackboard::GetBEnemyInRange() const
@@ -56,10 +72,21 @@ bool Blackboard::GetBEnemyInRange() const
 
 void Blackboard::SetNearestEnemy(Actor* argNearestEnemy)
 {
-	NearestEnemy = argNearestEnemy;
+	if (NearestEnemy != argNearestEnemy)
+	{
+		NearestEnemy = argNearestEnemy;
+		bSomeValueHasChanged = true;
+	}
 }
 
 Actor* Blackboard::GetNearestEnemy() const
 {
 	return NearestEnemy;
+}
+
+bool Blackboard::SomeValueHasChanged()
+{
+	bool bOldSomeValueHasChanged = bSomeValueHasChanged;
+	bSomeValueHasChanged = false;
+	return bOldSomeValueHasChanged;
 }
