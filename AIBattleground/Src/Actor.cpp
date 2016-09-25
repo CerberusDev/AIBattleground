@@ -122,8 +122,11 @@ void Actor::Update(const float DeltaTime)
 	ProcessMovement(DeltaTime);
 	UpdatePositionInQuadTree(DeltaTime);
 
-	const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
-	Blackboard.SetBHealthZoneDestReached(bReached);	
+	if (HP != MaxHP)
+	{
+		const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
+		Blackboard.SetBHealthZoneDestReached(bReached);	
+	}
 
 	if (NearestEnemy)
 	{
