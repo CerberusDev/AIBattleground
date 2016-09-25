@@ -20,7 +20,7 @@ public:
 
 	void Update();
 
-	EState MoveToNewStateIfNeeded();
+	EState DetermineNewState();
 	void StateStart();
 	void StateEnd();
 	void StateUpdate();

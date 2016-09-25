@@ -21,20 +21,22 @@ void AISystemFSM::Update()
 {
 	if (Blackboard->SomeValueHasChanged())
 	{
-		EState NewState = MoveToNewStateIfNeeded();
+		EState NewState = DetermineNewState();
 
-		if (State != NewState)
+		while (State != NewState)
 		{
 			StateEnd();
 			State = NewState;
 			StateStart();
+
+			NewState = DetermineNewState();
 		}
 	}
 
 	StateUpdate();
 }
 
-AISystemFSM::EState AISystemFSM::MoveToNewStateIfNeeded()
+AISystemFSM::EState AISystemFSM::DetermineNewState()
 {
 	EState NewState = State;
 
