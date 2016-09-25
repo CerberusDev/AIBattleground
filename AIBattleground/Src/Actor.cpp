@@ -42,8 +42,8 @@ DrawData_bShouldDrawLaser(false)
 	MovementDirectionOffset.x = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 	MovementDirectionOffset.y = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 
-	//AISystem = new AISystemFSM(this, &Blackboard);
-	AISystem = new AISystemBT(this, &Blackboard);
+	AISystem = new AISystemFSM(this, &Blackboard);
+	//AISystem = new AISystemBT(this, &Blackboard);
 
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
@@ -212,7 +212,7 @@ ETeam Actor::GetTeam() const
 void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 {
 	NearestEnemy = NewNearestEnemy;
-	Blackboard.SetNearestEnemy(NearestEnemy);
+	Blackboard.SetBNearestEnemyIsSet(NearestEnemy != nullptr);
 }
 
 Actor* Actor::GetNearestEnemy() const

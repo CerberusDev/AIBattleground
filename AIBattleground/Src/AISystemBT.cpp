@@ -9,7 +9,7 @@
 #include "Blackboard.h"
 
 AISystemBT::AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard) :
-AISystemBase(argOwner, argBlackboard), Root(nullptr), PendingTask(nullptr), BTStorage_Bool(false)
+AISystemBase(argOwner, argBlackboard), Root(nullptr), PendingTask(nullptr), BTStorage_Bool(false), bReevalutateTree(false)
 {
 	Root = new BTSelector(std::vector<BTNode*> {
 		new BTDecorator_BTStorage_Bool(this,
@@ -47,8 +47,13 @@ void AISystemBT::UpdatePendingTask(BTTask* NewPendingTask)
 
 void AISystemBT::Update()
 {
-	if (Blackboard->SomeValueHasChanged() || PendingTask == nullptr)
+	if (Blackboard->SomeValueHasChanged() || PendingTask == nullptr || bReevalutateTree)
+	{
+		bReevalutateTree = false;
 		Root->Update();
+	}
 	else
+	{
 		PendingTask->Update();
+	}
 }

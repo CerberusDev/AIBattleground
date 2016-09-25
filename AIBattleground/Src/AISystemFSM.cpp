@@ -41,13 +41,13 @@ AISystemFSM::EState AISystemFSM::MoveToNewStateIfNeeded()
 	switch (State)
 	{
 	case EState::IDLE:
-		if (Blackboard->GetNearestEnemy())
+		if (Blackboard->GetBNearestEnemyIsSet())
 			NewState = EState::MOVE_TOWARDS_ENEMY;
 		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
 			NewState = EState::RETREAT;
 		break;
 	case EState::MOVE_TOWARDS_ENEMY:
-		if (Blackboard->GetNearestEnemy() == nullptr)
+		if (!Blackboard->GetBNearestEnemyIsSet())
 			NewState = EState::IDLE;
 		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
 			NewState = EState::RETREAT;
@@ -55,7 +55,7 @@ AISystemFSM::EState AISystemFSM::MoveToNewStateIfNeeded()
 			NewState = EState::FIGHT;
 		break;
 	case EState::FIGHT:
-		if (Blackboard->GetNearestEnemy() == nullptr)
+		if (!Blackboard->GetBNearestEnemyIsSet())
 			NewState = EState::IDLE;
 		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
 			NewState = EState::RETREAT;

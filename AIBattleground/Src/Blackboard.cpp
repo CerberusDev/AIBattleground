@@ -5,7 +5,7 @@
 #include "Blackboard.h"
 
 Blackboard::Blackboard() :
-HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), NearestEnemy(nullptr)
+HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), bNearestEnemyIsSet(false)
 {
 
 }
@@ -70,18 +70,18 @@ bool Blackboard::GetBEnemyInRange() const
 	return bEnemyInRange;
 }
 
-void Blackboard::SetNearestEnemy(Actor* argNearestEnemy)
+void Blackboard::SetBNearestEnemyIsSet(bool argbNearestEnemyIsSet)
 {
-	if (NearestEnemy != argNearestEnemy)
+	if (bNearestEnemyIsSet != argbNearestEnemyIsSet)
 	{
-		NearestEnemy = argNearestEnemy;
+		bNearestEnemyIsSet = argbNearestEnemyIsSet;
 		bSomeValueHasChanged = true;
 	}
 }
 
-Actor* Blackboard::GetNearestEnemy() const
+bool Blackboard::GetBNearestEnemyIsSet() const
 {
-	return NearestEnemy;
+	return bNearestEnemyIsSet;
 }
 
 bool Blackboard::SomeValueHasChanged()

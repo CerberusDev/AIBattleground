@@ -10,9 +10,9 @@ private:
 	float HP;
 	float MaxHP;
 	bool bHealthZoneDestReached;
-	bool bSomeValueHasChanged;
 	bool bEnemyInRange;
-	class Actor* NearestEnemy;
+	bool bNearestEnemyIsSet;
+	bool bSomeValueHasChanged;
 
 public:
 	Blackboard();
@@ -30,8 +30,8 @@ public:
 	void SetBEnemyInRange(bool argbEnemyInRange);
 	bool GetBEnemyInRange() const;
 
-	void SetNearestEnemy(Actor* argNearestEnemy);
-	Actor* GetNearestEnemy() const;
+	void SetBNearestEnemyIsSet(bool argbNearestEnemyIsSet);
+	bool GetBNearestEnemyIsSet() const;
 
 	bool SomeValueHasChanged();
 };

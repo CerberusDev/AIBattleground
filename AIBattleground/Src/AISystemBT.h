@@ -136,7 +136,7 @@ private:
 
 		virtual bool IsConditionFulfilled()
 		{
-			return AIBlackboard->GetNearestEnemy() != nullptr;
+			return AIBlackboard->GetBNearestEnemyIsSet();
 		}
 	};
 
@@ -204,6 +204,7 @@ private:
 		virtual EStatus InternalUpdate()
 		{
 			AISystem->BTStorage_Bool = ValueToSet;
+			AISystem->bReevalutateTree = true;
 			return EStatus::SUCCESS;
 		}
 	};
@@ -265,6 +266,7 @@ private:
 	BTNode* Root;
 	BTTask* PendingTask;
 	bool BTStorage_Bool;
+	bool bReevalutateTree;
 
 public:
 	AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard);
