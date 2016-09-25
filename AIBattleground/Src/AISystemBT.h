@@ -12,9 +12,6 @@
 class AISystemBT : public AISystemBase
 {
 private:
-	bool BTStorage_Bool;
-
-private:
 	enum class EStatus { SUCCESS, FAIL, IN_PROGRESS };
 
 	struct BTNode
@@ -173,21 +170,38 @@ private:
 		}
 	};
 
-	struct BTTaskActor : public BTNode
+	struct BTTask : public BTNode
+	{
+		AISystemBT* AISystem;
+
+		BTTask(AISystemBT* argAISystem) : AISystem(argAISystem) {};
+
+		virtual EStatus InternalUpdate() = 0;
+		virtual EStatus Update()
+		{
+			EStatus Result = InternalUpdate();
+
+			if (Result == EStatus::IN_PROGRESS)
+				AISystem->UpdatePendingTask(this);
+
+			return Result;
+		}
+	};
+
+	struct BTTaskActor : public BTTask
 	{
 		Actor* OwningActor;
 
-		BTTaskActor(Actor* argOwningActor) : OwningActor(argOwningActor) {};
+		BTTaskActor(AISystemBT* argAISystem, Actor* argOwningActor) : BTTask(argAISystem), OwningActor(argOwningActor) {};
 	};
 
-	struct BTTask_SetBTStorage_Bool : public BTNode
+	struct BTTask_SetBTStorage_Bool : public BTTask
 	{
-		AISystemBT* AISystem;
 		bool ValueToSet;
 
-		BTTask_SetBTStorage_Bool(AISystemBT* argAISystem, bool argValueToSet) : AISystem(argAISystem), ValueToSet(argValueToSet) {};
+		BTTask_SetBTStorage_Bool(AISystemBT* argAISystem, bool argValueToSet) : BTTask(argAISystem), ValueToSet(argValueToSet) {};
 
-		virtual EStatus Update()
+		virtual EStatus InternalUpdate()
 		{
 			AISystem->BTStorage_Bool = ValueToSet;
 			return EStatus::SUCCESS;
@@ -196,9 +210,9 @@ private:
 
 	struct BTTask_StopMovement : public BTTaskActor
 	{
-		BTTask_StopMovement(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
+		BTTask_StopMovement(AISystemBT* argAISystem, Actor* argOwningActor) : BTTaskActor(argAISystem, argOwningActor) {};
 
-		virtual EStatus Update()
+		virtual EStatus InternalUpdate()
 		{
 			OwningActor->StopMovement();
 			return EStatus::SUCCESS;
@@ -207,9 +221,9 @@ private:
 
 	struct BTTask_GoTowardsNearestEnemy : public BTTaskActor
 	{
-		BTTask_GoTowardsNearestEnemy(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
+		BTTask_GoTowardsNearestEnemy(AISystemBT* argAISystem, Actor* argOwningActor) : BTTaskActor(argAISystem, argOwningActor) {};
 
-		virtual EStatus Update()
+		virtual EStatus InternalUpdate()
 		{
 			OwningActor->GoTowardsNearestEnemy();
 			return EStatus::IN_PROGRESS;
@@ -218,9 +232,9 @@ private:
 
 	struct BTTask_Fight : public BTTaskActor
 	{
-		BTTask_Fight(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
+		BTTask_Fight(AISystemBT* argAISystem, Actor* argOwningActor) : BTTaskActor(argAISystem, argOwningActor) {};
 
-		virtual EStatus Update()
+		virtual EStatus InternalUpdate()
 		{
 			OwningActor->TryToShoot();
 			return EStatus::IN_PROGRESS;
@@ -229,20 +243,33 @@ private:
 
 	struct BTTask_RetreatToHealZone : public BTTaskActor
 	{
-		BTTask_RetreatToHealZone(Actor* argOwningActor) : BTTaskActor(argOwningActor) {};
+		BTTask_RetreatToHealZone(AISystemBT* argAISystem, Actor* argOwningActor) : BTTaskActor(argAISystem, argOwningActor) {};
 
-		virtual EStatus Update()
+		virtual EStatus InternalUpdate()
 		{
 			OwningActor->RetreatToHealZone();
 			return EStatus::IN_PROGRESS;
 		}
 	};
 
+	struct BTTask_Idle : public BTTask
+	{
+		BTTask_Idle(AISystemBT* argAISystem) : BTTask(argAISystem) {};
+
+		virtual EStatus InternalUpdate()
+		{
+			return EStatus::IN_PROGRESS;
+		}
+	};
+
 	BTNode* Root;
+	BTTask* PendingTask;
+	bool BTStorage_Bool;
 
 public:
 	AISystemBT(class Actor* argOwner, class Blackboard* argBlackboard);
 	~AISystemBT();
 
+	void UpdatePendingTask(BTTask* NewPendingTask);
 	void Update();
 };
