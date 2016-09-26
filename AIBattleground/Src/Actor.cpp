@@ -18,8 +18,8 @@ ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), ShotTimeCounter(ShotInterval), 
 QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()))),
-DrawData_Position(Position), DrawData_VectorTowardsEnemy(0.0f, 0.0f), DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f),
-DrawData_bShouldDrawLaser(false)
+DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_VectorTowardsEnemyX(0.0f), DrawData_VectorTowardsEnemyY(0.0f),
+DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
 	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
 	{
@@ -59,10 +59,12 @@ Actor::~Actor()
 
 void Actor::SyncDrawData()
 {
-	DrawData_Position = Position;
+	DrawData_PositionX = Position.x;
+	DrawData_PositionY = Position.y;
 	DrawData_HP = HP;
 	DrawData_bShouldDrawLaser = bShouldDrawLaser;
-	DrawData_VectorTowardsEnemy = VectorTowardsEnemy;
+	DrawData_VectorTowardsEnemyX = VectorTowardsEnemy.x;
+	DrawData_VectorTowardsEnemyY = VectorTowardsEnemy.y;
 }
 
 void Actor::DrawRobot(sf::RenderWindow* Window) const
@@ -70,7 +72,7 @@ void Actor::DrawRobot(sf::RenderWindow* Window) const
 	DrawLaserBurst(Window);
 
 	sf::Transform CurrTransform;
-	CurrTransform.translate(DrawData_Position);
+	CurrTransform.translate(sf::Vector2f(DrawData_PositionX, DrawData_PositionY));
 
 	Window->draw(GetRobotSprite(), CurrTransform);
 }
@@ -85,7 +87,7 @@ void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 {
 	if (DrawData_bShouldDrawLaser)
 	{
-		sf::Vector2f Diff = DrawData_VectorTowardsEnemy;
+		sf::Vector2f Diff(DrawData_VectorTowardsEnemyX, DrawData_VectorTowardsEnemyY);
 		NormalizeVector2f(Diff);
 		DrawData_AngleToEnemy = acos(Diff.x);
 		DrawData_AngleToEnemy *= (float)M_1_PI * 180.0f;
@@ -94,9 +96,9 @@ void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 			DrawData_AngleToEnemy = 360.0f - DrawData_AngleToEnemy;
 
 		sf::Transform CurrTransform;
-		CurrTransform.translate(DrawData_Position);
+		CurrTransform.translate(sf::Vector2f(DrawData_PositionX, DrawData_PositionY));
 		CurrTransform.rotate(DrawData_AngleToEnemy);
-		CurrTransform.scale(GetLength(DrawData_VectorTowardsEnemy) / BeamTexSize.x, 1.0f);
+		CurrTransform.scale(GetLength(sf::Vector2f(DrawData_VectorTowardsEnemyX, DrawData_VectorTowardsEnemyY)) / BeamTexSize.x, 1.0f);
 
 		Window->draw(LaserBeamSprite, CurrTransform);
 	}
@@ -107,7 +109,7 @@ void Actor::DrawLaserBurst(sf::RenderWindow* Window) const
 	if (DrawData_bShouldDrawLaser)
 	{
 		sf::Transform CurrTransform;
-		CurrTransform.translate(DrawData_Position);
+		CurrTransform.translate(sf::Vector2f(DrawData_PositionX, DrawData_PositionY));
 		CurrTransform.rotate(DrawData_AngleToEnemy);
 		CurrTransform.translate(sf::Vector2f(Size.x / 2.0f + 1.0f, 0.0f));
 		Window->draw(LaserBurstSprite, CurrTransform);

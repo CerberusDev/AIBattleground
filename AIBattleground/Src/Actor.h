@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #include "Globals.h"
 #include "Blackboard.h"
 
@@ -43,11 +45,13 @@ private:
 	sf::Time QuadTreeUpdateInterval;
 	sf::Time QuadTreeUpdateCounter;
 
-	sf::Vector2f DrawData_Position;
-	sf::Vector2f DrawData_VectorTowardsEnemy;
-	float DrawData_HP;
+	std::atomic<float> DrawData_PositionX;
+	std::atomic<float> DrawData_PositionY;
+	std::atomic<float> DrawData_VectorTowardsEnemyX;
+	std::atomic<float> DrawData_VectorTowardsEnemyY;
+	std::atomic<float> DrawData_HP;
 	mutable float DrawData_AngleToEnemy;
-	bool DrawData_bShouldDrawLaser;
+	std::atomic<bool> DrawData_bShouldDrawLaser;
 
 public:
 	Actor(class LevelInfo* argLevelInfo, class TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition);

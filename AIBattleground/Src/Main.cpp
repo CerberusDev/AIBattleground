@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
+#include <atomic>
 
 #include "TextureManager.h"
 #include "Actor.h"
@@ -17,8 +18,8 @@
 const float MaxDeltaTime = 0.2f;
 const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
 
-int MainThreadFrameNum = 0;
-sf::Time DrawDurationTimeCounter;
+std::atomic<int> MainThreadFrameNum = 0;
+std::atomic<float> DrawDurationTimeCounter;
 
 void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 {
@@ -36,7 +37,7 @@ void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 			LevelInfo->Draw(Window);
 			Window->display();
 			
-			DrawDurationTimeCounter += RenderingThreadClock.getElapsedTime() - DrawStartTime;
+			DrawDurationTimeCounter = DrawDurationTimeCounter + (RenderingThreadClock.getElapsedTime() - DrawStartTime).asSeconds();
 
 			++RenderingThreadFrameNum;
 		}
@@ -84,7 +85,7 @@ int main()
 			std::cout << "-----------------------------------------------------" << std::endl;
 			std::cout << "FPS: " << MainFPSCounter 
 				<< std::setprecision(1) << std::fixed << "   Avg draw time: "
-				<< DrawDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg update time: "
+				<< DrawDurationTimeCounter * 1000.0f / MainFPSCounter << " ms   Avg update time: "
 				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
 			std::cout << "-----------------------------------------------------" << std::endl;
 
@@ -100,7 +101,7 @@ int main()
 			LevelInfo.T4 = sf::Time::Zero;
 			LevelInfo.T5 = sf::Time::Zero;
 
-			DrawDurationTimeCounter = sf::seconds(0.0f);
+			DrawDurationTimeCounter = 0.0f;
 			UpdateDurationTimeCounter = sf::seconds(0.0f);
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
