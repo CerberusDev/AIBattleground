@@ -45,7 +45,7 @@ public:
 	~LevelInfo();
 
 	void Draw(sf::RenderWindow* Window) const;
-	void Update(const float DeltaTime, const sf::Time MainTimeCounter);
+	void Update(const float DeltaTime, const sf::Time FixedDeltaTime);
 	void FindNearestEnemyForActor(class Actor* RequestingActor);
 	void QuickFindNearEnemyForActor(class Actor* RequestingActor);
 	void DestroyActor(class Actor* ActorToDestroy);

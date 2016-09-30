@@ -63,15 +63,15 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 			CurrActor->DrawRobot(Window);
 }
 
-void LevelInfo::Update(const float DeltaTime, const sf::Time MainTimeCounter)
+void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 {
 	sf::Clock C;
 
 	static int LastIndex = 0;
 
-	int NewIndex = (int)(MainTimeCounter.asSeconds() * ACTORS_NUMBER);
+	int NewIndex = LastIndex + (int)(FixedDeltaTime.asSeconds() * ACTORS_NUMBER);
 
-	if (NewIndex < LastIndex)
+	if (NewIndex > ACTORS_NUMBER)
 		NewIndex = ACTORS_NUMBER;
 
 	for (int i = LastIndex; i < NewIndex; ++i)

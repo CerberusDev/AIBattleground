@@ -117,7 +117,7 @@ int main()
 		//------------------- Update ----------------------
 		sf::Time UpdateStartTime = MainClock.getElapsedTime();
 
-		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime), MainTimeCounter);
+		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime), FixedDeltaTime);
 
 		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;
 
