@@ -15,8 +15,8 @@
 #define RES_X 1000
 #define RES_Y 600
 
-const float MaxDeltaTime = 0.2f;
-const sf::Time FixedDeltaTime = sf::seconds(0.01666666667f);
+const sf::Time MaxDeltaTime = sf::seconds(0.2f);
+const sf::Time FixedDeltaTime = sf::seconds(0.016f);
 
 std::atomic<int> MainThreadFrameNum = 0;
 std::atomic<float> DrawDurationTimeCounter;
@@ -65,6 +65,7 @@ int main()
 
 	sf::Clock MainClock;
 	sf::Time MainTimeCounter;
+	sf::Time ExcessingTime;
 	sf::Time UpdateDurationTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
@@ -117,7 +118,7 @@ int main()
 		//------------------- Update ----------------------
 		sf::Time UpdateStartTime = MainClock.getElapsedTime();
 
-		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime), FixedDeltaTime);
+		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime.asSeconds()), FixedDeltaTime);
 
 		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;
 
@@ -125,7 +126,25 @@ int main()
 		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();
 
 		if ((BonusTime) > sf::Time::Zero)
-			sf::sleep(BonusTime);
+		{
+			if (BonusTime > ExcessingTime)
+			{
+				sf::Time TimeToSleep = BonusTime - ExcessingTime;
+				ExcessingTime = sf::Time::Zero;
+				sf::sleep(TimeToSleep);
+			}
+			else
+			{
+				ExcessingTime += -BonusTime;
+			}
+		}
+		else
+		{
+			ExcessingTime += -BonusTime;
+
+			if (ExcessingTime > MaxDeltaTime)
+				ExcessingTime = MaxDeltaTime;
+		}
 
 		++MainThreadFrameNum;
 	}
