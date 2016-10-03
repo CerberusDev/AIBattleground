@@ -12,7 +12,7 @@
 
 //#define DRAW_DEBUG_GRID
 
-#define ACTORS_NUMBER 5000
+#define ACTORS_NUMBER 8000
 
 class LevelInfo
 {
