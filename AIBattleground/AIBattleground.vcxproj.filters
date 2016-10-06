@@ -42,6 +42,9 @@
     <ClCompile Include="Src\ActorSpawner.cpp">
       <Filter>Src</Filter>
     </ClCompile>
+    <ClCompile Include="Src\BTBase.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\TextureManager.h">
@@ -75,6 +78,9 @@
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Src\ActorSpawner.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\BTBase.h">
       <Filter>Src</Filter>
     </ClInclude>
   </ItemGroup>

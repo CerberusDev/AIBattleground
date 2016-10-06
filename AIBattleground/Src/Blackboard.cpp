@@ -4,8 +4,9 @@
 
 #include "Blackboard.h"
 
-Blackboard::Blackboard() :
-HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), bNearestEnemyIsSet(false)
+Blackboard::Blackboard(Actor* argOwner) :
+Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
+bNearestEnemyIsSet(false), bBTRecovering(false)
 {
 
 }
@@ -13,6 +14,11 @@ HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false
 Blackboard::~Blackboard()
 {
 
+}
+
+Actor* Blackboard::GetOwner() const
+{
+	return Owner;
 }
 
 void Blackboard::SetHP(float argHP)
@@ -82,6 +88,20 @@ void Blackboard::SetBNearestEnemyIsSet(bool argbNearestEnemyIsSet)
 bool Blackboard::GetBNearestEnemyIsSet() const
 {
 	return bNearestEnemyIsSet;
+}
+
+void Blackboard::SetBBTRecovering(bool argbBTRecovering)
+{
+	if (bBTRecovering != argbBTRecovering)
+	{
+		bBTRecovering = argbBTRecovering;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBBTRecovering() const
+{
+	return bBTRecovering;
 }
 
 bool Blackboard::SomeValueHasChanged()

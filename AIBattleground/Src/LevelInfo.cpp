@@ -173,3 +173,8 @@ int LevelInfo::GetActorsNumber() const
 {
 	return ACTORS_NUMBER;
 }
+
+BTBase* LevelInfo::GetBTData()
+{
+	return &BTData;
+}

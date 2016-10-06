@@ -9,6 +9,7 @@
 #include "HealZone.h"
 #include "ActorSpawner.h"
 #include "QuadTree.h"
+#include "BTBase.h"
 
 //#define DRAW_DEBUG_GRID
 
@@ -39,6 +40,7 @@ private:
 	ActorSpawner SpawnerA2;
 	ActorSpawner SpawnerB1;
 	ActorSpawner SpawnerB2;
+	BTBase BTData;
 
 public:
 	LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries);
@@ -54,6 +56,7 @@ public:
 	sf::Vector2f GetHealZonePosition(ETeam Team) const;
 	class Actor** GetActorsArray();
 	int GetActorsNumber() const;
+	BTBase* GetBTData();
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);

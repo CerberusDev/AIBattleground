@@ -15,7 +15,7 @@ private:
 	EState State;
 
 public:
-	AISystemFSM(class Actor* argOwner, class Blackboard* argBlackboard);
+	AISystemFSM(class Blackboard* argBlackboard);
 	~AISystemFSM();
 
 	void Update();

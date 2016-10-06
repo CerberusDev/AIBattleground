@@ -4,8 +4,8 @@
 
 #include "AISystemBase.h"
 
-AISystemBase::AISystemBase(class Actor* argOwner, class Blackboard* argBlackboard) :
-Owner(argOwner), Blackboard(argBlackboard)
+AISystemBase::AISystemBase(class Blackboard* argBlackboard) :
+Blackboard(argBlackboard)
 {
 
 }

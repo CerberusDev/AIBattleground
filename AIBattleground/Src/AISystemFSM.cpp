@@ -6,8 +6,8 @@
 #include "Actor.h"
 #include "Blackboard.h"
 
-AISystemFSM::AISystemFSM(class Actor* argOwner, class Blackboard* argBlackboard) :
-AISystemBase(argOwner, argBlackboard), State(EState::IDLE)
+AISystemFSM::AISystemFSM(class Blackboard* argBlackboard) :
+AISystemBase(argBlackboard), State(EState::IDLE)
 {
 
 }
@@ -84,19 +84,19 @@ void AISystemFSM::StateStart()
 	switch (State)
 	{
 	case EState::IDLE:
-		Owner->StopMovement();
+		Blackboard->GetOwner()->StopMovement();
 		break;
 	case EState::MOVE_TOWARDS_ENEMY:
 		;
 		break;
 	case EState::FIGHT:
-		Owner->StopMovement();
+		Blackboard->GetOwner()->StopMovement();
 		break;
 	case EState::RETREAT:
 		;
 		break;
 	case EState::RECOVER:
-		Owner->StopMovement();
+		Blackboard->GetOwner()->StopMovement();
 		break;
 	}
 }
@@ -131,13 +131,13 @@ void AISystemFSM::StateUpdate()
 		;
 		break;
 	case EState::MOVE_TOWARDS_ENEMY:
-		Owner->GoTowardsNearestEnemy();
+		Blackboard->GetOwner()->GoTowardsNearestEnemy();
 		break;
 	case EState::FIGHT:
-		Owner->TryToShoot();
+		Blackboard->GetOwner()->TryToShoot();
 		break;
 	case EState::RETREAT:
-		Owner->RetreatToHealZone();
+		Blackboard->GetOwner()->RetreatToHealZone();
 		break;
 	case EState::RECOVER:
 		;
