@@ -16,8 +16,8 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), ShotTimeCounter(ShotInterval), 
-QuadTreeUpdateInterval(sf::seconds(0.2f)), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()))),
+MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotTimeCounter(ShotInterval), QuadTreeUpdateCounter(sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()))),
+ShotInterval(sf::seconds(0.75f)), QuadTreeUpdateInterval(sf::seconds(0.2f)),
 DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_VectorTowardsEnemyX(0.0f), DrawData_VectorTowardsEnemyY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
@@ -119,11 +119,12 @@ void Actor::DrawLaserBurst(sf::RenderWindow* Window) const
 
 void Actor::Update(const float DeltaTime)
 {
-	bShouldDrawLaser = false;
 	ShotTimeCounter += sf::seconds(DeltaTime);
+	QuadTreeUpdateCounter += sf::seconds(DeltaTime);
+	bShouldDrawLaser = false;
 	
 	ProcessMovement(DeltaTime);
-	UpdatePositionInQuadTree(DeltaTime);
+	UpdatePositionInQuadTree();
 
 	if (HP != MaxHP)
 	{
@@ -166,10 +167,8 @@ void Actor::ProcessMovement(const float DeltaTime)
 	}
 }
 
-void Actor::UpdatePositionInQuadTree(const float DeltaTime)
+void Actor::UpdatePositionInQuadTree()
 {
-	QuadTreeUpdateCounter += sf::seconds(DeltaTime);
-
 	if (QuadTreeUpdateCounter >= QuadTreeUpdateInterval)
 	{
 		LevelInfo->UpdatePositionInQuadTree(this);
