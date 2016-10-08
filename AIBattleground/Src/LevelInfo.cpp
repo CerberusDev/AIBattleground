@@ -69,7 +69,7 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 
 	static int LastIndex = 0;
 
-	int NewIndex = LastIndex + (int)(FixedDeltaTime.asSeconds() * ACTORS_NUMBER);
+	int NewIndex = LastIndex + std::max((int)(FixedDeltaTime.asSeconds() * ACTORS_NUMBER), 1);
 
 	if (NewIndex > ACTORS_NUMBER)
 		NewIndex = ACTORS_NUMBER;
