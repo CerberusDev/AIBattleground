@@ -40,10 +40,12 @@ private:
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
 	bool bShouldDrawLaser;
-	sf::Time ShotTimeCounter;
-	sf::Time QuadTreeUpdateCounter;
 	sf::Time ShotInterval;
 	sf::Time QuadTreeUpdateInterval;
+	sf::Time MovementDirectionUpdateInterval;
+	sf::Time ShotTimeCounter;
+	sf::Time QuadTreeUpdateCounter;
+	sf::Time MovementDirectionUpdateTimeCounter;
 
 	std::atomic<float> DrawData_PositionX;
 	std::atomic<float> DrawData_PositionY;
@@ -67,6 +69,7 @@ public:
 	void ProcessMovement(const float DeltaTime);
 	void UpdatePositionInQuadTree();
 	void RetreatToHealZone();
+	void CalculateVectorTowardsEnemy();
 	void StopMovement();
 	void GoTowardsNearestEnemy();
 	void TryToShoot();
