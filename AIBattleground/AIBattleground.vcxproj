@@ -26,6 +26,7 @@
     <ClCompile Include="Src\AISystemFSM.cpp" />
     <ClCompile Include="Src\Blackboard.cpp" />
     <ClCompile Include="Src\BTBase.cpp" />
+    <ClCompile Include="Src\CapturePoint.cpp" />
     <ClCompile Include="Src\Globals.cpp" />
     <ClCompile Include="Src\HealZone.cpp" />
     <ClCompile Include="Src\LevelInfo.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Src\AISystemFSM.h" />
     <ClInclude Include="Src\Blackboard.h" />
     <ClInclude Include="Src\BTBase.h" />
+    <ClInclude Include="Src\CapturePoint.h" />
     <ClInclude Include="Src\Globals.h" />
     <ClInclude Include="Src\HealZone.h" />
     <ClInclude Include="Src\LevelInfo.h" />

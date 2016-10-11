@@ -10,6 +10,7 @@
 #include "ActorSpawner.h"
 #include "QuadTree.h"
 #include "BTBase.h"
+#include "CapturePoint.h"
 
 //#define DRAW_DEBUG_GRID
 
@@ -40,6 +41,8 @@ private:
 	ActorSpawner SpawnerA2;
 	ActorSpawner SpawnerB1;
 	ActorSpawner SpawnerB2;
+	CapturePoint CapturePointA1;
+	CapturePoint CapturePointB1;
 	BTBase BTData;
 
 public:

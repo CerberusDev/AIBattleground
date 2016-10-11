@@ -12,12 +12,14 @@ LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& Leve
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
 QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
-HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.2f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
-HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.8f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
+HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.125f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
+HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.875f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
 SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_A),
 SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A),
 SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B),
-SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B)
+SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B),
+CapturePointA1(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.275f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
+CapturePointB1(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.725f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -57,6 +59,9 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->DrawLaserBeam(Window);
+
+	CapturePointA1.Draw(Window);
+	CapturePointB1.Draw(Window);
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
