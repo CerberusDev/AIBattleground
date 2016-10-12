@@ -212,7 +212,7 @@ struct BTTask_RetreatToHealZone : public BTTask
 
 struct BTTask_Idle : public BTTask
 {
-	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	virtual EStatus InternalUpdate(Blackboard*)
 	{
 		return EStatus::IN_PROGRESS;
 	}
