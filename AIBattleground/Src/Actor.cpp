@@ -17,7 +17,7 @@ LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullp
 ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)), 
-ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_VectorTowardsEnemyX(0.0f), DrawData_VectorTowardsEnemyY(0.0f),
+ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
 	for (int i = 0; i < ROBOT_SPRITES_NUMBER; ++i)
@@ -41,8 +41,8 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 	MovementDirectionOffset.x = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 	MovementDirectionOffset.y = GetRandomFloat(ShotDist * 1.5f) - ShotDist * 0.75f;
 
-	//AISystem = new AISystemFSM(&Blackboard);
-	AISystem = new AISystemBT(LevelInfo->GetBTData(), &Blackboard);
+	AISystem = new AISystemFSM(&Blackboard);
+	//AISystem = new AISystemBT(LevelInfo->GetBTData(), &Blackboard);
 	//AISystem = new AISystemBT(new BTBase(), &Blackboard);
 
 	Blackboard.SetMaxHP(MaxHP);
@@ -66,8 +66,6 @@ void Actor::SyncDrawData()
 	DrawData_PositionY = Position.y;
 	DrawData_HP = HP;
 	DrawData_bShouldDrawLaser = bShouldDrawLaser;
-	DrawData_VectorTowardsEnemyX = VectorTowardsEnemy.x;
-	DrawData_VectorTowardsEnemyY = VectorTowardsEnemy.y;
 }
 
 void Actor::DrawRobot(sf::RenderWindow* Window) const
@@ -90,7 +88,7 @@ void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 {
 	if (DrawData_bShouldDrawLaser)
 	{
-		sf::Vector2f Diff(DrawData_VectorTowardsEnemyX, DrawData_VectorTowardsEnemyY);
+		sf::Vector2f Diff(DrawData_LaserBeamDirectionX, DrawData_LaserBeamDirectionY);
 		NormalizeVector2f(Diff);
 		DrawData_AngleToEnemy = acos(Diff.x);
 		DrawData_AngleToEnemy *= (float)M_1_PI * 180.0f;
@@ -101,7 +99,7 @@ void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
 		sf::Transform CurrTransform;
 		CurrTransform.translate(sf::Vector2f(DrawData_PositionX, DrawData_PositionY));
 		CurrTransform.rotate(DrawData_AngleToEnemy);
-		CurrTransform.scale(GetLength(sf::Vector2f(DrawData_VectorTowardsEnemyX, DrawData_VectorTowardsEnemyY)) / BeamTexSize.x, 1.0f);
+		CurrTransform.scale(GetLength(sf::Vector2f(DrawData_LaserBeamDirectionX, DrawData_LaserBeamDirectionY)) / BeamTexSize.x, 1.0f);
 
 		Window->draw(LaserBeamSprite, CurrTransform);
 	}
@@ -209,6 +207,9 @@ void Actor::GoTowardsNearestEnemy()
 		sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
 		NormalizeVector2f(NewDesiredMovementDirection);
 		SetDesiredMovementDirection(NewDesiredMovementDirection);
+
+		sf::Vector2f Dist = LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
+		Blackboard.SetBEnemyCapturePointInRange(GetLength(Dist) <= ShotDist + LevelInfo->GetEnemyCapturePoint(Team)->GetSize());
 	}
 }
 
@@ -269,6 +270,23 @@ void Actor::TryToShoot()
 		ShotTimeCounter = sf::Time::Zero;
 
 		CalculateVectorTowardsEnemy();
+
+		DrawData_LaserBeamDirectionX = VectorTowardsEnemy.x;
+		DrawData_LaserBeamDirectionY = VectorTowardsEnemy.y;
+	}
+}
+
+void Actor::TryToShootToEnemyCapturePoint()
+{
+	if (ShotTimeCounter >= ShotInterval)
+	{
+		bShouldDrawLaser = true;
+		LevelInfo->GetEnemyCapturePoint(Team)->TakeDamage(Damage);
+		ShotTimeCounter = sf::Time::Zero;
+
+		sf::Vector2f VectorTowardsEnemyCapturePoint = LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
+		DrawData_LaserBeamDirectionX = VectorTowardsEnemyCapturePoint.x;
+		DrawData_LaserBeamDirectionY = VectorTowardsEnemyCapturePoint.y;
 	}
 }
 
@@ -279,6 +297,11 @@ void Actor::TakeDamage(float DamageAmount)
 
 	if (HP <= 0.0f)
 		LevelInfo->DestroyActor(this);
+}
+
+void Actor::SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP)
+{
+	Blackboard.SetBEnemyCapturePointAtLowHP(argbEnemyCapturePointAtLowHP);
 }
 
 void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)

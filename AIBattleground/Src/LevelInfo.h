@@ -60,6 +60,7 @@ public:
 	class Actor** GetActorsArray();
 	int GetActorsNumber() const;
 	BTBase* GetBTData();
+	CapturePoint* GetEnemyCapturePoint(ETeam argTeam);
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);

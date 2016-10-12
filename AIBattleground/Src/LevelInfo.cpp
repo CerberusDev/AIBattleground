@@ -18,8 +18,8 @@ SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.
 SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A),
 SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B),
 SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B),
-CapturePointA1(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.275f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
-CapturePointB1(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.725f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
+CapturePointA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.775f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
+CapturePointB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.225f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -182,4 +182,9 @@ int LevelInfo::GetActorsNumber() const
 BTBase* LevelInfo::GetBTData()
 {
 	return &BTData;
+}
+
+CapturePoint* LevelInfo::GetEnemyCapturePoint(ETeam argTeam)
+{
+	return argTeam == ETeam::TEAM_A ? &CapturePointB1 : &CapturePointA1;
 }

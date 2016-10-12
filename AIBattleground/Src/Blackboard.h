@@ -15,6 +15,8 @@ private:
 	bool bNearestEnemyIsSet;
 	bool bSomeValueHasChanged;
 	bool bBTRecovering;
+	bool bEnemyCapturePointAtLowHP;
+	bool bEnemyCapturePointInRange;
 
 public:
 	Blackboard(Actor* argOwner);
@@ -39,6 +41,12 @@ public:
 
 	void SetBBTRecovering(bool argbBTRecovering);
 	bool GetBBTRecovering() const;
+
+	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
+	bool GetBEnemyCapturePointAtLowHP() const;
+
+	void SetBEnemyCapturePointInRange(bool argbEnemyCapturePointInRange);
+	bool GetBEnemyCapturePointInRange() const;
 
 	bool SomeValueHasChanged();
 };

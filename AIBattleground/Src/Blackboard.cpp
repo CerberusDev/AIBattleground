@@ -6,7 +6,7 @@
 
 Blackboard::Blackboard(Actor* argOwner) :
 Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
-bNearestEnemyIsSet(false), bBTRecovering(false)
+bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false)
 {
 
 }
@@ -102,6 +102,34 @@ void Blackboard::SetBBTRecovering(bool argbBTRecovering)
 bool Blackboard::GetBBTRecovering() const
 {
 	return bBTRecovering;
+}
+
+void Blackboard::SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP)
+{
+	if (bEnemyCapturePointAtLowHP != argbEnemyCapturePointAtLowHP)
+	{
+		bEnemyCapturePointAtLowHP = argbEnemyCapturePointAtLowHP;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBEnemyCapturePointAtLowHP() const
+{
+	return bEnemyCapturePointAtLowHP;
+}
+
+void Blackboard::SetBEnemyCapturePointInRange(bool argbEnemyCapturePointInRange)
+{
+	if (bEnemyCapturePointInRange != argbEnemyCapturePointInRange)
+	{
+		bEnemyCapturePointInRange = argbEnemyCapturePointInRange;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBEnemyCapturePointInRange() const
+{
+	return bEnemyCapturePointInRange;
 }
 
 bool Blackboard::SomeValueHasChanged()

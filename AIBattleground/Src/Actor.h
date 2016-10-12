@@ -49,8 +49,8 @@ private:
 
 	std::atomic<float> DrawData_PositionX;
 	std::atomic<float> DrawData_PositionY;
-	std::atomic<float> DrawData_VectorTowardsEnemyX;
-	std::atomic<float> DrawData_VectorTowardsEnemyY;
+	std::atomic<float> DrawData_LaserBeamDirectionX;
+	std::atomic<float> DrawData_LaserBeamDirectionY;
 	std::atomic<float> DrawData_HP;
 	mutable float DrawData_AngleToEnemy;
 	std::atomic<bool> DrawData_bShouldDrawLaser;
@@ -73,6 +73,7 @@ public:
 	void StopMovement();
 	void GoTowardsNearestEnemy();
 	void TryToShoot();
+	void TryToShootToEnemyCapturePoint();
 	void TakeDamage(float DamageAmount);
 	const sf::Vector2f& GetPosition() const;
 	ETeam GetTeam() const;
@@ -81,6 +82,7 @@ public:
 	void UpdateLastQuadTreePosition(const sf::Vector2f& NewPositionInQuadTree);
 	const sf::Vector2f& GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
+	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);
