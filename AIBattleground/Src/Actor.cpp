@@ -20,7 +20,7 @@ MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::se
 ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_VectorTowardsEnemyX(0.0f), DrawData_VectorTowardsEnemyY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
-	for (int i = 0; i < ROBOT_SPRITES_AMOUNT; ++i)
+	for (int i = 0; i < ROBOT_SPRITES_NUMBER; ++i)
 	{
 		sf::Vector2u TexSize = TexManager->InitTexture(&RobotSprites[i], TexName + std::to_string(i + 1));
 
@@ -83,7 +83,7 @@ void Actor::DrawRobot(sf::RenderWindow* Window) const
 const sf::Sprite& Actor::GetRobotSprite() const
 {
 	const float HPRatio = DrawData_HP / MaxHP;
-	return RobotSprites[(int)((1.0f - HPRatio) * ROBOT_SPRITES_AMOUNT)];
+	return RobotSprites[(int)((1.0f - HPRatio) * ROBOT_SPRITES_NUMBER)];
 }
 
 void Actor::DrawLaserBeam(sf::RenderWindow* Window) const
