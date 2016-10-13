@@ -19,6 +19,7 @@ private:
 	ETeam Team;
 	float MaxHP;
 	float HP;
+	float HPPerSecond;
 	float LowHPThreshold;
 	float Size;
 	bool bHasLowHP;
@@ -27,7 +28,9 @@ public:
 	CapturePoint(class LevelInfo* argLevelInfo, class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam);
 	~CapturePoint();
 
+	void Update(const float DeltaTime);
 	void TakeDamage(float DamageAmount);
+	void ChangeHP(float HPDelta);
 	void Draw(sf::RenderWindow* Window) const;
 	const sf::Sprite& GetCurrentSprite() const;
 	sf::Vector2f GetPosition() const;

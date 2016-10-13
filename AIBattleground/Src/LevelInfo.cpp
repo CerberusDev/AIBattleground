@@ -93,6 +93,8 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 	SpawnerB2.Update(DeltaTime);
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
+	CapturePointA1.Update(DeltaTime);
+	CapturePointB1.Update(DeltaTime);
 
 	T2 += C.restart();
 
