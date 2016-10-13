@@ -14,10 +14,10 @@
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
 LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
-ActualMovementDirection(0.0f, 0.0f), VectorTowardsEnemy(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
+ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)), 
-ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
+BBUpdateInterval(sf::seconds(0.2f)), ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
 	for (int i = 0; i < ROBOT_SPRITES_NUMBER; ++i)
@@ -47,12 +47,14 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
+	Blackboard.SetBEnemyCapturePointAtLowHP(LevelInfo->GetEnemyCapturePoint(Team)->HasLowHP());
 
 	LevelInfo->InitPositionInQuadTree(this);
 	LevelInfo->FindNearestEnemyForActor(this);
 
 	QuadTreeUpdateCounter = sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()));
 	MovementDirectionUpdateTimeCounter = sf::seconds(GetRandomFloat(MovementDirectionUpdateInterval.asSeconds()));
+	BBUpdateTimeCounter = sf::seconds(GetRandomFloat(BBUpdateInterval.asSeconds()));
 }
 
 Actor::~Actor()
@@ -122,15 +124,30 @@ void Actor::Update(const float DeltaTime)
 	ShotTimeCounter += sf::seconds(DeltaTime);
 	QuadTreeUpdateCounter += sf::seconds(DeltaTime);
 	MovementDirectionUpdateTimeCounter += sf::seconds(DeltaTime);
+	BBUpdateTimeCounter += sf::seconds(DeltaTime);
 	bShouldDrawLaser = false;
 	
 	ProcessMovement(DeltaTime);
+
 	UpdatePositionInQuadTree();
 
-	if (HP != MaxHP)
+	if (BBUpdateTimeCounter >= BBUpdateInterval)
 	{
-		const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
-		Blackboard.SetBHealthZoneDestReached(bReached);	
+		const bool bCapturePointInRange = GetLength(CalculateVectorTowardsEnemyCapturePoint()) <= ShotDist + LevelInfo->GetEnemyCapturePoint(Team)->GetSize();
+		Blackboard.SetBEnemyCapturePointInRange(bCapturePointInRange);
+
+		if (NearestEnemy)
+		{
+			Blackboard.SetBEnemyInRange(GetLength(CalculateVectorTowardsNearestEnemy()) <= ShotDist);
+		}
+
+		if (HP != MaxHP)
+		{
+			const bool bReached = GetSquaredDist(LevelInfo->GetHealZonePosition(Team) + MovementDirectionOffset, GetPosition()) < 100.0f;
+			Blackboard.SetBHealthZoneDestReached(bReached);	
+		}
+
+		BBUpdateTimeCounter -= BBUpdateInterval;
 	}
 }
 
@@ -178,17 +195,20 @@ void Actor::RetreatToHealZone()
 	SetDesiredMovementDirection(NewDesiredMovementDirection);
 }
 
-void Actor::CalculateVectorTowardsEnemy()
+sf::Vector2f Actor::CalculateVectorTowardsNearestEnemy() const
 {
-	if (NearestEnemy)
-	{
-		VectorTowardsEnemy = NearestEnemy->GetPosition() - GetPosition();
-		Blackboard.SetBEnemyInRange(GetLength(VectorTowardsEnemy) <= ShotDist);
-	}
-	else
+	if (NearestEnemy == nullptr)
 	{
 		std::cout << "Error! CalculateVectorTowardsEnemy(): None NearestEnemy." << std::endl;
+		return sf::Vector2f();
 	}
+
+	return NearestEnemy->GetPosition() - GetPosition();
+}
+
+sf::Vector2f Actor::CalculateVectorTowardsEnemyCapturePoint() const
+{
+	return LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
 }
 
 void Actor::StopMovement()
@@ -203,13 +223,21 @@ void Actor::GoTowardsNearestEnemy()
 	{
 		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
 
-		CalculateVectorTowardsEnemy();
-		sf::Vector2f NewDesiredMovementDirection = VectorTowardsEnemy + MovementDirectionOffset;
+		sf::Vector2f NewDesiredMovementDirection = CalculateVectorTowardsNearestEnemy() + MovementDirectionOffset;
 		NormalizeVector2f(NewDesiredMovementDirection);
 		SetDesiredMovementDirection(NewDesiredMovementDirection);
+	}
+}
 
-		sf::Vector2f Dist = LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
-		Blackboard.SetBEnemyCapturePointInRange(GetLength(Dist) <= ShotDist + LevelInfo->GetEnemyCapturePoint(Team)->GetSize());
+void Actor::GoTowardsEnemyCapturePoint()
+{
+	if (MovementDirectionUpdateTimeCounter >= MovementDirectionUpdateInterval)
+	{
+		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
+
+		sf::Vector2f NewDesiredMovementDirection = CalculateVectorTowardsEnemyCapturePoint() + MovementDirectionOffset;
+		NormalizeVector2f(NewDesiredMovementDirection);
+		SetDesiredMovementDirection(NewDesiredMovementDirection);
 	}
 }
 
@@ -237,7 +265,10 @@ void Actor::SetNearestEnemy(Actor* NewNearestEnemy)
 	Blackboard.SetBNearestEnemyIsSet(NearestEnemy != nullptr);
 
 	if (NearestEnemy)
-		CalculateVectorTowardsEnemy();
+	{
+		Blackboard.SetBEnemyInRange(GetLength(CalculateVectorTowardsNearestEnemy()) <= ShotDist);
+		MovementDirectionUpdateTimeCounter = MovementDirectionUpdateInterval;
+	}
 }
 
 Actor* Actor::GetNearestEnemy() const
@@ -269,8 +300,7 @@ void Actor::TryToShoot()
 		NearestEnemy->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
 
-		CalculateVectorTowardsEnemy();
-
+		sf::Vector2f VectorTowardsEnemy = CalculateVectorTowardsNearestEnemy();
 		DrawData_LaserBeamDirectionX = VectorTowardsEnemy.x;
 		DrawData_LaserBeamDirectionY = VectorTowardsEnemy.y;
 	}
@@ -284,7 +314,7 @@ void Actor::TryToShootToEnemyCapturePoint()
 		LevelInfo->GetEnemyCapturePoint(Team)->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
 
-		sf::Vector2f VectorTowardsEnemyCapturePoint = LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
+		sf::Vector2f VectorTowardsEnemyCapturePoint = CalculateVectorTowardsEnemyCapturePoint();
 		DrawData_LaserBeamDirectionX = VectorTowardsEnemyCapturePoint.x;
 		DrawData_LaserBeamDirectionY = VectorTowardsEnemyCapturePoint.y;
 	}

@@ -27,7 +27,6 @@ private:
 	sf::Vector2f ActualMovementDirection;
 	sf::Vector2u Size;
 	sf::Vector2u BeamTexSize;
-	sf::Vector2f VectorTowardsEnemy;
 	float ShotDist;
 	sf::Vector2f MovementDirectionOffset;
 	float MovementSpeed;
@@ -43,9 +42,11 @@ private:
 	sf::Time ShotInterval;
 	sf::Time QuadTreeUpdateInterval;
 	sf::Time MovementDirectionUpdateInterval;
+	sf::Time BBUpdateInterval;
 	sf::Time ShotTimeCounter;
 	sf::Time QuadTreeUpdateCounter;
 	sf::Time MovementDirectionUpdateTimeCounter;
+	sf::Time BBUpdateTimeCounter;
 
 	std::atomic<float> DrawData_PositionX;
 	std::atomic<float> DrawData_PositionY;
@@ -69,9 +70,11 @@ public:
 	void ProcessMovement(const float DeltaTime);
 	void UpdatePositionInQuadTree();
 	void RetreatToHealZone();
-	void CalculateVectorTowardsEnemy();
+	sf::Vector2f CalculateVectorTowardsNearestEnemy() const;
+	sf::Vector2f CalculateVectorTowardsEnemyCapturePoint() const;
 	void StopMovement();
 	void GoTowardsNearestEnemy();
+	void GoTowardsEnemyCapturePoint();
 	void TryToShoot();
 	void TryToShootToEnemyCapturePoint();
 	void TakeDamage(float DamageAmount);

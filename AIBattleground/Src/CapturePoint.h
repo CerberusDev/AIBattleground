@@ -21,6 +21,7 @@ private:
 	float HP;
 	float LowHPThreshold;
 	float Size;
+	bool bHasLowHP;
 
 public:
 	CapturePoint(class LevelInfo* argLevelInfo, class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam);
@@ -31,4 +32,5 @@ public:
 	const sf::Sprite& GetCurrentSprite() const;
 	sf::Vector2f GetPosition() const;
 	float GetSize() const;
+	bool HasLowHP() const;
 };

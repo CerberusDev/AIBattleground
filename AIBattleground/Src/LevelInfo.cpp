@@ -18,8 +18,8 @@ SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.
 SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A),
 SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B),
 SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B),
-CapturePointA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.775f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
-CapturePointB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.225f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
+CapturePointA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.375f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
+CapturePointB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.625f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -74,7 +74,7 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 
 	static int LastIndex = 0;
 
-	int NewIndex = LastIndex + std::max((int)(FixedDeltaTime.asSeconds() * ACTORS_NUMBER), 1);
+	int NewIndex = LastIndex + std::max((int)(FixedDeltaTime.asSeconds() * 1.5f * ACTORS_NUMBER), 1);
 
 	if (NewIndex > ACTORS_NUMBER)
 		NewIndex = ACTORS_NUMBER;
