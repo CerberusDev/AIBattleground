@@ -60,9 +60,9 @@ void CapturePoint::ChangeHP(float HPDelta)
 			if (Actor* CurrActor = ActorsArray[i])
 			{
 				if (CurrActor->GetTeam() != Team)
-				{
 					CurrActor->SetBEnemyCapturePointAtLowHP(bHasLowHP);
-				}
+				else
+					CurrActor->SetBAlliedCapturePointAtLowHP(bHasLowHP);
 			}
 		}
 	}

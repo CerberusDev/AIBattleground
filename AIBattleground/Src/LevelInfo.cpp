@@ -60,12 +60,12 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 		if (CurrActor)
 			CurrActor->DrawLaserBeam(Window);
 
-	CapturePointA1.Draw(Window);
-	CapturePointB1.Draw(Window);
-
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->DrawRobot(Window);
+
+	CapturePointA1.Draw(Window);
+	CapturePointB1.Draw(Window);
 }
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
@@ -189,4 +189,9 @@ BTBase* LevelInfo::GetBTData()
 CapturePoint* LevelInfo::GetEnemyCapturePoint(ETeam argTeam)
 {
 	return argTeam == ETeam::TEAM_A ? &CapturePointB1 : &CapturePointA1;
+}
+
+CapturePoint* LevelInfo::GetAlliedCapturePoint(ETeam argTeam)
+{
+	return argTeam == ETeam::TEAM_A ? &CapturePointA1 : &CapturePointB1;
 }

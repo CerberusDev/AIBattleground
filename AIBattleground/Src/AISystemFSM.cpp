@@ -49,6 +49,13 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
 		else if (Blackboard->GetBEnemyCapturePointInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_CAPTURE_POINT;
+		else if (Blackboard->GetBAlliedCapturePointAtLowHP())
+		{
+			if (!Blackboard->GetBNearAlliedCapturePoint())
+				NewState = EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT;
+			else if (Blackboard->GetBNearestEnemyIsSet())
+				NewState = EState::MOVE_TOWARDS_ATTACKING_ENEMY;
+		}
 		else if (!Blackboard->GetBEnemyCapturePointAtLowHP())
 			NewState = EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT;
 		else if (Blackboard->GetBNearestEnemyIsSet())
@@ -63,6 +70,16 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::SHOOTING_TO_ENEMY_CAPTURE_POINT;
 		else if (!Blackboard->GetBEnemyCapturePointAtLowHP())
 			NewState = EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT;
+		else if (Blackboard->GetBAlliedCapturePointAtLowHP())
+			NewState = EState::IDLE;
+		else if (!Blackboard->GetBNearestEnemyIsSet())
+			NewState = EState::IDLE;
+		break;
+	case EState::MOVE_TOWARDS_ATTACKING_ENEMY:
+		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
+			NewState = EState::RETREAT;
+		else if (Blackboard->GetBEnemyInRange())
+			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
 		else if (!Blackboard->GetBNearestEnemyIsSet())
 			NewState = EState::IDLE;
 		break;
@@ -71,10 +88,22 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyCapturePointAtLowHP())
 			NewState = EState::IDLE;
-		else if (Blackboard->GetBEnemyCapturePointInRange())
-			NewState = EState::SHOOTING_TO_ENEMY_CAPTURE_POINT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
+		else if (Blackboard->GetBEnemyCapturePointInRange())
+			NewState = EState::SHOOTING_TO_ENEMY_CAPTURE_POINT;
+		else if (Blackboard->GetBAlliedCapturePointAtLowHP())
+			NewState = EState::IDLE;
+		break;
+	case EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT:
+		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
+			NewState = EState::RETREAT;
+		else if (Blackboard->GetBEnemyInRange())
+			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
+		else if (!Blackboard->GetBAlliedCapturePointAtLowHP())
+			NewState = EState::IDLE;
+		else if (Blackboard->GetBNearAlliedCapturePoint())
+			NewState = EState::IDLE;
 		break;
 	case EState::SHOOTING_TO_ENEMY_ACTOR:
 		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.5f)
@@ -115,7 +144,13 @@ void AISystemFSM::StateStart()
 	case EState::MOVE_TOWARDS_ENEMY:
 		;
 		break;
+	case EState::MOVE_TOWARDS_ATTACKING_ENEMY:
+		;
+		break;
 	case EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT:
+		;
+		break;
+	case EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT:
 		;
 		break;
 	case EState::SHOOTING_TO_ENEMY_ACTOR:
@@ -143,7 +178,13 @@ void AISystemFSM::StateEnd()
 	case EState::MOVE_TOWARDS_ENEMY:
 		;
 		break;
+	case EState::MOVE_TOWARDS_ATTACKING_ENEMY:
+		;
+		break;
 	case EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT:
+		;
+		break;
+	case EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT:
 		;
 		break;
 	case EState::SHOOTING_TO_ENEMY_ACTOR:
@@ -171,8 +212,14 @@ void AISystemFSM::StateUpdate()
 	case EState::MOVE_TOWARDS_ENEMY:
 		Blackboard->GetOwner()->GoTowardsNearestEnemy();
 		break;
+	case EState::MOVE_TOWARDS_ATTACKING_ENEMY:
+		Blackboard->GetOwner()->GoTowardsNearestEnemy();
+		break;
 	case EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT:
 		Blackboard->GetOwner()->GoTowardsEnemyCapturePoint();
+		break;
+	case EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT:
+		Blackboard->GetOwner()->GoTowardsAlliedCapturePoint();
 		break;
 	case EState::SHOOTING_TO_ENEMY_ACTOR:
 		Blackboard->GetOwner()->TryToShoot();

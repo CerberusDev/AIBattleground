@@ -72,9 +72,11 @@ public:
 	void RetreatToHealZone();
 	sf::Vector2f CalculateVectorTowardsNearestEnemy() const;
 	sf::Vector2f CalculateVectorTowardsEnemyCapturePoint() const;
+	sf::Vector2f CalculateVectorTowardsAlliedCapturePoint() const;
 	void StopMovement();
 	void GoTowardsNearestEnemy();
 	void GoTowardsEnemyCapturePoint();
+	void GoTowardsAlliedCapturePoint();
 	void TryToShoot();
 	void TryToShootToEnemyCapturePoint();
 	void TakeDamage(float DamageAmount);
@@ -86,6 +88,7 @@ public:
 	const sf::Vector2f& GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
 	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
+	void SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP);
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);

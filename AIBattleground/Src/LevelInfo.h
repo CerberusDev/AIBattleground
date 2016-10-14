@@ -61,6 +61,7 @@ public:
 	int GetActorsNumber() const;
 	BTBase* GetBTData();
 	CapturePoint* GetEnemyCapturePoint(ETeam argTeam);
+	CapturePoint* GetAlliedCapturePoint(ETeam argTeam);
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);

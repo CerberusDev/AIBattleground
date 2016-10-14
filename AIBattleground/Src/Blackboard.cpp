@@ -6,7 +6,8 @@
 
 Blackboard::Blackboard(Actor* argOwner) :
 Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
-bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false)
+bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false), 
+bAlliedCapturePointAtLowHP(false), bNearAlliedCapturePoint(false)
 {
 
 }
@@ -130,6 +131,34 @@ void Blackboard::SetBEnemyCapturePointInRange(bool argbEnemyCapturePointInRange)
 bool Blackboard::GetBEnemyCapturePointInRange() const
 {
 	return bEnemyCapturePointInRange;
+}
+
+void Blackboard::SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP)
+{
+	if (bAlliedCapturePointAtLowHP != argbAlliedCapturePointAtLowHP)
+	{
+		bAlliedCapturePointAtLowHP = argbAlliedCapturePointAtLowHP;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBAlliedCapturePointAtLowHP() const
+{
+	return bAlliedCapturePointAtLowHP;
+}
+
+void Blackboard::SetBNearAlliedCapturePoint(bool argbNearAlliedCapturePoint)
+{
+	if (bNearAlliedCapturePoint != argbNearAlliedCapturePoint)
+	{
+		bNearAlliedCapturePoint = argbNearAlliedCapturePoint;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBNearAlliedCapturePoint() const
+{
+	return bNearAlliedCapturePoint;
 }
 
 bool Blackboard::SomeValueHasChanged()
