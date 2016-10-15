@@ -349,6 +349,9 @@ void Actor::TryToShootToEnemyCapturePoint()
 
 void Actor::TakeDamage(float DamageAmount)
 {
+	if (HP - DamageAmount <= 0.0f && GetRandomFloat() > 0.005f)
+		return;
+
 	HP -= DamageAmount;
 	Blackboard.SetHP(HP);
 
