@@ -11,7 +11,7 @@
 CapturePoint::CapturePoint(class LevelInfo* argLevelInfo, class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam) :
 MyLevelInfo(argLevelInfo), ActorsArray(MyLevelInfo->GetActorsArray()), ActorsNumber(MyLevelInfo->GetActorsNumber()),
 Position(argPosition), HealStepInterval(sf::seconds(1.0f)), Team(argTeam), MaxHP(50000.0f), HP(MaxHP), HPPerSecond(MaxHP / 20.0f),
-LowHPThreshold(MaxHP * 0.8f), VeryLowHPThreshold(MaxHP * 0.33f), Size(0.0f), bHasLowHP(false)
+LowHPThreshold(MaxHP * 0.6f), VeryLowHPThreshold(MaxHP * 0.33f), Size(0.0f), bHasLowHP(false)
 {
 	sf::Vector2u FirstTextureSize;
 
