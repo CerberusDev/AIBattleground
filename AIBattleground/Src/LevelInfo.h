@@ -14,7 +14,7 @@
 //#define DRAW_DEBUG_GRID
 
 #define ACTORS_NUMBER 6000
-#define CAPTURE_POINTS_PER_TEAM_NUMER 2
+#define CAPTURE_POINTS_PER_TEAM_NUMER 4
 
 class LevelInfo
 {
@@ -39,8 +39,10 @@ private:
 	HealZone HealZoneB;
 	ActorSpawner SpawnerA1;
 	ActorSpawner SpawnerA2;
+	ActorSpawner SpawnerA3;
 	ActorSpawner SpawnerB1;
 	ActorSpawner SpawnerB2;
+	ActorSpawner SpawnerB3;
 	class CapturePoint* CapturePointsA[CAPTURE_POINTS_PER_TEAM_NUMER];
 	CapturePoint* CapturePointsB[CAPTURE_POINTS_PER_TEAM_NUMER];
 	CapturePoint* MostEndangeredCapturePointA;
