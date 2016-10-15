@@ -153,6 +153,9 @@ void LevelInfo::UpdateMostEndangeredCapturePoint(ETeam argTeam)
 		{
 			NewMostEndangeredCapturePoint = CapturePoints[i];
 			MinHP = CapturePoints[i]->GetHP();
+
+			if (NewMostEndangeredCapturePoint->HasVeryLowHP())
+				break;
 		}
 	}
 

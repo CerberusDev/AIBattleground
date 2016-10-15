@@ -10,7 +10,8 @@
 
 CapturePoint::CapturePoint(class LevelInfo* argLevelInfo, class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam) :
 MyLevelInfo(argLevelInfo), ActorsArray(MyLevelInfo->GetActorsArray()), ActorsNumber(MyLevelInfo->GetActorsNumber()),
-Position(argPosition), Team(argTeam), MaxHP(10000.0f), HP(MaxHP), HPPerSecond(500.0f), LowHPThreshold(MaxHP / 2.0f), Size(0.0f), bHasLowHP(false)
+Position(argPosition), HealStepInterval(sf::seconds(1.0f)), Team(argTeam), MaxHP(10000.0f), HP(MaxHP), HPPerSecond(MaxHP / 20.0f),
+LowHPThreshold(MaxHP / 2.0f), VeryLowHPThreshold(MaxHP / 5.0f), Size(0.0f), bHasLowHP(false)
 {
 	sf::Vector2u FirstTextureSize;
 
@@ -39,7 +40,13 @@ CapturePoint::~CapturePoint()
 
 void CapturePoint::Update(const float DeltaTime)
 {
-	ChangeHP(HPPerSecond * DeltaTime);
+	HealStepTimeCounter += sf::seconds(DeltaTime);
+
+	if (HealStepTimeCounter >= HealStepInterval)
+	{
+		ChangeHP(HPPerSecond);
+		HealStepTimeCounter -= HealStepInterval;
+	}
 }
 
 void CapturePoint::TakeDamage(float DamageAmount)
@@ -87,6 +94,11 @@ float CapturePoint::GetSize() const
 bool CapturePoint::HasLowHP() const
 {
 	return bHasLowHP;
+}
+
+bool CapturePoint::HasVeryLowHP() const
+{
+	return HP < VeryLowHPThreshold;
 }
 
 float CapturePoint::GetHP() const
