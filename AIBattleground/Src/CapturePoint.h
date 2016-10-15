@@ -21,7 +21,7 @@ private:
 	ETeam Team;
 	float MaxHP;
 	float HP;
-	float HPPerSecond;
+	float HPPerHealStep;
 	float LowHPThreshold;
 	float VeryLowHPThreshold;
 	float Size;
