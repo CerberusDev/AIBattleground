@@ -197,7 +197,7 @@ void AISystemFSM::StateEnd()
 		;
 		break;
 	case EState::RECOVER:
-		;
+		Blackboard->SetBHealthZoneDestReached(false);
 		break;
 	}
 }
