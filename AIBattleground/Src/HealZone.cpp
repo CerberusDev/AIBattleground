@@ -7,7 +7,7 @@
 #include "Actor.h"
 
 HealZone::HealZone(class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam, class Actor** argActorsArray, int argActorsNumber) :
-Position(argPosition), Team(argTeam), HealTimeCounter(sf::Time::Zero), HealTimeStep(sf::seconds(0.1f)), HPToHeal(10.f), 
+Position(argPosition), Team(argTeam), HealTimeCounter(sf::Time::Zero), HealTimeStep(sf::seconds(0.15f)), HPToHeal(10.f), 
 ActorsArray(argActorsArray), ActorsNumber(argActorsNumber)
 {
 	sf::Vector2u Size = TexManager->InitTexture(&HealZoneSprite, std::string("HealZone") + (Team == ETeam::TEAM_A ? "A" : "B"));
