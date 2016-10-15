@@ -7,7 +7,6 @@
 #include <SFML\Graphics.hpp>
 
 #include "HealZone.h"
-#include "ActorSpawner.h"
 #include "QuadTree.h"
 #include "BTBase.h"
 
@@ -15,6 +14,7 @@
 
 #define ACTORS_NUMBER 6000
 #define CAPTURE_POINTS_PER_TEAM_NUMER 4
+#define ACTOR_SPAWNERS_NUMER 6
 
 class LevelInfo
 {
@@ -37,12 +37,7 @@ private:
 	class Actor* Actors[ACTORS_NUMBER];
 	HealZone HealZoneA;
 	HealZone HealZoneB;
-	ActorSpawner SpawnerA1;
-	ActorSpawner SpawnerA2;
-	ActorSpawner SpawnerA3;
-	ActorSpawner SpawnerB1;
-	ActorSpawner SpawnerB2;
-	ActorSpawner SpawnerB3;
+	class ActorSpawner* ActorSpawners[ACTOR_SPAWNERS_NUMER];
 	class CapturePoint* CapturePointsA[CAPTURE_POINTS_PER_TEAM_NUMER];
 	CapturePoint* CapturePointsB[CAPTURE_POINTS_PER_TEAM_NUMER];
 	CapturePoint* MostEndangeredCapturePointA;

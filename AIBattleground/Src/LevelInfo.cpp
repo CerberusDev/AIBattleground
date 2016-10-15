@@ -8,6 +8,7 @@
 #include "Actor.h"
 #include "TextureManager.h"
 #include "CapturePoint.h"
+#include "ActorSpawner.h"
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
@@ -15,12 +16,6 @@ QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f,
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.125f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
 HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.875f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
-SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 100),
-SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 150),
-SpawnerA3(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 25),
-SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 100),
-SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150),
-SpawnerB3(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 25),
 MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
@@ -29,6 +24,13 @@ MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
+
+	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 100);
+	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 150);
+	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 25);
+	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 100);
+	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150);
+	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 25);
 
 	CapturePointsA[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.28f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_A);
 	CapturePointsA[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.25f, LevelBoundaries.top + LevelBoundaries.height * 0.375f), ETeam::TEAM_A);
@@ -56,6 +58,11 @@ LevelInfo::~LevelInfo()
 	{
 		delete CapturePointsA[i];
 		delete CapturePointsB[i];
+	}
+
+	for (int i = 0; i < ACTOR_SPAWNERS_NUMER; ++i)
+	{
+		delete ActorSpawners[i];
 	}
 }
 
@@ -109,12 +116,9 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 
 	T1 += C.restart();
 
-	SpawnerA1.Update(DeltaTime);
-	SpawnerA2.Update(DeltaTime);
-	SpawnerA3.Update(DeltaTime);
-	SpawnerB1.Update(DeltaTime);
-	SpawnerB2.Update(DeltaTime);
-	SpawnerB3.Update(DeltaTime);
+	for (ActorSpawner* CurrSpawner : ActorSpawners)
+		CurrSpawner->Update(DeltaTime);
+
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
 
