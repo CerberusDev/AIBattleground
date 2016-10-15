@@ -43,6 +43,8 @@ private:
 	ActorSpawner SpawnerB2;
 	class CapturePoint* CapturePointsA[CAPTURE_POINTS_PER_TEAM_NUMER];
 	CapturePoint* CapturePointsB[CAPTURE_POINTS_PER_TEAM_NUMER];
+	CapturePoint* MostEndangeredCapturePointA;
+	CapturePoint* MostEndangeredCapturePointB;
 	BTBase BTData;
 
 public:
@@ -52,6 +54,7 @@ public:
 	void Draw(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime, const sf::Time FixedDeltaTime);
 	void FindNearestEnemyForActor(class Actor* RequestingActor);
+	void UpdateMostEndangeredCapturePoint(ETeam argTeam);
 	void QuickFindNearEnemyForActor(class Actor* RequestingActor);
 	void DestroyActor(class Actor* ActorToDestroy);
 	void InitPositionInQuadTree(Actor* ActorToUpdate);
@@ -61,9 +64,8 @@ public:
 	int GetActorsNumber() const;
 	BTBase* GetBTData();
 	CapturePoint* GetNearestEnemyCapturePoint(Actor* TargetActor);
-	CapturePoint* GetNearestAlliedCapturePoint(Actor* TargetActor);
+	CapturePoint* GetMostEndangeredCapturePoint(ETeam argTeam) const;
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);
-	CapturePoint* GetNearestCapturePoint(const sf::Vector2f& TargetPosition, ETeam argTeam);
 };

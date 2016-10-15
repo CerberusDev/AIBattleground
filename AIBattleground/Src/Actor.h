@@ -19,7 +19,6 @@ private:
 	Blackboard Blackboard;
 	Actor* NearestEnemy;
 	class CapturePoint* NearestEnemyCapturePoint;
-	class CapturePoint* NearestAlliedCapturePoint;
 	sf::Sprite RobotSprites[ROBOT_SPRITES_NUMBER];
 	sf::Sprite LaserBeamSprite;
 	sf::Sprite LaserBurstSprite;
@@ -88,9 +87,8 @@ public:
 	const sf::Vector2f& GetLastQuadTreePosition() const;
 	void Heal(float HPToHeal);
 	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
-	void SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP);
+	void NotifyNewEndangeredAlliedCapturePoint(CapturePoint* NewEndangeredAlliedCapturePoint);
 	CapturePoint* GetNearestEnemyCapturePoint() const;
-	CapturePoint* GetNearestAlliedCapturePoint() const;
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);

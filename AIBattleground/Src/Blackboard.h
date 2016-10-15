@@ -17,7 +17,7 @@ private:
 	bool bBTRecovering;
 	bool bEnemyCapturePointAtLowHP;
 	bool bEnemyCapturePointInRange;
-	bool bAlliedCapturePointAtLowHP;
+	bool bMostEndangeredAlliedCapturePointIsSet;
 	bool bNearAlliedCapturePoint;
 
 public:
@@ -50,8 +50,8 @@ public:
 	void SetBEnemyCapturePointInRange(bool argbEnemyCapturePointInRange);
 	bool GetBEnemyCapturePointInRange() const;
 
-	void SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP);
-	bool GetBAlliedCapturePointAtLowHP() const;
+	void SetBMostEndangeredAlliedCapturePointIsSet(bool argbMostEndangeredAlliedCapturePointIsSet);
+	bool GetBMostEndangeredAlliedCapturePointIsSet() const;
 
 	void SetBNearAlliedCapturePoint(bool argbNearAlliedCapturePoint);
 	bool GetBNearAlliedCapturePoint() const;

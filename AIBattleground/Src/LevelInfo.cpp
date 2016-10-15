@@ -18,7 +18,8 @@ HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width 
 SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A, 150),
 SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_A, 30),
 SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B, 150),
-SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B, 30)
+SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B, 30),
+MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -115,6 +116,9 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 		CapturePointsB[i]->Update(DeltaTime);
 	}
 
+	UpdateMostEndangeredCapturePoint(ETeam::TEAM_A);
+	UpdateMostEndangeredCapturePoint(ETeam::TEAM_B);
+
 	T2 += C.restart();
 
 	for (Actor* CurrActor : Actors)
@@ -134,6 +138,34 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 			CurrActor->SyncDrawData();
 
 	T5 += C.restart();
+}
+
+void LevelInfo::UpdateMostEndangeredCapturePoint(ETeam argTeam)
+{
+	CapturePoint** MostEndangeredCapturePoint = argTeam == ETeam::TEAM_A ? &MostEndangeredCapturePointA : &MostEndangeredCapturePointB;
+	CapturePoint** CapturePoints = argTeam == ETeam::TEAM_A ? CapturePointsA : CapturePointsB;
+	CapturePoint* NewMostEndangeredCapturePoint = nullptr;
+	float MinHP = FLT_MAX;
+
+	for (int i = 0; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
+	{
+		if (CapturePoints[i]->HasLowHP() && CapturePoints[i]->GetHP() < MinHP)
+		{
+			NewMostEndangeredCapturePoint = CapturePoints[i];
+			MinHP = CapturePoints[i]->GetHP();
+		}
+	}
+
+	if (NewMostEndangeredCapturePoint != *MostEndangeredCapturePoint)
+	{
+		*MostEndangeredCapturePoint = NewMostEndangeredCapturePoint;
+
+		int TeamOffset = argTeam == ETeam::TEAM_A ? 0 : ACTORS_NUMBER / 2;
+
+		for (int i = TeamOffset; i < ACTORS_NUMBER / 2 + TeamOffset; ++i)
+			if (Actors[i])
+				Actors[i]->NotifyNewEndangeredAlliedCapturePoint(*MostEndangeredCapturePoint);
+	}
 }
 
 void LevelInfo::FindNearestEnemyForActor(class Actor* RequestingActor)
@@ -207,24 +239,14 @@ BTBase* LevelInfo::GetBTData()
 
 CapturePoint* LevelInfo::GetNearestEnemyCapturePoint(Actor* TargetActor)
 {
-	return GetNearestCapturePoint(TargetActor->GetPosition(), TargetActor->GetTeam() == ETeam::TEAM_A ? ETeam::TEAM_B : ETeam::TEAM_A);
-}
-
-CapturePoint* LevelInfo::GetNearestAlliedCapturePoint(Actor* TargetActor)
-{
-	return GetNearestCapturePoint(TargetActor->GetPosition(), TargetActor->GetTeam());
-}
-
-CapturePoint* LevelInfo::GetNearestCapturePoint(const sf::Vector2f& TargetPosition, ETeam argTeam)
-{
-	CapturePoint** AvailableCapturePoints = argTeam == ETeam::TEAM_A ? CapturePointsA : CapturePointsB;
+	CapturePoint** AvailableCapturePoints = TargetActor->GetTeam() == ETeam::TEAM_A ? CapturePointsB : CapturePointsA;
 
 	CapturePoint* NearestCapturePoint = AvailableCapturePoints[0];
-	float MinSquaredDist = GetSquaredDist(TargetPosition, NearestCapturePoint->GetPosition());
+	float MinSquaredDist = GetSquaredDist(TargetActor->GetPosition(), NearestCapturePoint->GetPosition());
 
 	for (int i = 1; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
 	{
-		float SquaredDist = GetSquaredDist(TargetPosition, AvailableCapturePoints[i]->GetPosition());
+		float SquaredDist = GetSquaredDist(TargetActor->GetPosition(), AvailableCapturePoints[i]->GetPosition());
 
 		if (SquaredDist < MinSquaredDist)
 		{
@@ -234,4 +256,9 @@ CapturePoint* LevelInfo::GetNearestCapturePoint(const sf::Vector2f& TargetPositi
 	}
 
 	return NearestCapturePoint;
+}
+
+CapturePoint* LevelInfo::GetMostEndangeredCapturePoint(ETeam argTeam) const
+{
+	return argTeam == ETeam::TEAM_A ? MostEndangeredCapturePointA : MostEndangeredCapturePointB;
 }

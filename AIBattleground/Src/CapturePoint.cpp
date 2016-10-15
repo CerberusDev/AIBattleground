@@ -57,19 +57,8 @@ void CapturePoint::ChangeHP(float HPDelta)
 	{
 		for (int i = 0; i < ActorsNumber; ++i)
 		{
-			if (Actor* CurrActor = ActorsArray[i])
-			{
-				if (CurrActor->GetTeam() == Team)
-				{
-					if (CurrActor->GetNearestAlliedCapturePoint() == this)
-						CurrActor->SetBAlliedCapturePointAtLowHP(bHasLowHP);
-				}
-				else
-				{
-					if (CurrActor->GetNearestEnemyCapturePoint() == this)
-						CurrActor->SetBEnemyCapturePointAtLowHP(bHasLowHP);
-				}
-			}
+			if (ActorsArray[i] != nullptr && ActorsArray[i]->GetTeam() != Team && ActorsArray[i]->GetNearestEnemyCapturePoint() == this)
+				ActorsArray[i]->SetBEnemyCapturePointAtLowHP(bHasLowHP);
 		}
 	}
 }
@@ -98,4 +87,9 @@ float CapturePoint::GetSize() const
 bool CapturePoint::HasLowHP() const
 {
 	return bHasLowHP;
+}
+
+float CapturePoint::GetHP() const
+{
+	return HP;
 }

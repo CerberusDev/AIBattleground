@@ -14,7 +14,7 @@
 #include "CapturePoint.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), NearestAlliedCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
+LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
 Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)), 
@@ -47,12 +47,11 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 	//AISystem = new AISystemBT(new BTBase(), &Blackboard);
 
 	NearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
-	NearestAlliedCapturePoint = LevelInfo->GetNearestAlliedCapturePoint(this);
 
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
 	Blackboard.SetBEnemyCapturePointAtLowHP(NearestEnemyCapturePoint->HasLowHP());
-	Blackboard.SetBAlliedCapturePointAtLowHP(NearestAlliedCapturePoint->HasLowHP());
+	Blackboard.SetBMostEndangeredAlliedCapturePointIsSet(LevelInfo->GetMostEndangeredCapturePoint(Team) != nullptr);
 
 	LevelInfo->InitPositionInQuadTree(this);
 	LevelInfo->FindNearestEnemyForActor(this);
@@ -139,22 +138,20 @@ void Actor::Update(const float DeltaTime)
 	if (BBUpdateTimeCounter >= BBUpdateInterval)
 	{
 		CapturePoint* NewNearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
-		CapturePoint* NewNearestAlliedCapturePoint = LevelInfo->GetNearestAlliedCapturePoint(this);
 
 		if (NewNearestEnemyCapturePoint != NearestEnemyCapturePoint)
 			Blackboard.SetBEnemyCapturePointAtLowHP(NewNearestEnemyCapturePoint->HasLowHP());
 
-		if (NewNearestAlliedCapturePoint != NearestAlliedCapturePoint)
-			Blackboard.SetBAlliedCapturePointAtLowHP(NewNearestAlliedCapturePoint->HasLowHP());
-
 		NearestEnemyCapturePoint = NewNearestEnemyCapturePoint;
-		NearestAlliedCapturePoint = NewNearestAlliedCapturePoint;
 
 		const bool bEnemyCapturePointInRange = GetLength(GetPosition() - NearestEnemyCapturePoint->GetPosition()) <= ShotDist + NearestEnemyCapturePoint->GetSize();
 		Blackboard.SetBEnemyCapturePointInRange(bEnemyCapturePointInRange);
 
-		const bool bNearAlliedCapturePoint = GetSquaredDist(GetPosition(), NearestAlliedCapturePoint->GetPosition()) < 10000.0f;
-		Blackboard.SetBNearAlliedCapturePoint(bNearAlliedCapturePoint);
+		if (CapturePoint* MostEndangeredCapturePoint = LevelInfo->GetMostEndangeredCapturePoint(Team))
+		{
+			const bool bNearAlliedCapturePoint = GetSquaredDist(GetPosition(), MostEndangeredCapturePoint->GetPosition()) < 10000.0f;
+			Blackboard.SetBNearAlliedCapturePoint(bNearAlliedCapturePoint);
+		}
 
 		if (NearestEnemy)
 		{
@@ -262,7 +259,7 @@ void Actor::GoTowardsAlliedCapturePoint()
 	{
 		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
 
-		sf::Vector2f NewDesiredMovementDirection = NearestAlliedCapturePoint->GetPosition() - GetPosition() + MovementDirectionOffset;
+		sf::Vector2f NewDesiredMovementDirection = LevelInfo->GetMostEndangeredCapturePoint(Team)->GetPosition() - GetPosition() + MovementDirectionOffset;
 		NormalizeVector2f(NewDesiredMovementDirection);
 		SetDesiredMovementDirection(NewDesiredMovementDirection);
 	}
@@ -364,17 +361,17 @@ void Actor::SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP)
 	Blackboard.SetBEnemyCapturePointAtLowHP(argbEnemyCapturePointAtLowHP);
 }
 
-void Actor::SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP)
+void Actor::NotifyNewEndangeredAlliedCapturePoint(CapturePoint* NewEndangeredAlliedCapturePoint)
 {
-	Blackboard.SetBAlliedCapturePointAtLowHP(argbAlliedCapturePointAtLowHP);
+	Blackboard.SetBMostEndangeredAlliedCapturePointIsSet(NewEndangeredAlliedCapturePoint != nullptr);
+
+	if (NewEndangeredAlliedCapturePoint)
+		Blackboard.SetBNearAlliedCapturePoint(GetSquaredDist(GetPosition(), NewEndangeredAlliedCapturePoint->GetPosition()) < 10000.0f);
+	else
+		Blackboard.SetBNearAlliedCapturePoint(false);
 }
 
 CapturePoint* Actor::GetNearestEnemyCapturePoint() const
 {
 	return NearestEnemyCapturePoint;
-}
-
-CapturePoint* Actor::GetNearestAlliedCapturePoint() const
-{
-	return NearestAlliedCapturePoint;
 }

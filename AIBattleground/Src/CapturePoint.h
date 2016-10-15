@@ -36,4 +36,5 @@ public:
 	sf::Vector2f GetPosition() const;
 	float GetSize() const;
 	bool HasLowHP() const;
+	float GetHP() const;
 };

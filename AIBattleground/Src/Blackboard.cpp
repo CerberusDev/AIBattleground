@@ -7,7 +7,7 @@
 Blackboard::Blackboard(Actor* argOwner) :
 Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
 bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false), 
-bAlliedCapturePointAtLowHP(false), bNearAlliedCapturePoint(false)
+bMostEndangeredAlliedCapturePointIsSet(false), bNearAlliedCapturePoint(false)
 {
 
 }
@@ -133,18 +133,18 @@ bool Blackboard::GetBEnemyCapturePointInRange() const
 	return bEnemyCapturePointInRange;
 }
 
-void Blackboard::SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP)
+void Blackboard::SetBMostEndangeredAlliedCapturePointIsSet(bool argbMostEndangeredAlliedCapturePointIsSet)
 {
-	if (bAlliedCapturePointAtLowHP != argbAlliedCapturePointAtLowHP)
+	if (bMostEndangeredAlliedCapturePointIsSet != argbMostEndangeredAlliedCapturePointIsSet)
 	{
-		bAlliedCapturePointAtLowHP = argbAlliedCapturePointAtLowHP;
+		bMostEndangeredAlliedCapturePointIsSet = argbMostEndangeredAlliedCapturePointIsSet;
 		bSomeValueHasChanged = true;
 	}
 }
 
-bool Blackboard::GetBAlliedCapturePointAtLowHP() const
+bool Blackboard::GetBMostEndangeredAlliedCapturePointIsSet() const
 {
-	return bAlliedCapturePointAtLowHP;
+	return bMostEndangeredAlliedCapturePointIsSet;
 }
 
 void Blackboard::SetBNearAlliedCapturePoint(bool argbNearAlliedCapturePoint)
