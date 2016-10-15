@@ -94,5 +94,4 @@ public:
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);
-	void GenerateRandomMovementDirection(EDirection DirectionToAvoid = EDirection::NONE);
 };

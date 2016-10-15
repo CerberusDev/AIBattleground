@@ -375,32 +375,3 @@ CapturePoint* Actor::GetNearestAlliedCapturePoint() const
 {
 	return NearestAlliedCapturePoint;
 }
-
-void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)
-{
-	switch (DirectionToAvoid)
-	{
-	case EDirection::UP:
-		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		DesiredMovementDirection.y = GetRandomFloat();
-		break;
-	case EDirection::RIGHT:
-		DesiredMovementDirection.x = GetRandomFloat() - 1.0f;
-		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
-		break;
-	case EDirection::DOWN:
-		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		DesiredMovementDirection.y = GetRandomFloat() - 1.0f;
-		break;
-	case EDirection::LEFT:
-		DesiredMovementDirection.x = GetRandomFloat();
-		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
-		break;
-	case EDirection::NONE:
-		DesiredMovementDirection.x = GetRandomFloat(2.0f) - 1.0f;
-		DesiredMovementDirection.y = GetRandomFloat(2.0f) - 1.0f;
-		break;
-	}
-
-	NormalizeVector2f(DesiredMovementDirection);
-}
