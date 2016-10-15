@@ -10,11 +10,11 @@
 #include "ActorSpawner.h"
 #include "QuadTree.h"
 #include "BTBase.h"
-#include "CapturePoint.h"
 
 //#define DRAW_DEBUG_GRID
 
 #define ACTORS_NUMBER 6000
+#define CAPTURE_POINTS_PER_TEAM_NUMER 2
 
 class LevelInfo
 {
@@ -41,8 +41,8 @@ private:
 	ActorSpawner SpawnerA2;
 	ActorSpawner SpawnerB1;
 	ActorSpawner SpawnerB2;
-	CapturePoint CapturePointA1;
-	CapturePoint CapturePointB1;
+	class CapturePoint* CapturePointsA[CAPTURE_POINTS_PER_TEAM_NUMER];
+	CapturePoint* CapturePointsB[CAPTURE_POINTS_PER_TEAM_NUMER];
 	BTBase BTData;
 
 public:
@@ -60,9 +60,10 @@ public:
 	class Actor** GetActorsArray();
 	int GetActorsNumber() const;
 	BTBase* GetBTData();
-	CapturePoint* GetEnemyCapturePoint(ETeam argTeam);
-	CapturePoint* GetAlliedCapturePoint(ETeam argTeam);
+	CapturePoint* GetNearestEnemyCapturePoint(Actor* TargetActor);
+	CapturePoint* GetNearestAlliedCapturePoint(Actor* TargetActor);
 
 private:
 	static sf::Vector2f GetRandomPointInRect(const sf::FloatRect& Rect);
+	CapturePoint* GetNearestCapturePoint(const sf::Vector2f& TargetPosition, ETeam argTeam);
 };

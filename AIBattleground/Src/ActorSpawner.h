@@ -23,7 +23,7 @@ private:
 	sf::Time SpawnTimeCounter;
 
 public:
-	ActorSpawner(class LevelInfo* argLevelInfo, class TextureManager* argTexManager, sf::Vector2f argPosition, ETeam argTeam);
+	ActorSpawner(class LevelInfo* argLevelInfo, class TextureManager* argTexManager, sf::Vector2f argPosition, ETeam argTeam, int argActorsPerSecond);
 	~ActorSpawner();
 
 	void Update(const float DeltaTime);

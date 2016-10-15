@@ -7,6 +7,7 @@
 #include "LevelInfo.h"
 #include "Actor.h"
 #include "TextureManager.h"
+#include "CapturePoint.h"
 
 LevelInfo::LevelInfo(class TextureManager* TexManager, const sf::FloatRect& LevelBoundaries) :
 Boundaries(LevelBoundaries), RightBottomEdge(LevelBoundaries.left + LevelBoundaries.width, LevelBoundaries.top + LevelBoundaries.height),
@@ -14,12 +15,10 @@ QuadTree_TeamA(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f,
 QuadTree_TeamB(sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.5f, LevelBoundaries.top + LevelBoundaries.height * 0.5f)),
 HealZoneA(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.125f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, Actors, ACTORS_NUMBER),
 HealZoneB(TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.875f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, Actors, ACTORS_NUMBER),
-SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_A),
-SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A),
-SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B),
-SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B),
-CapturePointA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.375f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A),
-CapturePointB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.625f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B)
+SpawnerA1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_A, 150),
+SpawnerA2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.05f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_A, 30),
+SpawnerB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.15f), ETeam::TEAM_B, 150),
+SpawnerB2(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.95f, LevelBoundaries.top + LevelBoundaries.height * 0.85f), ETeam::TEAM_B, 30)
 {
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		Actors[i] = nullptr;
@@ -27,6 +26,13 @@ CapturePointB1(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBounda
 	TexManager->InitTexture(&BackgroundSprite, "Background256", true);
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
+
+	CapturePointsA[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.375f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A);
+	CapturePointsA[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.375f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A);
+
+	CapturePointsB[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.625f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B);
+	CapturePointsB[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.625f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B);
+
 
 #if defined DRAW_DEBUG_GRID
 	TexManager->InitTexture(&DebugGridSprite, "DebugGrid1000x800");
@@ -38,6 +44,12 @@ LevelInfo::~LevelInfo()
 	for (int i = 0; i < ACTORS_NUMBER; ++i)
 		if (Actors[i])
 			delete Actors[i];
+
+	for (int i = 0; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
+	{
+		delete CapturePointsA[i];
+		delete CapturePointsB[i];
+	}
 }
 
 sf::Vector2f LevelInfo::GetRandomPointInRect(const sf::FloatRect& Rect)
@@ -64,8 +76,11 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 		if (CurrActor)
 			CurrActor->DrawRobot(Window);
 
-	CapturePointA1.Draw(Window);
-	CapturePointB1.Draw(Window);
+	for (int i = 0; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
+	{
+		CapturePointsA[i]->Draw(Window);
+		CapturePointsB[i]->Draw(Window);
+	}
 }
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
@@ -93,8 +108,12 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 	SpawnerB2.Update(DeltaTime);
 	HealZoneA.Update(DeltaTime);
 	HealZoneB.Update(DeltaTime);
-	CapturePointA1.Update(DeltaTime);
-	CapturePointB1.Update(DeltaTime);
+
+	for (int i = 0; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
+	{
+		CapturePointsA[i]->Update(DeltaTime);
+		CapturePointsB[i]->Update(DeltaTime);
+	}
 
 	T2 += C.restart();
 
@@ -186,12 +205,33 @@ BTBase* LevelInfo::GetBTData()
 	return &BTData;
 }
 
-CapturePoint* LevelInfo::GetEnemyCapturePoint(ETeam argTeam)
+CapturePoint* LevelInfo::GetNearestEnemyCapturePoint(Actor* TargetActor)
 {
-	return argTeam == ETeam::TEAM_A ? &CapturePointB1 : &CapturePointA1;
+	return GetNearestCapturePoint(TargetActor->GetPosition(), TargetActor->GetTeam() == ETeam::TEAM_A ? ETeam::TEAM_B : ETeam::TEAM_A);
 }
 
-CapturePoint* LevelInfo::GetAlliedCapturePoint(ETeam argTeam)
+CapturePoint* LevelInfo::GetNearestAlliedCapturePoint(Actor* TargetActor)
 {
-	return argTeam == ETeam::TEAM_A ? &CapturePointA1 : &CapturePointB1;
+	return GetNearestCapturePoint(TargetActor->GetPosition(), TargetActor->GetTeam());
+}
+
+CapturePoint* LevelInfo::GetNearestCapturePoint(const sf::Vector2f& TargetPosition, ETeam argTeam)
+{
+	CapturePoint** AvailableCapturePoints = argTeam == ETeam::TEAM_A ? CapturePointsA : CapturePointsB;
+
+	CapturePoint* NearestCapturePoint = AvailableCapturePoints[0];
+	float MinSquaredDist = GetSquaredDist(TargetPosition, NearestCapturePoint->GetPosition());
+
+	for (int i = 1; i < CAPTURE_POINTS_PER_TEAM_NUMER; ++i)
+	{
+		float SquaredDist = GetSquaredDist(TargetPosition, AvailableCapturePoints[i]->GetPosition());
+
+		if (SquaredDist < MinSquaredDist)
+		{
+			MinSquaredDist = SquaredDist;
+			NearestCapturePoint = AvailableCapturePoints[i];
+		}
+	}
+
+	return NearestCapturePoint;
 }

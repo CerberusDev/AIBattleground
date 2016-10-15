@@ -18,6 +18,8 @@ private:
 	class AISystemBase* AISystem;
 	Blackboard Blackboard;
 	Actor* NearestEnemy;
+	class CapturePoint* NearestEnemyCapturePoint;
+	class CapturePoint* NearestAlliedCapturePoint;
 	sf::Sprite RobotSprites[ROBOT_SPRITES_NUMBER];
 	sf::Sprite LaserBeamSprite;
 	sf::Sprite LaserBurstSprite;
@@ -71,8 +73,6 @@ public:
 	void UpdatePositionInQuadTree();
 	void RetreatToHealZone();
 	sf::Vector2f CalculateVectorTowardsNearestEnemy() const;
-	sf::Vector2f CalculateVectorTowardsEnemyCapturePoint() const;
-	sf::Vector2f CalculateVectorTowardsAlliedCapturePoint() const;
 	void StopMovement();
 	void GoTowardsNearestEnemy();
 	void GoTowardsEnemyCapturePoint();
@@ -89,6 +89,8 @@ public:
 	void Heal(float HPToHeal);
 	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
 	void SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP);
+	CapturePoint* GetNearestEnemyCapturePoint() const;
+	CapturePoint* GetNearestAlliedCapturePoint() const;
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);

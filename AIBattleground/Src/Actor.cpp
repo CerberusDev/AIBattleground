@@ -11,10 +11,11 @@
 #include "LevelInfo.h"
 #include "AISystemFSM.h"
 #include "AISystemBT.h"
+#include "CapturePoint.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), LastQuadTreePosition(InitialPosition), Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f),
-ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
+LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), NearestAlliedCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
+Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
 MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.75f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)), 
 BBUpdateInterval(sf::seconds(0.2f)), ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
@@ -45,10 +46,13 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 	//AISystem = new AISystemBT(LevelInfo->GetBTData(), &Blackboard);
 	//AISystem = new AISystemBT(new BTBase(), &Blackboard);
 
+	NearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
+	NearestAlliedCapturePoint = LevelInfo->GetNearestAlliedCapturePoint(this);
+
 	Blackboard.SetMaxHP(MaxHP);
 	Blackboard.SetHP(HP);
-	Blackboard.SetBEnemyCapturePointAtLowHP(LevelInfo->GetEnemyCapturePoint(Team)->HasLowHP());
-	Blackboard.SetBAlliedCapturePointAtLowHP(LevelInfo->GetAlliedCapturePoint(Team)->HasLowHP());
+	Blackboard.SetBEnemyCapturePointAtLowHP(NearestEnemyCapturePoint->HasLowHP());
+	Blackboard.SetBAlliedCapturePointAtLowHP(NearestAlliedCapturePoint->HasLowHP());
 
 	LevelInfo->InitPositionInQuadTree(this);
 	LevelInfo->FindNearestEnemyForActor(this);
@@ -134,10 +138,22 @@ void Actor::Update(const float DeltaTime)
 
 	if (BBUpdateTimeCounter >= BBUpdateInterval)
 	{
-		const bool bCapturePointInRange = GetLength(CalculateVectorTowardsEnemyCapturePoint()) <= ShotDist + LevelInfo->GetEnemyCapturePoint(Team)->GetSize();
-		Blackboard.SetBEnemyCapturePointInRange(bCapturePointInRange);
+		CapturePoint* NewNearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
+		CapturePoint* NewNearestAlliedCapturePoint = LevelInfo->GetNearestAlliedCapturePoint(this);
 
-		const bool bNearAlliedCapturePoint = GetSquaredLength(CalculateVectorTowardsAlliedCapturePoint()) < 10000.0f;
+		if (NewNearestEnemyCapturePoint != NearestEnemyCapturePoint)
+			Blackboard.SetBEnemyCapturePointAtLowHP(NewNearestEnemyCapturePoint->HasLowHP());
+
+		if (NewNearestAlliedCapturePoint != NearestAlliedCapturePoint)
+			Blackboard.SetBAlliedCapturePointAtLowHP(NewNearestAlliedCapturePoint->HasLowHP());
+
+		NearestEnemyCapturePoint = NewNearestEnemyCapturePoint;
+		NearestAlliedCapturePoint = NewNearestAlliedCapturePoint;
+
+		const bool bEnemyCapturePointInRange = GetLength(GetPosition() - NearestEnemyCapturePoint->GetPosition()) <= ShotDist + NearestEnemyCapturePoint->GetSize();
+		Blackboard.SetBEnemyCapturePointInRange(bEnemyCapturePointInRange);
+
+		const bool bNearAlliedCapturePoint = GetSquaredDist(GetPosition(), NearestAlliedCapturePoint->GetPosition()) < 10000.0f;
 		Blackboard.SetBNearAlliedCapturePoint(bNearAlliedCapturePoint);
 
 		if (NearestEnemy)
@@ -210,16 +226,6 @@ sf::Vector2f Actor::CalculateVectorTowardsNearestEnemy() const
 	return NearestEnemy->GetPosition() - GetPosition();
 }
 
-sf::Vector2f Actor::CalculateVectorTowardsEnemyCapturePoint() const
-{
-	return LevelInfo->GetEnemyCapturePoint(Team)->GetPosition() - GetPosition();
-}
-
-sf::Vector2f Actor::CalculateVectorTowardsAlliedCapturePoint() const
-{
-	return LevelInfo->GetAlliedCapturePoint(Team)->GetPosition() - GetPosition();
-}
-
 void Actor::StopMovement()
 {
 	if (DesiredMovementDirection != sf::Vector2f(0.0f, 0.0f))
@@ -244,7 +250,7 @@ void Actor::GoTowardsEnemyCapturePoint()
 	{
 		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
 
-		sf::Vector2f NewDesiredMovementDirection = CalculateVectorTowardsEnemyCapturePoint() + MovementDirectionOffset;
+		sf::Vector2f NewDesiredMovementDirection = NearestEnemyCapturePoint->GetPosition() - GetPosition() + MovementDirectionOffset;
 		NormalizeVector2f(NewDesiredMovementDirection);
 		SetDesiredMovementDirection(NewDesiredMovementDirection);
 	}
@@ -256,7 +262,7 @@ void Actor::GoTowardsAlliedCapturePoint()
 	{
 		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
 
-		sf::Vector2f NewDesiredMovementDirection = CalculateVectorTowardsAlliedCapturePoint() + MovementDirectionOffset;
+		sf::Vector2f NewDesiredMovementDirection = NearestAlliedCapturePoint->GetPosition() - GetPosition() + MovementDirectionOffset;
 		NormalizeVector2f(NewDesiredMovementDirection);
 		SetDesiredMovementDirection(NewDesiredMovementDirection);
 	}
@@ -332,10 +338,10 @@ void Actor::TryToShootToEnemyCapturePoint()
 	if (ShotTimeCounter >= ShotInterval)
 	{
 		bShouldDrawLaser = true;
-		LevelInfo->GetEnemyCapturePoint(Team)->TakeDamage(Damage);
+		NearestEnemyCapturePoint->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
 
-		sf::Vector2f VectorTowardsEnemyCapturePoint = CalculateVectorTowardsEnemyCapturePoint();
+		sf::Vector2f VectorTowardsEnemyCapturePoint = NearestEnemyCapturePoint->GetPosition() - GetPosition();
 		DrawData_LaserBeamDirectionX = VectorTowardsEnemyCapturePoint.x;
 		DrawData_LaserBeamDirectionY = VectorTowardsEnemyCapturePoint.y;
 	}
@@ -358,6 +364,16 @@ void Actor::SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP)
 void Actor::SetBAlliedCapturePointAtLowHP(bool argbAlliedCapturePointAtLowHP)
 {
 	Blackboard.SetBAlliedCapturePointAtLowHP(argbAlliedCapturePointAtLowHP);
+}
+
+CapturePoint* Actor::GetNearestEnemyCapturePoint() const
+{
+	return NearestEnemyCapturePoint;
+}
+
+CapturePoint* Actor::GetNearestAlliedCapturePoint() const
+{
+	return NearestAlliedCapturePoint;
 }
 
 void Actor::GenerateRandomMovementDirection(EDirection DirectionToAvoid)

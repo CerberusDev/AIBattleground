@@ -5,8 +5,8 @@
 #include "ActorSpawner.h"
 #include "LevelInfo.h"
 
-ActorSpawner::ActorSpawner(class LevelInfo* argLevelInfo, class TextureManager* argTexManager, sf::Vector2f argPosition, ETeam argTeam) :
-LevelInfo(argLevelInfo), TexManager(argTexManager), Position(argPosition), Team(argTeam), Radius(20.0f), ActorsPerSecond(300),
+ActorSpawner::ActorSpawner(class LevelInfo* argLevelInfo, class TextureManager* argTexManager, sf::Vector2f argPosition, ETeam argTeam, int argActorsPerSecond) :
+LevelInfo(argLevelInfo), TexManager(argTexManager), Position(argPosition), Team(argTeam), Radius(20.0f), ActorsPerSecond(argActorsPerSecond),
 ActorsArray(LevelInfo->GetActorsArray()), ActorsNumber(LevelInfo->GetActorsNumber()), 
 ActorTexName(Team == ETeam::TEAM_A ? "RobotA" : "RobotB"), TeamOffset(Team == ETeam::TEAM_A ? 0 : ActorsNumber / 2),
 SpawnInterval(sf::seconds(1.0f / ActorsPerSecond))
