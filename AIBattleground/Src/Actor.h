@@ -93,6 +93,7 @@ public:
 	void NotifyNewEndangeredAlliedCapturePoint(CapturePoint* NewEndangeredAlliedCapturePoint);
 	CapturePoint* GetNearestEnemyCapturePoint() const;
 	void SetReatreating(bool bNewRetreating);
+	bool IsRetrating() const;
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);

@@ -405,3 +405,8 @@ void Actor::SetReatreating(bool bNewRetreating)
 		}
 	}
 }
+
+bool Actor::IsRetrating() const
+{
+	return bRetreating;
+}

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <SFML\Graphics.hpp>
+#include <mutex>
 
 #include "HealZone.h"
 #include "QuadTree.h"
@@ -25,9 +26,9 @@ public:
 	sf::Time T2;
 	sf::Time T3;
 	sf::Time T4;
-	sf::Time T5;
 
 private:
+	mutable std::mutex DrawDataMutex;
 	QuadTree QuadTree_TeamA;
 	QuadTree QuadTree_TeamB;
 	sf::Sprite BackgroundSprite;
@@ -35,6 +36,8 @@ private:
 	sf::Sprite DebugGridSprite;
 #endif
 	class Actor* Actors[ACTORS_NUMBER];
+	Actor* Draw_Actors[ACTORS_NUMBER];
+	std::vector<Actor*> ActorsToDelete;
 	HealZone HealZoneA;
 	HealZone HealZoneB;
 	class ActorSpawner* ActorSpawners[ACTOR_SPAWNERS_NUMER];
@@ -50,6 +53,7 @@ public:
 
 	void Draw(sf::RenderWindow* Window) const;
 	void Update(const float DeltaTime, const sf::Time FixedDeltaTime);
+	void SyncData();
 	void FindNearestEnemyForActor(class Actor* RequestingActor);
 	void UpdateMostEndangeredCapturePoint(ETeam argTeam);
 	void QuickFindNearEnemyForActor(class Actor* RequestingActor);

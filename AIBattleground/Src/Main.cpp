@@ -67,6 +67,7 @@ int main()
 	sf::Time MainTimeCounter;
 	sf::Time ExcessingTime;
 	sf::Time UpdateDurationTimeCounter;
+	sf::Time DataSyncTimeCounter;
 	sf::Time DeltaTime;
 	int MainFPSCounter = 0;
 
@@ -85,25 +86,25 @@ int main()
 		{
 			std::cout << "-----------------------------------------------------" << std::endl;
 			std::cout << "FPS: " << MainFPSCounter 
-				<< std::setprecision(1) << std::fixed << "   Avg draw time: "
-				<< DrawDurationTimeCounter * 1000.0f / MainFPSCounter << " ms   Avg update time: "
-				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
+				<< std::setprecision(1) << std::fixed << "   Avg draw t: "
+				<< DrawDurationTimeCounter * 1000.0f / MainFPSCounter << " ms   Avg update t: "
+				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg sync t: " 
+				<< DataSyncTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
 			std::cout << "-----------------------------------------------------" << std::endl;
 
 			std::cout << "Finding nearest enemy: " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 			std::cout << "Level objects update:  " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 			std::cout << "General actor update:  " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 			std::cout << "Update AI system:      " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Sync draw data:        " << LevelInfo.T5.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 
 			LevelInfo.T1 = sf::Time::Zero;
 			LevelInfo.T2 = sf::Time::Zero;
 			LevelInfo.T3 = sf::Time::Zero;
 			LevelInfo.T4 = sf::Time::Zero;
-			LevelInfo.T5 = sf::Time::Zero;
 
 			DrawDurationTimeCounter = 0.0f;
-			UpdateDurationTimeCounter = sf::seconds(0.0f);
+			UpdateDurationTimeCounter = sf::Time::Zero;
+			DataSyncTimeCounter = sf::Time::Zero;
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
 		}
@@ -121,6 +122,14 @@ int main()
 		LevelInfo.Update(std::min(std::max(FixedDeltaTime.asSeconds(), DeltaTime.asSeconds()), MaxDeltaTime.asSeconds()), FixedDeltaTime);
 
 		UpdateDurationTimeCounter += MainClock.getElapsedTime() - UpdateStartTime;
+
+		//------------------- Data sync ----------------------
+
+		sf::Time SyncStartTime = MainClock.getElapsedTime();
+
+		LevelInfo.SyncData();
+
+		DataSyncTimeCounter += MainClock.getElapsedTime() - SyncStartTime;
 
 		//----------------- Time padding -------------------
 		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();

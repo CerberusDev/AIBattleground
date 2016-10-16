@@ -73,6 +73,8 @@ sf::Vector2f LevelInfo::GetRandomPointInRect(const sf::FloatRect& Rect)
 
 void LevelInfo::Draw(sf::RenderWindow* Window) const
 {
+	DrawDataMutex.lock();
+
 	Window->draw(BackgroundSprite);
 
 #if defined DRAW_DEBUG_GRID
@@ -82,11 +84,11 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 	HealZoneA.Draw(Window);
 	HealZoneB.Draw(Window);
 
-	for (Actor* CurrActor : Actors)
+	for (Actor* CurrActor : Draw_Actors)
 		if (CurrActor)
 			CurrActor->DrawLaserBeam(Window);
 
-	for (Actor* CurrActor : Actors)
+	for (Actor* CurrActor : Draw_Actors)
 		if (CurrActor)
 			CurrActor->DrawRobot(Window);
 
@@ -95,6 +97,8 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 		CapturePointsA[i]->Draw(Window);
 		CapturePointsB[i]->Draw(Window);
 	}
+
+	DrawDataMutex.unlock();
 }
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
@@ -144,12 +148,40 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 			CurrActor->UpdateAISystem();
 
 	T4 += C.restart();
+}
 
-	for (Actor* CurrActor : Actors)
-		if (CurrActor)
-			CurrActor->SyncDrawData();
+void LevelInfo::SyncData()
+{
+	DrawDataMutex.lock();
 
-	T5 += C.restart();
+	while (!ActorsToDelete.empty())
+	{
+		Actor* ActorToDelete = ActorsToDelete.back();
+		ActorsToDelete.pop_back();
+		delete ActorToDelete;
+	}
+
+	int DrawIdx = 0;
+
+	for (int i = 0; i < ACTORS_NUMBER; ++i)
+	{
+		if (Actors[i])
+		{
+			if (Actors[i]->IsRetrating())
+				Draw_Actors[DrawIdx++] = Actors[i];
+
+			Actors[i]->SyncDrawData();
+		}
+	}
+
+	for (int i = 0; i < ACTORS_NUMBER; ++i)
+		if (Actors[i] && !Actors[i]->IsRetrating())
+			Draw_Actors[DrawIdx++] = Actors[i];
+
+	for (int i = DrawIdx; i < ACTORS_NUMBER; ++i)
+		Draw_Actors[i] = nullptr;
+
+	DrawDataMutex.unlock();
 }
 
 void LevelInfo::UpdateMostEndangeredCapturePoint(ETeam argTeam)
@@ -216,7 +248,7 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 		if (Actors[i] && Actors[i]->GetNearestEnemy() == ActorToDestroy)
 			QuickFindNearEnemyForActor(Actors[i]);
 
-	delete ActorToDestroy;
+	ActorsToDelete.push_back(ActorToDestroy);
 }
 
 void LevelInfo::RegiseterInQuadTree(Actor* ActorToRegister)
