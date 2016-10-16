@@ -16,8 +16,8 @@
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
 LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
 Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), MovementSpeed(100.0f), DirectionChangeSpeed(5.0f),
-MaxHP(100.0f), HP(MaxHP), Damage(30.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), bInterpolateMovementDirection(false),
-MovementDirectionInterpAlpha(0.0f), bShouldDrawLaser(false), ShotInterval(sf::seconds(0.2f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)), 
+MaxHP(100.0f), HP(MaxHP), Damage(5.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), MovementDirectionInterpAlpha(0.0f), bInterpolateMovementDirection(false),
+bShouldDrawLaser(false), bRetreating(false), ShotInterval(sf::seconds(0.2f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)),
 BBUpdateInterval(sf::seconds(0.2f)), ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
 {
@@ -53,7 +53,7 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 	Blackboard.SetBEnemyCapturePointAtLowHP(NearestEnemyCapturePoint->HasLowHP());
 	Blackboard.SetBMostEndangeredAlliedCapturePointIsSet(LevelInfo->GetMostEndangeredCapturePoint(Team) != nullptr);
 
-	LevelInfo->InitPositionInQuadTree(this);
+	LevelInfo->RegiseterInQuadTree(this);
 	LevelInfo->FindNearestEnemyForActor(this);
 
 	QuadTreeUpdateCounter = sf::seconds(GetRandomFloat(QuadTreeUpdateInterval.asSeconds()));
@@ -200,7 +200,9 @@ void Actor::UpdatePositionInQuadTree()
 {
 	if (QuadTreeUpdateCounter >= QuadTreeUpdateInterval)
 	{
-		LevelInfo->UpdatePositionInQuadTree(this);
+		if (!bRetreating)
+			LevelInfo->UpdatePositionInQuadTree(this);
+
 		QuadTreeUpdateCounter -= QuadTreeUpdateInterval;
 	}
 }
@@ -320,6 +322,14 @@ void Actor::TryToShoot()
 {
 	if (ShotTimeCounter >= ShotInterval)
 	{
+		if (NearestEnemy->bRetreating)
+		{
+			LevelInfo->QuickFindNearEnemyForActor(this);
+
+			if (NearestEnemy == nullptr || !Blackboard.GetBEnemyInRange())
+				return;
+		}
+
 		bShouldDrawLaser = true;
 		NearestEnemy->TakeDamage(Damage);
 		ShotTimeCounter = sf::Time::Zero;
@@ -346,7 +356,7 @@ void Actor::TryToShootToEnemyCapturePoint()
 
 void Actor::TakeDamage(float DamageAmount)
 {
-	if (HP - DamageAmount <= 0.0f && GetRandomFloat() > 0.005f)
+	if (HP - DamageAmount <= 0.0f && GetRandomFloat() > 0.02f)
 		return;
 
 	HP -= DamageAmount;
@@ -374,4 +384,17 @@ void Actor::NotifyNewEndangeredAlliedCapturePoint(CapturePoint* NewEndangeredAll
 CapturePoint* Actor::GetNearestEnemyCapturePoint() const
 {
 	return NearestEnemyCapturePoint;
+}
+
+void Actor::SetReatreating(bool bNewRetreating)
+{
+	if (bRetreating != bNewRetreating)
+	{
+		bRetreating = bNewRetreating;
+
+		if (bRetreating)
+			LevelInfo->UnregiseterFromQuadTree(this);
+		else
+			LevelInfo->RegiseterInQuadTree(this);
+	}
 }

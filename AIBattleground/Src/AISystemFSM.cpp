@@ -160,7 +160,7 @@ void AISystemFSM::StateStart()
 		Blackboard->GetOwner()->StopMovement();
 		break;
 	case EState::RETREAT:
-		;
+		Blackboard->GetOwner()->SetReatreating(true);
 		break;
 	case EState::RECOVER:
 		Blackboard->GetOwner()->StopMovement();
@@ -194,7 +194,7 @@ void AISystemFSM::StateEnd()
 		;
 		break;
 	case EState::RETREAT:
-		;
+		Blackboard->GetOwner()->SetReatreating(false);
 		break;
 	case EState::RECOVER:
 		Blackboard->SetBHealthZoneDestReached(false);

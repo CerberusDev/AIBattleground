@@ -219,10 +219,16 @@ void LevelInfo::DestroyActor(class Actor* ActorToDestroy)
 	delete ActorToDestroy;
 }
 
-void LevelInfo::InitPositionInQuadTree(Actor* ActorToUpdate)
+void LevelInfo::RegiseterInQuadTree(Actor* ActorToRegister)
 {
-	QuadTree* QuadTreeToUpdate = ActorToUpdate->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
-	QuadTreeToUpdate->AddActor(ActorToUpdate);
+	QuadTree* QuadTreeToUpdate = ActorToRegister->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
+	QuadTreeToUpdate->AddActor(ActorToRegister);
+}
+
+void LevelInfo::UnregiseterFromQuadTree(Actor* ActorToUnregister)
+{
+	QuadTree* QuadTreeToUpdate = ActorToUnregister->GetTeam() == ETeam::TEAM_A ? &QuadTree_TeamA : &QuadTree_TeamB;
+	QuadTreeToUpdate->RemoveActor(ActorToUnregister);
 }
 
 void LevelInfo::UpdatePositionInQuadTree(Actor* ActorToUpdate)

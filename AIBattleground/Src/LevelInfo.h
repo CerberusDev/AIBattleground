@@ -54,8 +54,9 @@ public:
 	void UpdateMostEndangeredCapturePoint(ETeam argTeam);
 	void QuickFindNearEnemyForActor(class Actor* RequestingActor);
 	void DestroyActor(class Actor* ActorToDestroy);
-	void InitPositionInQuadTree(Actor* ActorToUpdate);
-	void UpdatePositionInQuadTree(Actor* ActorToUpdate);
+	void RegiseterInQuadTree(Actor* ActorToUpdate);
+	void UnregiseterFromQuadTree(Actor* ActorToRegister);
+	void UpdatePositionInQuadTree(Actor* ActorToUnregister);
 	sf::Vector2f GetHealZonePosition(ETeam Team) const;
 	class Actor** GetActorsArray();
 	int GetActorsNumber() const;

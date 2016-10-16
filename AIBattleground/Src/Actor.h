@@ -40,6 +40,7 @@ private:
 	float MovementDirectionInterpAlpha;
 	bool bInterpolateMovementDirection;
 	bool bShouldDrawLaser;
+	bool bRetreating;
 	sf::Time ShotInterval;
 	sf::Time QuadTreeUpdateInterval;
 	sf::Time MovementDirectionUpdateInterval;
@@ -89,6 +90,7 @@ public:
 	void SetBEnemyCapturePointAtLowHP(bool argbEnemyCapturePointAtLowHP);
 	void NotifyNewEndangeredAlliedCapturePoint(CapturePoint* NewEndangeredAlliedCapturePoint);
 	CapturePoint* GetNearestEnemyCapturePoint() const;
+	void SetReatreating(bool bNewRetreating);
 
 private:
 	void SetDesiredMovementDirection(const sf::Vector2f& NewDesiredMovementDireciton);
