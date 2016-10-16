@@ -29,8 +29,10 @@ private:
 	sf::Vector2u Size;
 	sf::Vector2u BeamTexSize;
 	float ShotDist;
+	const float RetreatingMovementSpeed;
+	const float StandardMovementSpeed;
 	sf::Vector2f MovementDirectionOffset;
-	float MovementSpeed;
+	float CurrentMovementSpeed;
 	float DirectionChangeSpeed;
 	float MaxHP;
 	float HP;
