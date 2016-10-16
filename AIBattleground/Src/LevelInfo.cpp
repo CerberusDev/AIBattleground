@@ -25,9 +25,9 @@ MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
 
-	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 150);
-	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 150);
-	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 150);
+	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 175);
+	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 175);
+	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 100);
 	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150);
 	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 150);
 	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 150);
