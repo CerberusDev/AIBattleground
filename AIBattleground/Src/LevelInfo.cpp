@@ -25,22 +25,22 @@ MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
 
-	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 100);
-	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 150);
-	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 25);
-	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 100);
-	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150);
-	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 25);
+	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 150);
+	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 150);
+	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 150);
+	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150);
+	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 150);
+	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 150);
 
-	CapturePointsA[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.28f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_A);
+	CapturePointsA[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.275f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_A);
 	CapturePointsA[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.25f, LevelBoundaries.top + LevelBoundaries.height * 0.375f), ETeam::TEAM_A);
 	CapturePointsA[2] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.25f, LevelBoundaries.top + LevelBoundaries.height * 0.625f), ETeam::TEAM_A);
-	CapturePointsA[3] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.28f, LevelBoundaries.top + LevelBoundaries.height * 0.875f), ETeam::TEAM_A);
+	CapturePointsA[3] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.275f, LevelBoundaries.top + LevelBoundaries.height * 0.875f), ETeam::TEAM_A);
 
-	CapturePointsB[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.72f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_B);
+	CapturePointsB[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.725f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_B);
 	CapturePointsB[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.75f, LevelBoundaries.top + LevelBoundaries.height * 0.375f), ETeam::TEAM_B);
 	CapturePointsB[2] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.75f, LevelBoundaries.top + LevelBoundaries.height * 0.625f), ETeam::TEAM_B);
-	CapturePointsB[3] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.72f, LevelBoundaries.top + LevelBoundaries.height * 0.875f), ETeam::TEAM_B);
+	CapturePointsB[3] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.725f, LevelBoundaries.top + LevelBoundaries.height * 0.875f), ETeam::TEAM_B);
 
 
 #if defined DRAW_DEBUG_GRID
