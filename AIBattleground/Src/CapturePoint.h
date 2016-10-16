@@ -17,7 +17,9 @@ private:
 	sf::Sprite CapturePointSprite[CAPTURE_POINT_SPRITES_NUMBER];
 	sf::Vector2f Position;
 	sf::Time HealStepInterval;
+	sf::Time NoDamageTimeNeededToHeal;
 	sf::Time HealStepTimeCounter;
+	sf::Time NoDamageTimeCounter;
 	ETeam Team;
 	float MaxHP;
 	float HP;

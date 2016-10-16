@@ -10,8 +10,9 @@
 
 CapturePoint::CapturePoint(class LevelInfo* argLevelInfo, class TextureManager* TexManager, sf::Vector2f argPosition, ETeam argTeam) :
 MyLevelInfo(argLevelInfo), ActorsArray(MyLevelInfo->GetActorsArray()), ActorsNumber(MyLevelInfo->GetActorsNumber()),
-Position(argPosition), HealStepInterval(sf::seconds(0.1f)), Team(argTeam), MaxHP(10000.0f), HP(MaxHP), HPPerHealStep(MaxHP / CAPTURE_POINT_SPRITES_NUMBER),
-LowHPThreshold(MaxHP * 0.6f), VeryLowHPThreshold(MaxHP * 0.33f), Size(0.0f), bHasLowHP(false)
+Position(argPosition), HealStepInterval(sf::seconds(0.1f)), NoDamageTimeNeededToHeal(sf::seconds(0.3f)), Team(argTeam), MaxHP(20000.0f), 
+HP(MaxHP), HPPerHealStep(MaxHP / CAPTURE_POINT_SPRITES_NUMBER), LowHPThreshold(MaxHP * 0.6f), VeryLowHPThreshold(MaxHP * 0.33f), 
+Size(0.0f), bHasLowHP(false)
 {
 	sf::Vector2u FirstTextureSize;
 
@@ -41,17 +42,19 @@ CapturePoint::~CapturePoint()
 void CapturePoint::Update(const float DeltaTime)
 {
 	HealStepTimeCounter += sf::seconds(DeltaTime);
+	NoDamageTimeCounter += sf::seconds(DeltaTime);
 
-	if (HealStepTimeCounter >= HealStepInterval)
+	if (HealStepTimeCounter >= HealStepInterval && NoDamageTimeCounter > NoDamageTimeNeededToHeal)
 	{
 		ChangeHP(HPPerHealStep);
-		HealStepTimeCounter -= HealStepInterval;
+		HealStepTimeCounter = sf::Time::Zero;
 	}
 }
 
 void CapturePoint::TakeDamage(float DamageAmount)
 {
 	ChangeHP(-DamageAmount);
+	NoDamageTimeCounter = sf::Time::Zero;
 }
 
 void CapturePoint::ChangeHP(float HPDelta)
