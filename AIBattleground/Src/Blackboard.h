@@ -19,6 +19,7 @@ private:
 	bool bEnemyCapturePointInRange;
 	bool bMostEndangeredAlliedCapturePointIsSet;
 	bool bNearAlliedCapturePoint;
+	bool bBTGuardMode;
 
 public:
 	Blackboard(Actor* argOwner);
@@ -55,6 +56,9 @@ public:
 
 	void SetBNearAlliedCapturePoint(bool argbNearAlliedCapturePoint);
 	bool GetBNearAlliedCapturePoint() const;
+
+	void SetBBTGuardMode(bool argbBTGuardMode);
+	bool GetBBTGuardMode() const;
 
 	bool SomeValueHasChanged();
 };

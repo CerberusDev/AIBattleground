@@ -215,6 +215,16 @@ struct BTBDecorator_NearAlliedCapturePoint : public BTBlackboardDecorator
 	}
 };
 
+struct BTBDecorator_GuardMode : public BTBlackboardDecorator
+{
+	BTBDecorator_GuardMode(BTNode* argChild) : BTBlackboardDecorator(argChild) {};
+
+	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
+	{
+		return argBlackboard->GetBBTGuardMode();
+	}
+};
+
 struct BTTask : public BTNode
 {
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard) = 0;
@@ -309,6 +319,19 @@ struct BTTask_SetBlackboardBRecoveringValue : public BTTask
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
 	{
 		argBlackboard->SetBBTRecovering(bValueToSet);
+		return EStatus::SUCCESS;
+	}
+};
+
+struct BTTask_SetBlackboardBGuardModeValue : public BTTask
+{
+	bool bValueToSet;
+
+	BTTask_SetBlackboardBGuardModeValue(bool argBValueToSet) : bValueToSet(argBValueToSet) {};
+
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->SetBBTGuardMode(bValueToSet);
 		return EStatus::SUCCESS;
 	}
 };

@@ -7,7 +7,7 @@
 Blackboard::Blackboard(Actor* argOwner) :
 Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
 bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false), 
-bMostEndangeredAlliedCapturePointIsSet(false), bNearAlliedCapturePoint(false)
+bMostEndangeredAlliedCapturePointIsSet(false), bNearAlliedCapturePoint(false), bBTGuardMode(false)
 {
 
 }
@@ -159,6 +159,20 @@ void Blackboard::SetBNearAlliedCapturePoint(bool argbNearAlliedCapturePoint)
 bool Blackboard::GetBNearAlliedCapturePoint() const
 {
 	return bNearAlliedCapturePoint;
+}
+
+void Blackboard::SetBBTGuardMode(bool argbBTGuardMode)
+{
+	if (bNearAlliedCapturePoint != argbBTGuardMode)
+	{
+		bBTGuardMode = argbBTGuardMode;
+		bBTGuardMode = true;
+	}
+}
+
+bool Blackboard::GetBBTGuardMode() const
+{
+	return bBTGuardMode;
 }
 
 bool Blackboard::SomeValueHasChanged()
