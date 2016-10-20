@@ -85,13 +85,28 @@ struct BTDecorator : public BTNode
 	}
 };
 
+struct BTDecorateor_InverseBlackbordConditionAbove: public BTDecorator
+{
+	BTDecorateor_InverseBlackbordConditionAbove(BTNode* argChild) : BTDecorator(argChild) {};
+
+	virtual EStatus Update(AISystemBT* argAISystem, Blackboard* argBlackboard)
+	{
+		return Child->Update(argAISystem, argBlackboard);
+	}
+};
+
 struct BTBlackboardDecorator : public BTDecorator
 {
 	BTBlackboardDecorator(BTNode* argChild) : BTDecorator(argChild) {};
 
 	virtual EStatus Update(AISystemBT* argAISystem, Blackboard* argBlackboard)
 	{
-		if (IsConditionFulfilled(argBlackboard))
+		bool bConditionValue = IsConditionFulfilled(argBlackboard);
+
+		if (dynamic_cast<BTDecorateor_InverseBlackbordConditionAbove*>(Child))
+			bConditionValue = !bConditionValue;
+
+		if (bConditionValue)
 			return Child->Update(argAISystem, argBlackboard);
 		else
 			return EStatus::FAIL;
@@ -160,6 +175,46 @@ struct BTBDecorator_Recovering : public BTBlackboardDecorator
 	}
 };
 
+struct BTBDecorator_EnemyCapturePointAtLowHP : public BTBlackboardDecorator
+{
+	BTBDecorator_EnemyCapturePointAtLowHP(BTNode* argChild) : BTBlackboardDecorator(argChild) {};
+
+	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
+	{
+		return argBlackboard->GetBEnemyCapturePointAtLowHP();
+	}
+};
+
+struct BTBDecorator_EnemyCapturePointInRange : public BTBlackboardDecorator
+{
+	BTBDecorator_EnemyCapturePointInRange(BTNode* argChild) : BTBlackboardDecorator(argChild) {};
+
+	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
+	{
+		return argBlackboard->GetBEnemyCapturePointInRange();
+	}
+};
+
+struct BTBDecorator_MostEndangeredAlliedCapturePointIsSet : public BTBlackboardDecorator
+{
+	BTBDecorator_MostEndangeredAlliedCapturePointIsSet(BTNode* argChild) : BTBlackboardDecorator(argChild) {};
+
+	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
+	{
+		return argBlackboard->GetBMostEndangeredAlliedCapturePointIsSet();
+	}
+};
+
+struct BTBDecorator_NearAlliedCapturePoint : public BTBlackboardDecorator
+{
+	BTBDecorator_NearAlliedCapturePoint(BTNode* argChild) : BTBlackboardDecorator(argChild) {};
+
+	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
+	{
+		return argBlackboard->GetBNearAlliedCapturePoint();
+	}
+};
+
 struct BTTask : public BTNode
 {
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard) = 0;
@@ -206,6 +261,33 @@ struct BTTask_RetreatToHealZone : public BTTask
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
 	{
 		argBlackboard->GetOwner()->RetreatToHealZone();
+		return EStatus::IN_PROGRESS;
+	}
+};
+
+struct BTTask_GoTowardsEnemyCapturePoint : public BTTask
+{
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->GetOwner()->GoTowardsEnemyCapturePoint();
+		return EStatus::IN_PROGRESS;
+	}
+};
+
+struct BTTask_GoTowardsAlliedCapturePoint : public BTTask
+{
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->GetOwner()->GoTowardsAlliedCapturePoint();
+		return EStatus::IN_PROGRESS;
+	}
+};
+
+struct BTTask_TryToShootToEnemyCapturePoint : public BTTask
+{
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->GetOwner()->TryToShootToEnemyCapturePoint();
 		return EStatus::IN_PROGRESS;
 	}
 };
