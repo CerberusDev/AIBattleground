@@ -163,10 +163,10 @@ bool Blackboard::GetBNearAlliedCapturePoint() const
 
 void Blackboard::SetBBTGuardMode(bool argbBTGuardMode)
 {
-	if (bNearAlliedCapturePoint != argbBTGuardMode)
+	if (bBTGuardMode != argbBTGuardMode)
 	{
 		bBTGuardMode = argbBTGuardMode;
-		bBTGuardMode = true;
+		bSomeValueHasChanged = true;
 	}
 }
 
