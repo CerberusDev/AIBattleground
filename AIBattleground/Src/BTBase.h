@@ -85,6 +85,17 @@ struct BTDecorator : public BTNode
 	}
 };
 
+struct BTDecorator_ForceSuccess : public BTDecorator
+{
+	BTDecorator_ForceSuccess(BTNode* argChild) : BTDecorator(argChild) {};
+
+	virtual EStatus Update(AISystemBT* argAISystem, Blackboard* argBlackboard)
+	{
+		Child->Update(argAISystem, argBlackboard);
+		return EStatus::SUCCESS;
+	}
+};
+
 struct BTDecorateor_InverseBlackbordConditionAbove: public BTDecorator
 {
 	BTDecorateor_InverseBlackbordConditionAbove(BTNode* argChild) : BTDecorator(argChild) {};
@@ -257,7 +268,7 @@ struct BTTask_GoTowardsNearestEnemy : public BTTask
 	}
 };
 
-struct BTTask_Fight : public BTTask
+struct BTTask_ShootToEnemy : public BTTask
 {
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
 	{
@@ -332,6 +343,32 @@ struct BTTask_SetBlackboardBGuardModeValue : public BTTask
 	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
 	{
 		argBlackboard->SetBBTGuardMode(bValueToSet);
+		return EStatus::SUCCESS;
+	}
+};
+
+struct BTTask_SetBlackboardBHealthZoneDestReached : public BTTask
+{
+	bool bValueToSet;
+
+	BTTask_SetBlackboardBHealthZoneDestReached(bool argBValueToSet) : bValueToSet(argBValueToSet) {};
+
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->SetBHealthZoneDestReached(bValueToSet);
+		return EStatus::SUCCESS;
+	}
+};
+
+struct BTTask_SetRetreating : public BTTask
+{
+	bool bValueToSet;
+
+	BTTask_SetRetreating(bool argBValueToSet) : bValueToSet(argBValueToSet) {};
+
+	virtual EStatus InternalUpdate(Blackboard* argBlackboard)
+	{
+		argBlackboard->GetOwner()->SetReatreating(bValueToSet);
 		return EStatus::SUCCESS;
 	}
 };
