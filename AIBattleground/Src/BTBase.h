@@ -37,13 +37,9 @@ struct BTSelector : public BTComposite
 		{
 			EStatus ChildStatus = (*it)->Update(argAISystem, argBlackboard);
 
-			if (ChildStatus == EStatus::SUCCESS)
+			if (ChildStatus != EStatus::FAIL)
 			{
-				return EStatus::SUCCESS;
-			}
-			else if (ChildStatus == EStatus::IN_PROGRESS)
-			{
-				return EStatus::IN_PROGRESS;
+				return ChildStatus;
 			}
 		}
 
@@ -60,13 +56,9 @@ struct BTSequence : public BTComposite
 		{
 			EStatus ChildStatus = (*it)->Update(argAISystem, argBlackboard);
 
-			if (ChildStatus == EStatus::FAIL)
+			if (ChildStatus != EStatus::SUCCESS)
 			{
-				return EStatus::FAIL;
-			}
-			else if (ChildStatus == EStatus::IN_PROGRESS)
-			{
-				return EStatus::IN_PROGRESS;
+				return ChildStatus;
 			}
 		}
 
