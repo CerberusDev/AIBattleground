@@ -152,7 +152,7 @@ struct BTBDecorator_LowHealth : public BTBlackboardDecorator
 
 	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
 	{
-		return argBlackboard->GetHP() < argBlackboard->GetMaxHP() * 0.1f;
+		return argBlackboard->GetBLowHP();
 	}
 };
 
@@ -162,7 +162,7 @@ struct BTBDecorator_FullHealth : public BTBlackboardDecorator
 
 	virtual bool IsConditionFulfilled(Blackboard* argBlackboard)
 	{
-		return argBlackboard->GetHP() == argBlackboard->GetMaxHP();
+		return argBlackboard->GetBFullHP();
 	}
 };
 

@@ -36,6 +36,7 @@ private:
 	float DirectionChangeSpeed;
 	float MaxHP;
 	float HP;
+	float LowHPThreshold;
 	float Damage;
 	ETeam Team;
 	sf::Vector2f MovementDirectionInterpStart;

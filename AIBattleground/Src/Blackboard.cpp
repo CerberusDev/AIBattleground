@@ -5,7 +5,7 @@
 #include "Blackboard.h"
 
 Blackboard::Blackboard(Actor* argOwner) :
-Owner(argOwner), HP(0.0f), MaxHP(0.0f), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false), 
+Owner(argOwner), bLowHP(false), bFullHP(false), bHealthZoneDestReached(false), bSomeValueHasChanged(false), bEnemyInRange(false),
 bNearestEnemyIsSet(false), bBTRecovering(false), bEnemyCapturePointAtLowHP(false), bEnemyCapturePointInRange(false), 
 bMostEndangeredAlliedCapturePointIsSet(false), bNearAlliedCapturePoint(false), bBTGuardMode(false)
 {
@@ -22,31 +22,32 @@ Actor* Blackboard::GetOwner() const
 	return Owner;
 }
 
-void Blackboard::SetHP(float argHP)
+void Blackboard::SetBLowHP(bool argbLowHP)
 {
-	if (HP != argHP)
+	if (bLowHP != argbLowHP)
 	{
-		HP = argHP;
-		bSomeValueHasChanged = true;
-	}
-}
-float Blackboard::GetHP() const
-{
-	return HP;
-}
-
-void Blackboard::SetMaxHP(float argMaxHP)
-{
-	if (MaxHP != argMaxHP)
-	{
-		MaxHP = argMaxHP;
+		bLowHP = argbLowHP;
 		bSomeValueHasChanged = true;
 	}
 }
 
-float Blackboard::GetMaxHP() const
+bool Blackboard::GetBLowHP() const
 {
-	return MaxHP;
+	return bLowHP;
+}
+
+void Blackboard::SetBFullHP(bool argbFullHP)
+{
+	if (bFullHP != argbFullHP)
+	{
+		bFullHP = argbFullHP;
+		bSomeValueHasChanged = true;
+	}
+}
+
+bool Blackboard::GetBFullHP() const
+{
+	return bFullHP;
 }
 
 void Blackboard::SetBHealthZoneDestReached(bool argbHealthZoneDestReached)

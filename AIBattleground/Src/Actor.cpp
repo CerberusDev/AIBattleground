@@ -17,7 +17,7 @@ Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const st
 LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
 Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), 
 RetreatingMovementSpeed(60.0f), StandardMovementSpeed(100.0f), CurrentMovementSpeed(StandardMovementSpeed), DirectionChangeSpeed(5.0f),
-MaxHP(100.0f), HP(MaxHP), Damage(9.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), MovementDirectionInterpAlpha(0.0f), bInterpolateMovementDirection(false),
+MaxHP(100.0f), HP(MaxHP), LowHPThreshold(MaxHP * 0.1f), Damage(9.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), MovementDirectionInterpAlpha(0.0f), bInterpolateMovementDirection(false),
 bShouldDrawLaser(false), bRetreating(false), ShotInterval(sf::seconds(0.15f)), QuadTreeUpdateInterval(sf::seconds(0.2f)), MovementDirectionUpdateInterval(sf::seconds(0.2f)),
 BBUpdateInterval(sf::seconds(0.2f)), ShotTimeCounter(ShotInterval), DrawData_PositionX(Position.x), DrawData_PositionY(Position.y), DrawData_LaserBeamDirectionX(0.0f), DrawData_LaserBeamDirectionY(0.0f),
 DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false)
@@ -49,8 +49,8 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 
 	NearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
 
-	Blackboard.SetMaxHP(MaxHP);
-	Blackboard.SetHP(HP);
+	Blackboard.SetBFullHP(HP == MaxHP);
+	Blackboard.SetBLowHP(HP < LowHPThreshold);
 	Blackboard.SetBEnemyCapturePointAtLowHP(NearestEnemyCapturePoint->HasLowHP());
 	Blackboard.SetBMostEndangeredAlliedCapturePointIsSet(LevelInfo->GetMostEndangeredCapturePoint(Team) != nullptr);
 
@@ -316,7 +316,8 @@ const sf::Vector2f& Actor::GetLastQuadTreePosition() const
 void Actor::Heal(float HPToHeal)
 {
 	HP = std::min(HP + HPToHeal, MaxHP);
-	Blackboard.SetHP(HP);
+	Blackboard.SetBLowHP(HP < LowHPThreshold);
+	Blackboard.SetBFullHP(HP == MaxHP);
 }
 
 void Actor::TryToShoot()
@@ -361,7 +362,8 @@ void Actor::TakeDamage(float DamageAmount)
 		return;
 
 	HP -= DamageAmount;
-	Blackboard.SetHP(HP);
+	Blackboard.SetBLowHP(HP < LowHPThreshold);
+	Blackboard.SetBFullHP(HP == MaxHP);
 
 	if (HP <= 0.0f)
 		LevelInfo->DestroyActor(this);

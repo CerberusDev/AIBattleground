@@ -43,7 +43,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 	switch (State)
 	{
 	case EState::IDLE:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
@@ -62,7 +62,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::MOVE_TOWARDS_ENEMY;
 		break;
 	case EState::MOVE_TOWARDS_ENEMY:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
@@ -76,7 +76,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::IDLE;
 		break;
 	case EState::MOVE_TOWARDS_ATTACKING_ENEMY:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
@@ -84,7 +84,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::IDLE;
 		break;
 	case EState::MOVE_TOWARDS_ENEMY_CAPTURE_POINT:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyCapturePointAtLowHP())
 			NewState = EState::IDLE;
@@ -96,7 +96,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::IDLE;
 		break;
 	case EState::MOVE_TOWARDS_ALLIED_CAPTURE_POINT:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
@@ -106,7 +106,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::IDLE;
 		break;
 	case EState::SHOOTING_TO_ENEMY_ACTOR:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (!Blackboard->GetBEnemyInRange())
 			NewState = EState::IDLE;
@@ -114,7 +114,7 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 			NewState = EState::IDLE;
 		break;
 	case EState::SHOOTING_TO_ENEMY_CAPTURE_POINT:
-		if (Blackboard->GetHP() < Blackboard->GetMaxHP() * 0.1f)
+		if (Blackboard->GetBLowHP())
 			NewState = EState::RETREAT;
 		else if (Blackboard->GetBEnemyInRange())
 			NewState = EState::SHOOTING_TO_ENEMY_ACTOR;
@@ -122,11 +122,11 @@ AISystemFSM::EState AISystemFSM::DetermineNewState()
 	case EState::RETREAT:
 		if (Blackboard->GetBHealthZoneDestReached())
 			NewState = EState::RECOVER;
-		else if (Blackboard->GetHP() == Blackboard->GetMaxHP())
+		else if (Blackboard->GetBFullHP())
 			NewState = EState::IDLE;
 		break;
 	case EState::RECOVER:
-		if (Blackboard->GetHP() == Blackboard->GetMaxHP())
+		if (Blackboard->GetBFullHP())
 			NewState = EState::IDLE;
 		break;
 	}

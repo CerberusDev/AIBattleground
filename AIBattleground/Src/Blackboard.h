@@ -8,8 +8,8 @@ class Blackboard
 {
 private:
 	class Actor* Owner;
-	float HP;
-	float MaxHP;
+	bool bLowHP;
+	bool bFullHP;
 	bool bHealthZoneDestReached;
 	bool bEnemyInRange;
 	bool bNearestEnemyIsSet;
@@ -27,11 +27,11 @@ public:
 
 	Actor* GetOwner() const;
 
-	void SetHP(float argHP);
-	float GetHP() const;
+	void SetBLowHP(bool argbLowHP);
+	bool GetBLowHP() const;
 
-	void SetMaxHP(float argMaxHP);
-	float GetMaxHP() const;
+	void SetBFullHP(bool argbFullHP);
+	bool GetBFullHP() const;
 
 	void SetBHealthZoneDestReached(bool argbHealthZoneDestReached);
 	bool GetBHealthZoneDestReached() const;
