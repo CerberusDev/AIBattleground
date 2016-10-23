@@ -9,7 +9,7 @@
 #include "AISystemBT.h"
 
 
-enum class EStatus {SUCCESS, FAIL, IN_PROGRESS };
+enum class EStatus {SUCCESS, FAIL, IN_PROGRESS};
 
 struct BTNode
 {
