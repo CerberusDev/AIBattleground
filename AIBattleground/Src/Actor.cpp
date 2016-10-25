@@ -14,7 +14,7 @@
 #include "CapturePoint.h"
 
 Actor::Actor(class LevelInfo* argLevelInfo, TextureManager* TexManager, const std::string& TexName, const ETeam argTeam, const sf::Vector2f& InitialPosition) :
-LevelInfo(argLevelInfo), AISystem(nullptr), Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), LastQuadTreePosition(InitialPosition), 
+LevelInfo(argLevelInfo), AISystem(nullptr), /*BTAsset(nullptr),*/ Blackboard(this), NearestEnemy(nullptr), NearestEnemyCapturePoint(nullptr), LastQuadTreePosition(InitialPosition),
 Position(InitialPosition), DesiredMovementDirection(0.0f, 0.0f), ActualMovementDirection(0.0f, 0.0f), ShotDist(75.0f * (1.0f - GetRandomFloat(0.4f))), 
 RetreatingMovementSpeed(60.0f), StandardMovementSpeed(100.0f), CurrentMovementSpeed(StandardMovementSpeed), DirectionChangeSpeed(5.0f),
 MaxHP(100.0f), HP(MaxHP), LowHPThreshold(MaxHP * 0.1f), Damage(9.0f), Team(argTeam), MovementDirectionInterpStart(0.0f, 0.0f), MovementDirectionInterpAlpha(0.0f), bInterpolateMovementDirection(false),
@@ -45,7 +45,9 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 
 	AISystem = new AISystemFSM(&Blackboard);
 	//AISystem = new AISystemBT(LevelInfo->GetBTData(), &Blackboard);
-	//AISystem = new AISystemBT(new BTBase(), &Blackboard);
+	
+	//BTAsset = new BTBase();
+	//AISystem = new AISystemBT(BTAsset, &Blackboard);
 
 	NearestEnemyCapturePoint = LevelInfo->GetNearestEnemyCapturePoint(this);
 
@@ -65,6 +67,9 @@ DrawData_HP(MaxHP), DrawData_AngleToEnemy(0.0f), DrawData_bShouldDrawLaser(false
 Actor::~Actor()
 {
 	delete AISystem;
+
+	//if (BTAsset != nullptr)
+	//	delete BTAsset;
 }
 
 void Actor::SyncDrawData()

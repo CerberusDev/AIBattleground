@@ -22,9 +22,9 @@ class LevelInfo
 public:
 	const sf::FloatRect Boundaries;
 	const sf::Vector2f RightBottomEdge;
-	sf::Time T1;
-	sf::Time T2;
-	sf::Time T3;
+	//sf::Time T1;
+	//sf::Time T2;
+	//sf::Time T3;
 	sf::Time T4;
 
 private:

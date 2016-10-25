@@ -25,12 +25,12 @@ MostEndangeredCapturePointA(nullptr), MostEndangeredCapturePointB(nullptr)
 	BackgroundSprite.setTextureRect(sf::IntRect(0, 0, (int)Boundaries.width, (int)Boundaries.height));
 	BackgroundSprite.setPosition(sf::Vector2f(Boundaries.left, Boundaries.top));
 
-	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 175);
-	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 175);
-	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 100);
-	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 150);
-	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 150);
-	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 150);
+	ActorSpawners[0] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_A, 350);
+	ActorSpawners[1] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_A, 350);
+	ActorSpawners[2] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.025f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_A, 200);
+	ActorSpawners[3] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.5f), ETeam::TEAM_B, 300);
+	ActorSpawners[4] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.3f), ETeam::TEAM_B, 300);
+	ActorSpawners[5] = new ActorSpawner(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.975f, LevelBoundaries.top + LevelBoundaries.height * 0.7f), ETeam::TEAM_B, 300);
 
 	CapturePointsA[0] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.275f, LevelBoundaries.top + LevelBoundaries.height * 0.125f), ETeam::TEAM_A);
 	CapturePointsA[1] = new CapturePoint(this, TexManager, sf::Vector2f(LevelBoundaries.left + LevelBoundaries.width * 0.25f, LevelBoundaries.top + LevelBoundaries.height * 0.375f), ETeam::TEAM_A);
@@ -103,8 +103,6 @@ void LevelInfo::Draw(sf::RenderWindow* Window) const
 
 void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 {
-	sf::Clock C;
-
 	static int LastIndex = 0;
 
 	int NewIndex = LastIndex + std::max((int)(FixedDeltaTime.asSeconds() * 1.5f * ACTORS_NUMBER), 1);
@@ -118,7 +116,7 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 
 	LastIndex = NewIndex != ACTORS_NUMBER ? NewIndex: 0;
 
-	T1 += C.restart();
+	//T1 += C.restart();
 
 	for (ActorSpawner* CurrSpawner : ActorSpawners)
 		CurrSpawner->Update(DeltaTime);
@@ -135,13 +133,14 @@ void LevelInfo::Update(const float DeltaTime, const sf::Time FixedDeltaTime)
 	UpdateMostEndangeredCapturePoint(ETeam::TEAM_A);
 	UpdateMostEndangeredCapturePoint(ETeam::TEAM_B);
 
-	T2 += C.restart();
+	//T2 += C.restart();
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)
 			CurrActor->Update(DeltaTime);
 
-	T3 += C.restart();
+	//T3 += C.restart();
+	sf::Clock C;
 
 	for (Actor* CurrActor : Actors)
 		if (CurrActor)

@@ -16,6 +16,7 @@ class Actor
 private:
 	class LevelInfo* LevelInfo;
 	class AISystemBase* AISystem;
+	//class BTBase* BTAsset;
 	Blackboard Blackboard;
 	Actor* NearestEnemy;
 	class CapturePoint* NearestEnemyCapturePoint;

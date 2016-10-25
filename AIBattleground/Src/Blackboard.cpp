@@ -180,5 +180,6 @@ bool Blackboard::SomeValueHasChanged()
 {
 	bool bOldSomeValueHasChanged = bSomeValueHasChanged;
 	bSomeValueHasChanged = false;
-	return bOldSomeValueHasChanged;
+	return true;
+	//return bOldSomeValueHasChanged;
 }

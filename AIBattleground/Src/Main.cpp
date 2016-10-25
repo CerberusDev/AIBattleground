@@ -7,6 +7,9 @@
 #include <iomanip>
 #include <thread>
 #include <atomic>
+#include <fstream>
+#include <ctime>
+#include <Windows.h>
 
 #include "TextureManager.h"
 #include "Actor.h"
@@ -47,12 +50,12 @@ void main_RenderingThread(sf::RenderWindow* Window, LevelInfo* LevelInfo)
 		}
 	}
 
-	std::cout << "Terminating rendering thread." << RenderingThreadFrameNum << std::endl;
+	//std::cout << "Terminating rendering thread." << RenderingThreadFrameNum << std::endl;
 }
 
-int main()
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
 {
-	std::cout << "AI Battleground: Start! " << std::endl;
+	//std::cout << "AI Battleground: Start! " << std::endl;
 
 	std::srand((unsigned int)std::time(0));
 	
@@ -69,42 +72,62 @@ int main()
 	sf::Time UpdateDurationTimeCounter;
 	sf::Time DataSyncTimeCounter;
 	sf::Time DeltaTime;
+	sf::Time TimeFromStart;
 	int MainFPSCounter = 0;
+
+	std::ofstream LogFile;
+	std::time_t t = time(0);
+	struct tm* now = localtime(&t);
+	LogFile.open(std::string("Logs/Log FSMAlways ") + std::to_string(now->tm_mday) + "-" + std::to_string(1 + now->tm_mon) + " " 
+		+ std::to_string(now->tm_hour) + "." + std::to_string(now->tm_min) + "." + std::to_string(now->tm_sec) + ".txt");
 
 	Window.setActive(false);
 	std::thread RenderingThread(main_RenderingThread, &Window, &LevelInfo);
 
-	std::cout << "Initialization completed." << std::endl;
+	//std::cout << "Initialization completed." << std::endl;
+
+	int XYZ = 0;
 
 	while (Window.isOpen())
 	{
 		DeltaTime = MainClock.restart();
 		MainTimeCounter += DeltaTime;
+		TimeFromStart += DeltaTime;
 		MainFPSCounter++;
 
-		while (MainTimeCounter.asSeconds() >= 1.0f)
+		if (MainTimeCounter.asSeconds() >= 1.0f)
 		{
-			std::cout << "-----------------------------------------------------" << std::endl;
-			std::cout << "FPS: " << MainFPSCounter 
-				<< std::setprecision(1) << std::fixed << "   Avg draw t: "
-				<< DrawDurationTimeCounter * 1000.0f / MainFPSCounter << " ms   Avg update t: "
-				<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg sync t: " 
-				<< DataSyncTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
-			std::cout << "-----------------------------------------------------" << std::endl;
+			//std::cout << "-----------------------------------------------------" << std::endl;
+			//std::cout << "FPS: " << MainFPSCounter 
+			//	<< std::setprecision(1) << std::fixed << "   Avg draw t: "
+			//	<< DrawDurationTimeCounter * 1000.0f / MainFPSCounter << " ms   Avg update t: "
+			//	<< UpdateDurationTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms   Avg sync t: " 
+			//	<< DataSyncTimeCounter.asSeconds() * 1000.0f / MainFPSCounter << " ms" << std::endl;
+			//std::cout << "-----------------------------------------------------" << std::endl;
 
-			std::cout << "Finding nearest enemy: " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Level objects update:  " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "General actor update:  " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
-			std::cout << "Update AI system:      " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			//std::cout << "Finding nearest enemy: " << LevelInfo.T1.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			//std::cout << "Level objects update:  " << LevelInfo.T2.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			//std::cout << "General actor update:  " << LevelInfo.T3.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
+			//std::cout << "Update AI system:      " << LevelInfo.T4.asSeconds() * 1000.0f / MainFPSCounter << std::endl;
 
-			LevelInfo.T1 = sf::Time::Zero;
-			LevelInfo.T2 = sf::Time::Zero;
-			LevelInfo.T3 = sf::Time::Zero;
-			LevelInfo.T4 = sf::Time::Zero;
+			//LevelInfo.T1 = sf::Time::Zero;
+			//LevelInfo.T2 = sf::Time::Zero;
+			//LevelInfo.T3 = sf::Time::Zero;
+			//LevelInfo.T4 = sf::Time::Zero;
 
-			DrawDurationTimeCounter = 0.0f;
-			UpdateDurationTimeCounter = sf::Time::Zero;
-			DataSyncTimeCounter = sf::Time::Zero;
+			if (TimeFromStart > sf::seconds(15.0f))
+			{
+				++XYZ;
+				LogFile << LevelInfo.T4.asMicroseconds() / MainFPSCounter << std::endl;
+				LevelInfo.T4 = sf::Time::Zero;
+
+				if (XYZ == 30)
+					Window.close();
+			}
+
+			//DrawDurationTimeCounter = 0.0f;
+			//UpdateDurationTimeCounter = sf::Time::Zero;
+			//DataSyncTimeCounter = sf::Time::Zero;
 			MainTimeCounter -= sf::seconds(1.0f);
 			MainFPSCounter = 0;
 		}
@@ -130,6 +153,16 @@ int main()
 		LevelInfo.SyncData();
 
 		DataSyncTimeCounter += MainClock.getElapsedTime() - SyncStartTime;
+
+		//--------------------------------------------------
+
+		//if (TimeFromStart > sf::seconds(15.0f))
+		//{
+		//	LogFile << LevelInfo.T4.asMicroseconds() << std::endl;
+		//}
+
+		//LevelInfo.T4 = sf::Time::Zero;
+
 
 		//----------------- Time padding -------------------
 		sf::Time BonusTime = FixedDeltaTime - MainClock.getElapsedTime();
@@ -158,6 +191,8 @@ int main()
 		++MainThreadFrameNum;
 	}
 	
+	LogFile.close();
+
 	RenderingThread.join();
 	return 0;
 }
