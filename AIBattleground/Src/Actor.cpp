@@ -210,9 +210,14 @@ void Actor::UpdatePositionInQuadTree()
 
 void Actor::RetreatToHealZone()
 {
-	sf::Vector2f NewDesiredMovementDirection = LevelInfo->GetHealZonePosition(Team) - GetPosition() + MovementDirectionOffset;
-	NormalizeVector2f(NewDesiredMovementDirection);
-	SetDesiredMovementDirection(NewDesiredMovementDirection);
+	if (MovementDirectionUpdateTimeCounter >= MovementDirectionUpdateInterval)
+	{
+		MovementDirectionUpdateTimeCounter = sf::Time::Zero;
+
+		sf::Vector2f NewDesiredMovementDirection = LevelInfo->GetHealZonePosition(Team) - GetPosition() + MovementDirectionOffset;
+		NormalizeVector2f(NewDesiredMovementDirection);
+		SetDesiredMovementDirection(NewDesiredMovementDirection);
+	}
 }
 
 sf::Vector2f Actor::CalculateVectorTowardsNearestEnemy() const
